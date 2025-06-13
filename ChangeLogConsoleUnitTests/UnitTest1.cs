@@ -12,9 +12,12 @@ namespace ChangeLogConsoleUnitTests
         public void Setup()
         {
             string configpath = @"Config\AppTest.config";
-            logpath = @"C:\TempLogs\";
+            logpath = @$"{AppDomain.CurrentDomain.BaseDirectory}TempLogs\";
 
-            Directory.Delete(logpath, true); // Ensure the log directory is clean before starting the test
+            if(Directory.Exists(logpath))
+            {
+                Directory.Delete(logpath, true); // Ensure the log directory is clean before starting the test
+            }
 
             logwriter = new LogWriter(configpath,logpath);
         }
