@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeLogConsole", "ChangeLogConsole.csproj", "{E9585EA2-6565-4D88-8E4F-EC624D53D87E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangeLogConsole", "ChangeLogConsole.csproj", "{E9585EA2-6565-4D88-8E4F-EC624D53D87E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeLogCoreLibrary", "..\ChangeLogCoreLibrary\ChangeLogCoreLibrary.csproj", "{032EAC49-5AD9-46A8-949F-ADE399EE1B84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangeLogCoreLibrary", "..\ChangeLogCoreLibrary\ChangeLogCoreLibrary.csproj", "{032EAC49-5AD9-46A8-949F-ADE399EE1B84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeLogConsoleUnitTests", "..\ChangeLogConsoleUnitTests\ChangeLogConsoleUnitTests.csproj", "{13D3A263-9286-4997-B6EC-CD8F0ACE9F0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangeLogConsoleUnitTests", "..\ChangeLogConsoleUnitTests\ChangeLogConsoleUnitTests.csproj", "{13D3A263-9286-4997-B6EC-CD8F0ACE9F0D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseClass", "..\..\BaseClassLibrary\BaseClass\BaseClass.csproj", "{1BEFC7D2-F30B-4785-A50F-AF2DC75C03B6}"
 EndProject
