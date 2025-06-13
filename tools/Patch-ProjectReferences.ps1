@@ -10,7 +10,7 @@ $csprojFiles = Get-ChildItem -Recurse -Filter *.csproj
 
 foreach ($file in $csprojFiles) {
     $content = Get-Content $file.FullName -Raw
-    $patched = $content.Replace($pattern1, $replace1).Replace($pattern2, $replace2)
+    $patched = $content.Replace($pattern1, $replace1).Replace($pattern2, $replace2).Replace($pattern3, $replace3)
 
     if ($patched -ne $content) {
         Write-Host "Patching: $($file.FullName)"
