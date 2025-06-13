@@ -83,22 +83,26 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - name: Patch ProjectReference paths for CI
+    # - name: Patch ProjectReference paths for CI
+    #   shell: pwsh
+    #   run: |
+    #     # Adjust root path if needed; here we scan under ConsoleProject folder
+    #     $csprojs = Get-ChildItem -Path ConsoleProject -Filter *.csproj -Recurse
+    #     foreach ($f in $csprojs) {
+    #       $text = Get-Content $f.FullName -Raw
+    #       $patched = $text.Replace('..\..\BaseClassLibrary\BaseClass\BaseClass.csproj', '..\BaseClassLibrary\BaseClass\BaseClass.csproj')
+    #       $patched = $patched.Replace('..\..\BaseClassLibrary\Common.Abstractions\Common.Abstractions.csproj', '..\BaseClassLibrary\Common.Abstractions\Common.Abstractions.csproj')
+    #       $patched = $patched.Replace('..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj', '..\BaseClassLibrary\BaseLogger\BaseLogger.csproj')
+    #       # add more Replace lines as needed
+    #       if ($patched -ne $text) {
+    #         Write-Host "Patching $($f.FullName)"
+    #         Set-Content $f.FullName $patched
+    #       }
+    #     }
+
+    - name: Patch ProjectReference paths
       shell: pwsh
-      run: |
-        # Adjust root path if needed; here we scan under ConsoleProject folder
-        $csprojs = Get-ChildItem -Path ConsoleProject -Filter *.csproj -Recurse
-        foreach ($f in $csprojs) {
-          $text = Get-Content $f.FullName -Raw
-          $patched = $text.Replace('..\..\BaseClassLibrary\BaseClass\BaseClass.csproj', '..\BaseClassLibrary\BaseClass\BaseClass.csproj')
-          $patched = $patched.Replace('..\..\BaseClassLibrary\Common.Abstractions\Common.Abstractions.csproj', '..\BaseClassLibrary\Common.Abstractions\Common.Abstractions.csproj')
-          $patched = $patched.Replace('..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj', '..\BaseClassLibrary\BaseLogger\BaseLogger.csproj')
-          # add more Replace lines as needed
-          if ($patched -ne $text) {
-            Write-Host "Patching $($f.FullName)"
-            Set-Content $f.FullName $patched
-          }
-        }
+      run: tools/Patch-ProjectReferences.ps1
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
