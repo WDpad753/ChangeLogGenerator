@@ -67,6 +67,12 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Dump directory tree
+      shell: powershell
+      run: |
+        Write-Host "Working dir: $(Get-Location)"
+        Get-ChildItem -Force -Recurse
+
     # Install the .NET Core workload
     - name: Install .NET Core
       uses: actions/setup-dotnet@v4
