@@ -19,7 +19,6 @@ namespace ChangeLogCoreLibrary.APIRepositories.Factory
             return mode switch
             {
                 RepoMode.AzureDevOps => new AzureDevOps(settings, JsonReader, configReader, logger),
-
                 RepoMode.GitHub => new GitHub(settings, JsonReader, configReader, logger),
                 _ => throw new ArgumentException("Invalid mode", nameof(mode))
             };
