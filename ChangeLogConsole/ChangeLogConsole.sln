@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeLogCoreLibrary", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeLogConsoleUnitTests", "..\ChangeLogConsoleUnitTests\ChangeLogConsoleUnitTests.csproj", "{13D3A263-9286-4997-B6EC-CD8F0ACE9F0D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseClass", "..\..\BaseClassLibrary\BaseClass\BaseClass.csproj", "{1BEFC7D2-F30B-4785-A50F-AF2DC75C03B6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseLogger", "..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj", "{13B5BA84-BB5B-4C98-8202-A1EAF698D738}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Abstraction", "..\..\BaseClassLibrary\Common.Abstraction\Common.Abstraction.csproj", "{055A98C8-302A-402D-8EF3-F524ECC49668}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +33,18 @@ Global
 		{13D3A263-9286-4997-B6EC-CD8F0ACE9F0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13D3A263-9286-4997-B6EC-CD8F0ACE9F0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13D3A263-9286-4997-B6EC-CD8F0ACE9F0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BEFC7D2-F30B-4785-A50F-AF2DC75C03B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BEFC7D2-F30B-4785-A50F-AF2DC75C03B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BEFC7D2-F30B-4785-A50F-AF2DC75C03B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BEFC7D2-F30B-4785-A50F-AF2DC75C03B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13B5BA84-BB5B-4C98-8202-A1EAF698D738}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13B5BA84-BB5B-4C98-8202-A1EAF698D738}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13B5BA84-BB5B-4C98-8202-A1EAF698D738}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13B5BA84-BB5B-4C98-8202-A1EAF698D738}.Release|Any CPU.Build.0 = Release|Any CPU
+		{055A98C8-302A-402D-8EF3-F524ECC49668}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{055A98C8-302A-402D-8EF3-F524ECC49668}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{055A98C8-302A-402D-8EF3-F524ECC49668}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{055A98C8-302A-402D-8EF3-F524ECC49668}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
