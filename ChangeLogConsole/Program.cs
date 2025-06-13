@@ -1,8 +1,10 @@
 ﻿using BaseClass;
+using BaseClass.Config;
+using BaseLogger;
 using ChangeLogConsole.Writer;
 using ChangeLogCoreLibrary.Model;
-using Common.Abstractions;
-using Common.Abstractions.Models;
+//using Common.Abstractions;
+//using Common.Abstractions.Models;
 using System.Diagnostics;
 using System.Reflection.Metadata;
 using UtilityClass = BaseClass.MethodNameExtractor.FuncNameExtractor;
@@ -16,8 +18,10 @@ namespace ChangeLogConsole
 
     public class Program
     {
-        private static readonly ILogWriter logwriter;
-        private static readonly IConfigReader reader;
+        //private static readonly ILogWriter logwriter;
+        //private static readonly IConfigReader reader;
+        //private LogWriter logwriter = new();
+        private ConfigReader reader;
 
         static void Main(string[] args)
         {
@@ -30,7 +34,7 @@ namespace ChangeLogConsole
 
             if (commitmessagespath == null)
             {
-                logwriter.LogWrite($@"Error Message: Unable to find the path to save Commit File.", "MainProgram", UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                //logwriter.LogWrite($@"Error Message: Unable to find the path to save Commit File.", "MainProgram", UtilityClass.GetMethodName(), MessageLevels.Fatal);
                 return;
             }
 
@@ -58,7 +62,7 @@ namespace ChangeLogConsole
             }
             catch (Exception ex)
             {
-                logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                //logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",UtilityClass.GetMethodName(), MessageLevels.Fatal);
             }
         }
     }

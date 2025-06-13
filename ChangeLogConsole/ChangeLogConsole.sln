@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangeLogConsoleUnitTests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseClass", "..\..\BaseClassLibrary\BaseClass\BaseClass.csproj", "{1BEFC7D2-F30B-4785-A50F-AF2DC75C03B6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Abstraction", "..\..\BaseClassLibrary\Common.Abstraction\Common.Abstraction.csproj", "{055A98C8-302A-402D-8EF3-F524ECC49668}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseLogger", "..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj", "{EBA21783-FFF6-46BF-B40A-032DF1D9AEE9}"
 EndProject
 Global
@@ -37,10 +35,6 @@ Global
 		{1BEFC7D2-F30B-4785-A50F-AF2DC75C03B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BEFC7D2-F30B-4785-A50F-AF2DC75C03B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BEFC7D2-F30B-4785-A50F-AF2DC75C03B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{055A98C8-302A-402D-8EF3-F524ECC49668}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{055A98C8-302A-402D-8EF3-F524ECC49668}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{055A98C8-302A-402D-8EF3-F524ECC49668}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{055A98C8-302A-402D-8EF3-F524ECC49668}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EBA21783-FFF6-46BF-B40A-032DF1D9AEE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EBA21783-FFF6-46BF-B40A-032DF1D9AEE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBA21783-FFF6-46BF-B40A-032DF1D9AEE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
