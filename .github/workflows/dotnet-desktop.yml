@@ -76,6 +76,9 @@ jobs:
     - name: Checkout submodules
       run: git submodule update --init --recursive 
 
+    - name: Update the submodules
+      run: git submodule update --remote
+
     - name: Dump directory tree
       shell: powershell
       run: |
