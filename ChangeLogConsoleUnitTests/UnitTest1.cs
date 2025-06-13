@@ -16,7 +16,14 @@ namespace ChangeLogConsoleUnitTests
         [Test]
         public void Test1()
         {
-            Assert.Pass();
+            if (logwriter == null)
+            {
+                Assert.Fail("LogWriter is not initialized.");
+            }
+            else
+            {
+                Assert.Pass();
+            }
         }
     }
 }
