@@ -14,6 +14,8 @@ foreach ($file in $csprojFiles) {
 
     if ($patched -ne $content) {
         Write-Host "Patching: $($file.FullName)"
+        Write-Host "`nUpdated content for: $($file.FullName)"
+        Write-Host $patched
         Set-Content $file.FullName $patched
     }
 }
