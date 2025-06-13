@@ -1,10 +1,10 @@
 ﻿$pattern1 = '..\..\BaseClassLibrary\BaseClass\BaseClass.csproj'
 $pattern2 = '..\..\BaseClassLibrary\Common.Abstractions\Common.Abstractions.csproj'
-$pattern3 = '..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj'
+# $pattern3 = '..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj'
 
 $replace1 = '..\BaseClassLibrary\BaseClass\BaseClass.csproj'
 $replace2 = '..\BaseClassLibrary\Common.Abstractions\Common.Abstractions.csproj'
-$replace3 = '..\BaseClassLibrary\BaseLogger\BaseLogger.csproj'
+#$replace3 = '..\BaseClassLibrary\BaseLogger\BaseLogger.csproj'
 
 $csprojFiles = Get-ChildItem -Recurse -Filter *.csproj
 
