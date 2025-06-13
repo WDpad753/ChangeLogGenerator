@@ -10,8 +10,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\BaseClassLibrary\BaseClass\BaseClass.csproj" />
     <ProjectReference Include="..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj" />
-    <ProjectReference Include="..\..\BaseClassLibrary\Common.Abstraction\Common.Abstraction.csproj" />
     <ProjectReference Include="..\ChangeLogCoreLibrary\ChangeLogCoreLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="JsonFiles\" />
   </ItemGroup>
 
 </Project>

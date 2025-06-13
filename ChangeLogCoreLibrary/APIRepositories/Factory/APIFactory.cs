@@ -1,4 +1,7 @@
-﻿using ChangeLogCoreLibrary.APIRepositories.Interface;
+﻿using BaseClass.Config;
+using BaseClass.JSON;
+using BaseLogger;
+using ChangeLogCoreLibrary.APIRepositories.Interface;
 using ChangeLogCoreLibrary.Classes;
 using ChangeLogCoreLibrary.Model;
 using System;
@@ -11,12 +14,12 @@ namespace ChangeLogCoreLibrary.APIRepositories.Factory
 {
     public class APIFactory
     {
-        public static IAPIRepo GetAPIRepo(RepoMode mode, CLGConfig settings)
+        public static IAPIRepo GetAPIRepo(RepoMode mode, CLGConfig settings, JSONFileHandler JsonReader, ConfigReader configReader, LogWriter logger)
         {
             return mode switch
             {
-                RepoMode.AzureDevOps => new AzureDevOps(settings),
-                RepoMode.GitHub => new GitHub(settings),
+                RepoMode.AzureDevOps => new AzureDevOps(settings, JsonReader, configReader, logger),
+                RepoMode.GitHub => new GitHub(settings, JsonReader, configReader, logger),
                 _ => throw new ArgumentException("Invalid mode", nameof(mode))
             };
         }

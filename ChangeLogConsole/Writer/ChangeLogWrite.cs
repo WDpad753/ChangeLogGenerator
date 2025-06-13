@@ -1,12 +1,16 @@
 ﻿using BaseClass.API;
+using BaseClass.Config;
 using BaseClass.Helper;
 using BaseClass.JSON;
+using BaseLogger;
 using ChangeLogCoreLibrary.APIRepositories.Factory;
+using ChangeLogCoreLibrary.APIRepositories.Interface;
 using ChangeLogCoreLibrary.Model;
-using Common.Abstractions;
-using Common.Abstractions.Models;
+//using Common.Abstractions;
+//using Common.Abstractions.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +19,7 @@ namespace ChangeLogConsole.Writer
 {
     public class ChangeLogWrite
     {
-        private string configpathfull
+        public string configpathfull
         {
             get
             {
@@ -31,40 +35,57 @@ namespace ChangeLogConsole.Writer
         private CLGConfig _config;
         private JSONFileHandler _fileHandler;
         private APIClient _client;
-        private readonly IConfigReader _reader;
+        //private readonly IConfigReader _reader;
+        private ConfigReader _reader;
+        private LogWriter _logger;
+        private static MapJson prevMapJson = new MapJson();
+        private readonly IAPIRepo _repo;
+        private string _logFilePath;
 
-        public ChangeLogWrite(CLGConfig config, RepoMode mode,DebugState state)
+        public ChangeLogWrite(CLGConfig config, RepoMode mode, LogWriter Logger, string logFilePath)
         {
             _config = config;
-            _fileHandler = new(state);
-            var APIMode = APIFactory.GetAPIRepo(mode,config);
-            //_client = new();
+            _fileHandler = new();
+            _logger = Logger;
+            _reader = new(configpathfull, Logger);
+            _repo = APIFactory.GetAPIRepo(mode, config, _fileHandler, _reader, _logger);
+            _logFilePath = logFilePath;
         }
 
         public async Task<string> ChangeLogReaderWriter(string filepath)
         {
-            string line;
-            int Switch;
-            string prevdatetime = "";
-            int firstentry = 0;
-            string prevMapJsonHS = _reader.ReadInfo("PrevMapJSONHS","");
-            //MapJson prevMapJson;
-            int addition;
-            int alteration;
-            int deletion;
-            int printcount = 0;
+            string prevMapJsonHS = _reader.ReadInfo("PrevMapJSONHS");
             MapJson mapJson = await _client.Get<MapJson>();
-            //Crc32 crc = new Crc32();
-            //string mapJsonHS = crc.CalculateHash(mapJson);
             string mapJsonHS = Crc32.CalculateHash(mapJson);
-            List<object> values;
-            //List<object> JsonMapValues = new List<object>();
-            Dictionary<long, List<object>> PrevJsonMap = new Dictionary<long, List<object>>();
-            Dictionary<long, List<object>> JsonMap = new Dictionary<long, List<object>>();
 
+            if (mapJson != null)
+            {
+                if (File.Exists(Path.Combine(_config.jsonpath, _config.jsonfilename)))
+                {
+                    prevMapJson = _fileHandler.GetJson<MapJson>(Path.Combine(_config.jsonpath, _config.jsonfilename));
+                    if (prevMapJson == null)
+                    {
+                        prevMapJson = _fileHandler.GetJson<MapJson>(Path.Combine(_config.backupjsonpath, _config.jsonfilename));
+                    }
+                }
 
+                if (!mapJsonHS.Equals(prevMapJsonHS))
+                {
+                    _repo.MapJsonReader(mapJson, prevMapJson, mapJsonHS, _logFilePath);
+                }
+                else
+                {
+                    Console.WriteLine("No Changes in the Commit history data");
+                    return null;
+                }
+            }
+            else
+            {
+                throw new Exception("MapJson is empty");
+            }
+
+            //return sb.ToString();
             return null;
         }
-
     }
 }
