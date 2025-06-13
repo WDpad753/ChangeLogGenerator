@@ -6,19 +6,25 @@ namespace ChangeLogConsoleUnitTests
     public class Tests
     {
         private ILogWriter logwriter;
+        private string logpath;
 
         [SetUp]
         public void Setup()
         {
-            logwriter = new LogWriter(@"Config\AppTest.config","");
+            string configpath = @"Config\AppTest.config";
+            logpath = @"C:\TempLogs\";
+
+            Directory.Delete(logpath, true); // Ensure the log directory is clean before starting the test
+
+            logwriter = new LogWriter(configpath,logpath);
         }
 
         [Test]
         public void Test1()
         {
-            if (logwriter == null)
+            if (logwriter == null && Directory.Exists(logpath))
             {
-                Assert.Fail("LogWriter is not initialized.");
+                Assert.Fail("LogWriter is not initialized and Directory Exists.");
             }
             else
             {
