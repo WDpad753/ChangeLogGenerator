@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\BaseClassLibrary\BaseClass\BaseClass.csproj" />
+    <ProjectReference Include="..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj" />
+    <ProjectReference Include="..\..\BaseClassLibrary\Common.Abstraction\Common.Abstraction.csproj" />
+  </ItemGroup>
+
 </Project>
