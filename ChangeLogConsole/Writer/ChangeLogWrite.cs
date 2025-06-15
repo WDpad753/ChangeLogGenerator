@@ -2,12 +2,11 @@
 using BaseClass.Config;
 using BaseClass.Helper;
 using BaseClass.JSON;
+using BaseClass.Model;
 using BaseLogger;
 using ChangeLogCoreLibrary.APIRepositories.Factory;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
 using ChangeLogCoreLibrary.Model;
-//using Common.Abstractions;
-//using Common.Abstractions.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -36,7 +35,7 @@ namespace ChangeLogConsole.Writer
         private JSONFileHandler _fileHandler;
         private APIClient _client;
         //private readonly IConfigReader _reader;
-        private ConfigReader _reader;
+        private ConfigHandler _reader;
         private LogWriter _logger;
         private static MapJson prevMapJson = new MapJson();
         private readonly IAPIRepo _repo;
@@ -45,18 +44,18 @@ namespace ChangeLogConsole.Writer
         public ChangeLogWrite(CLGConfig config, RepoMode mode, LogWriter Logger, string logFilePath)
         {
             _config = config;
-            _fileHandler = new();
             _logger = Logger;
+            _fileHandler = new(Logger);
             _reader = new(configpathfull, Logger);
-            _repo = APIFactory.GetAPIRepo(mode, config, _fileHandler, _reader, _logger);
+            _repo = APIFactory.GetAPIRepo(mode, config, _fileHandler, _reader, Logger);
             _logFilePath = logFilePath;
         }
 
-        public async Task<string> ChangeLogReaderWriter(string filepath)
+        public async Task<string?> ChangeLogReaderWriter()
         {
             string prevMapJsonHS = _reader.ReadInfo("PrevMapJSONHS");
             MapJson mapJson = await _client.Get<MapJson>();
-            string mapJsonHS = Crc32.CalculateHash(mapJson);
+            string mapJsonHS = Crc32.CalculateHash<MapJson>(mapJson);
 
             if (mapJson != null)
             {

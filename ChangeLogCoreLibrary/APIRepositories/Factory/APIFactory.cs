@@ -1,5 +1,6 @@
 ﻿using BaseClass.Config;
 using BaseClass.JSON;
+using BaseClass.Model;
 using BaseLogger;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
 using ChangeLogCoreLibrary.Classes;
@@ -14,7 +15,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Factory
 {
     public class APIFactory
     {
-        public static IAPIRepo GetAPIRepo(RepoMode mode, CLGConfig settings, JSONFileHandler JsonReader, ConfigReader configReader, LogWriter logger)
+        public static IAPIRepo GetAPIRepo(RepoMode mode, CLGConfig settings, JSONFileHandler JsonReader, ConfigHandler configReader, LogWriter logger)
         {
             return mode switch
             {

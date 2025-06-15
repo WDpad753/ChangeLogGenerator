@@ -1,5 +1,6 @@
 ﻿using BaseClass.Config;
 using BaseClass.JSON;
+using BaseClass.Model;
 using BaseLogger;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
 using ChangeLogCoreLibrary.Model;
@@ -16,9 +17,9 @@ namespace ChangeLogCoreLibrary.Classes
         private CLGConfig _config;
         private LogWriter _logger;
         private JSONFileHandler _fileHandler;
-        private ConfigReader _reader;
+        private ConfigHandler _reader;
         
-        public GitHub(CLGConfig config, JSONFileHandler JsonReader, ConfigReader Reader, LogWriter Logger)
+        public GitHub(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler Reader, LogWriter Logger)
         {
             _config = config;
             _logger = Logger;
