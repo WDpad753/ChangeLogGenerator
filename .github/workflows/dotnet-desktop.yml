@@ -85,6 +85,10 @@ jobs:
         Write-Host "Working dir: $(Get-Location)"
         Get-ChildItem -Force -Recurse
 
+    - name: Setting Up environment variables for Unit Tests
+      run: |
+        echo "Test=Hello_Unit_Test" >> $env:GITHUB_ENV
+
     # Install the .NET Core workload
     - name: Install .NET Core
       uses: actions/setup-dotnet@v4

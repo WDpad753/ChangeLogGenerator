@@ -1,6 +1,8 @@
 ﻿using BaseClass;
 using BaseClass.Config;
+using BaseClass.Model;
 using BaseLogger;
+using BaseLogger.Models;
 using ChangeLogConsole.Writer;
 using ChangeLogCoreLibrary.Model;
 //using Common.Abstractions;
@@ -20,8 +22,11 @@ namespace ChangeLogConsole
     {
         //private static readonly ILogWriter logwriter;
         //private static readonly IConfigReader reader;
-        //private LogWriter logwriter = new();
-        private ConfigReader reader;
+        private static LogWriter? logwriter;
+        private static ConfigHandler? reader;
+        private static string? NameSpace = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+
+        public static CLGConfig _config { get; }
 
         static void Main(string[] args)
         {
@@ -29,36 +34,76 @@ namespace ChangeLogConsole
             string currentDirectory = Directory.GetCurrentDirectory();
             string currentDirectory2 = AppDomain.CurrentDomain.BaseDirectory;
 
-            // Setting up and running ChangeLogConsole for Creating/Appending ChangeLog:
-            string? commitmessagespath = ProgramConfig.commitMessagesPath;
+            string configFilePath = Path.Combine(currentDirectory2, "Config");
+            string[] files = Directory.GetFiles(configFilePath);
 
-            if (commitmessagespath == null)
+            // Double check
+            if(!Directory.Exists(configFilePath) || files.Count() > 0)
             {
-                //logwriter.LogWrite($@"Error Message: Unable to find the path to save Commit File.", "MainProgram", UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                throw new Exception("Either the Config File Path does not exist or there are different Configs in the assigned path.");
+            }
+
+            string configFile = files[0];
+            string logFilePath = Path.Combine(Path.GetPathRoot(Environment.SystemDirectory), "tmp");
+
+            logwriter = new(configFile, logFilePath);
+            reader = new(configFile, logwriter);
+
+            // Setting up and running ChangeLogConsole for Creating/Appending ChangeLog:
+            //string? commitmessagespath = ProgramConfig.commitMessagesPath;
+
+            //if (commitmessagespath == null)
+            if (_config == null)
+            {
+                logwriter.LogWrite($@"Error Message: Unable to find the path to save Commit File.", "MainProgram", UtilityClass.GetMethodName(), MessageLevels.Fatal);
                 return;
             }
 
-            string commitmessagesfilename = "ChangeLog.txt";
-            //string targetcommitjsonpath = @$"{currentDirectory}\JsonFiles\";
-            string targetcommitjsonpath = @$"{currentDirectory2}JsonFiles\";
-            string targetcommitjsonfile = "PrevMap.json";
-            string backuptargetcommitjsonpath = $@"{Directory.GetParent(currentDirectory2).Parent.Parent.Parent.FullName}\JsonFiles\";
-            CLGConfig CLG = new CLGConfig();
+            //string commitmessagesfilename = "ChangeLog.txt";
+            ////string targetcommitjsonpath = @$"{currentDirectory}\JsonFiles\";
+            //string targetcommitjsonpath = @$"{currentDirectory2}JsonFiles\";
+            //string targetcommitjsonfile = "PrevMap.json";
+            //string backuptargetcommitjsonpath = $@"{Directory.GetParent(currentDirectory2).Parent.Parent.Parent.FullName}\JsonFiles\";
 
-            Debug.WriteLine($"Old Directory => {currentDirectory}; tested Directory => {currentDirectory2}");
-            CLG.commitlogpath = commitmessagespath;
-            CLG.commitlogfilename = commitmessagesfilename;
-            CLG.jsonpath = targetcommitjsonpath;
-            CLG.backupjsonpath = backuptargetcommitjsonpath;
-            CLG.jsonfilename = targetcommitjsonfile;
-            string commitfilepath = CLG.logfilepath;
+            //Debug.WriteLine($"Old Directory => {currentDirectory}; tested Directory => {currentDirectory2}");
+            //_config.commitlogpath = commitmessagespath;
+            //_config.commitlogfilename = commitmessagesfilename;
+            //_config.jsonpath = targetcommitjsonpath;
+            //CLG.backupjsonpath = backuptargetcommitjsonpath;
+            //CLG.jsonfilename = targetcommitjsonfile;
+            //string commitfilepath = CLG.logfilepath;
 
-            //ChangeLogWrite clg = new(CLG,,);
+            string? tarRepo = reader.ReadInfo("Repo");
+            RepoMode mode;
+
+            if(tarRepo == null)
+            {
+                logwriter.LogWrite($@"Error Message: Value for the Target Repo is empty.", NameSpace, UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                return;
+            }
+            else
+            {
+                if(tarRepo.ToLower().Equals("GitHub".ToLower()))
+                {
+                    mode = RepoMode.GitHub;
+                }
+                else if (tarRepo.ToLower().Equals("AzureDevOps".ToLower()))
+                {
+                    mode = RepoMode.AzureDevOps;
+                }
+                else
+                {
+                    logwriter.LogWrite($@"Error Message: Selected Repo Mode can not be found.", NameSpace, UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                    return;
+                }
+            }
+
+            ChangeLogWrite clg = new(_config, mode, logwriter, logFilePath);
 
             try
             {
                 //Task.Run(async () => await clg.ChangeLogReaderWriter(commitfilepath));
-                //clg.ChangeLogReaderWriter(commitfilepath).Wait(15000000);
+                clg.ChangeLogReaderWriter().Wait(15000000);
             }
             catch (Exception ex)
             {

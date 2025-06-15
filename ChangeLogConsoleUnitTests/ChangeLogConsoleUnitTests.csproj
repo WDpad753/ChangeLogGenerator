@@ -26,7 +26,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\BaseClassLibrary\BaseClass\BaseClass.csproj" />
     <ProjectReference Include="..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj" />
-    <ProjectReference Include="..\..\BaseClassLibrary\Common.Abstraction\Common.Abstraction.csproj" />
     <ProjectReference Include="..\ChangeLogCoreLibrary\ChangeLogCoreLibrary.csproj" />
   </ItemGroup>
 
@@ -36,6 +35,15 @@
 
   <ItemGroup>
     <None Update="Config\AppTest.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\EnvFileTest.env">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\launchsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\XMLFileTest.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

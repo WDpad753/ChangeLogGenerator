@@ -1,15 +1,16 @@
 using BaseClass.Config;
+using BaseClass.Model;
 using BaseLogger;
-using Common.Abstractions;
+using System.Reflection.Metadata;
 
 namespace ChangeLogConsoleUnitTests.BaseTests
 {
     public class CoreLibTests
     {
         private LogWriter logwriter;
+        private ConfigHandler configReader;
         private string logpath;
-        private string ConfigFilePath;
-        private string appName = "ConsoleTest";
+        private static string LaunchJsonConfigFilePath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\launchsettings.json";
 
         [SetUp]
         public void Setup()
@@ -17,21 +18,20 @@ namespace ChangeLogConsoleUnitTests.BaseTests
             string configpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest.config";
             logpath = @$"{AppDomain.CurrentDomain.BaseDirectory}TempLogs\";
 
-            ConfigFilePath = configpath;
-
             if (Directory.Exists(logpath))
             {
                 Directory.Delete(logpath, true); // Ensure the log directory is clean before starting the test
             }
 
-            logwriter = new LogWriter(configpath,logpath);
+            logwriter = new LogWriter(configpath, logpath);
+
+            configReader = new(configpath, logwriter);
         }
 
         [Test]
-        public void ConfigReaderTest()
+        public void ConfigReaderAssertTest()
         {
-            ConfigReader configReader = new(ConfigFilePath,logwriter);
-
+            string appName = "ConsoleTest";
             string? val = configReader.ReadInfo("AppName");
 
             if (val != null)
@@ -41,6 +41,76 @@ namespace ChangeLogConsoleUnitTests.BaseTests
             else
             {
                 Assert.Fail("Unable to Obtain a Value from Configuration File");
+            }
+        }
+
+        [Test]
+        public void ConfigReaderModificationTest()
+        {
+            string? val = configReader.ReadInfo("AppName");
+
+            string newAppName = "NewConsoleTest";
+            configReader.SaveInfo(newAppName, "AppName");
+            val = configReader.ReadInfo("AppName");
+
+            if (val != null)
+            {
+                Assert.That(newAppName == val, "Value is not equal after modification");
+            }
+            else
+            {
+                Assert.Fail("Unable to Obtain a Value from Configuration File after modification");
+            }
+        }
+
+        [Test]
+        public void ConfigUserEnvReadTest()
+        {
+            string val = "Hello_Unit_Test";
+
+            string? res = configReader.EnvRead("Test", EnvAccessMode.User);
+
+            if (res != null)
+            {
+                Assert.That(val == res, "Value is not equal after modification");
+            }
+            else
+            {
+                Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
+            }
+        }
+
+        [Test]
+        public void ConfigMachineEnvReadTest()
+        {
+            string val = "Hello_Unit_Test";
+
+            string? res = configReader.EnvRead("Test", EnvAccessMode.System);
+
+            if (res != null)
+            {
+                Assert.That(val == res, "Value is not equal after modification");
+            }
+            else
+            {
+                Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
+            }
+        }
+
+        [Test]
+        public void JsonConfigEnvReadTest()
+        {
+            string val = "Hello_Unit_Test";
+
+            string? res = configReader.EnvRead("Test", EnvAccessMode.File, LaunchJsonConfigFilePath, "environmentVariables");
+
+            if (res != null)
+            {
+                Assert.That(val == res, "Value is not equal after modification");
+            }
+            else
+            {
+                Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
             }
         }
     }

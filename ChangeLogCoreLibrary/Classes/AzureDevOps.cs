@@ -1,6 +1,7 @@
 ﻿using BaseClass.Config;
 using BaseClass.Helper;
 using BaseClass.JSON;
+using BaseClass.Model;
 using BaseLogger;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
 using ChangeLogCoreLibrary.Model;
@@ -20,10 +21,10 @@ namespace ChangeLogCoreLibrary.Classes
         private CLGConfig _config;
         private LogWriter _logger;
         private JSONFileHandler _fileHandler;
-        private ConfigReader _reader;
+        private ConfigHandler _reader;
         private static MapJson prevMapJson = new MapJson();
 
-        public AzureDevOps(CLGConfig config, JSONFileHandler JsonReader, ConfigReader configReader,  LogWriter Logger)
+        public AzureDevOps(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler configReader,  LogWriter Logger)
         {
             _config = config;
             _logger = Logger;
