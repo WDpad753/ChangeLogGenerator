@@ -26,6 +26,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
             logwriter = new LogWriter(configpath, logpath);
 
             configReader = new(configpath, logwriter);
+            Environment.SetEnvironmentVariable("Test", "Hello_Unit_Test", EnvironmentVariableTarget.Process);
         }
 
         [Test]
@@ -64,6 +65,24 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
+        public void ConfigUserMachineMimicEnvReadTest()
+        {
+            string val = "Hello_Unit_Test";
+
+            string? res = configReader.EnvRead("Test", EnvAccessMode.Project);
+
+            if (res != null)
+            {
+                Assert.That(val == res, "Value is not equal after modification");
+            }
+            else
+            {
+                Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
+            }
+        }
+
+        [Test]
+        [Explicit("Only run locally or manually")]
         public void ConfigUserEnvReadTest()
         {
             string val = "Hello_Unit_Test";
@@ -81,6 +100,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
+        [Explicit("Only run locally or manually")]
         public void ConfigMachineEnvReadTest()
         {
             string val = "Hello_Unit_Test";
