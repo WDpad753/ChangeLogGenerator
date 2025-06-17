@@ -1,5 +1,4 @@
-
-namespace ChangeLogTestAPI
+namespace TestAPI
 {
     public class Program
     {
@@ -14,6 +13,13 @@ namespace ChangeLogTestAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            //builder.Services.AddHttpClient(client =>
+            //{
+            //    client.BaseAddress = new Uri("https://dev.azure.com/");
+            //});
+
+            builder.Services.AddHealthChecks();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -25,6 +31,8 @@ namespace ChangeLogTestAPI
 
             app.UseAuthorization();
 
+            // Enable health check endpoint at /health
+            app.MapHealthChecks("/health");
 
             app.MapControllers();
 

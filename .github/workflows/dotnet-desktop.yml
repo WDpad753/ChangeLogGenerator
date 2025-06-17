@@ -111,6 +111,17 @@ jobs:
     #         Set-Content $f.FullName $patched
     #       }
     #     }
+    
+    - name: Wait for API health check
+      run: |
+        for i in {1..10}; do
+          if curl --fail "http://localhost:5237/health; then
+            echo "API is healthy"
+            break
+          fi
+          echo "Waiting for API..."
+          sleep 3
+        done
 
     - name: Patch ProjectReference paths
       shell: pwsh

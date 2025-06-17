@@ -13,7 +13,15 @@
   <ItemGroup>
     <ProjectReference Include="..\..\BaseClassLibrary\BaseClass\BaseClass.csproj" />
     <ProjectReference Include="..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj" />
-    <ProjectReference Include="..\ChangeLogCoreLibrary\ChangeLogCoreLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Data\GitHubCommits.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\AzureCommits.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
