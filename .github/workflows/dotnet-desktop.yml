@@ -123,18 +123,39 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Run API in background
+      shell: pwsh
       run: |
         $apiLog = "apilog.txt"
-        $job = Start-Job -ScriptBlock {
-          dotnet run --project $env:Api_Project_Path --urls=http://localhost:5237
-        }
+        if (Test-Path $apiLog) { Remove-Item $apiLog }
+        $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+        $startInfo.FileName = "dotnet"
+        $startInfo.Arguments = "run --project $env:Api_Project_Path --urls=http://localhost:5237"
+        $startInfo.RedirectStandardOutput = $true
+        $startInfo.RedirectStandardError = $true
+        $startInfo.UseShellExecute = $false
+        $startInfo.CreateNoWindow = $true
 
-        # Wait a moment to allow process to start
-        Start-Sleep -Seconds 3
+        $process = New-Object System.Diagnostics.Process
+        $process.StartInfo = $startInfo
+        $process.Start() | Out-Null
 
-        # Optionally: dump early logs
-        Receive-Job $job -Keep > $apiLog
-      shell: pwsh
+        # Asynchronously read output and error streams to file
+        $stdOut = $process.StandardOutput
+        $stdErr = $process.StandardError
+
+        Start-Job -ScriptBlock {
+          param($out, $err, $file)
+          while (-not $out.EndOfStream) {
+            $line = $out.ReadLine()
+            Add-Content -Path $file -Value $line
+          }
+          while (-not $err.EndOfStream) {
+            $line = $err.ReadLine()
+            Add-Content -Path $file -Value $line
+          }
+        } -ArgumentList $stdOut, $stdErr, $apiLog | Out-Null
+
+        Start-Sleep -Seconds 5
 
     - name: Build the test project
       run: dotnet build ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
@@ -180,6 +201,14 @@ jobs:
       run: dotnet test ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }} --no-build --verbosity normal
       #env:
       #  Test: Hello_Unit_Test
+
+    - name: Dump API logs if startup failed
+      if: failure()  # or run only after health check failure
+      shell: pwsh
+      run: |
+        Write-Host "=== API Logs ==="
+        Get-Content apilog.txt
+
 
     # # Restore the application to populate the obj folder with RuntimeIdentifiers
     # - name: Restore the application
