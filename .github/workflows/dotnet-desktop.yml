@@ -153,7 +153,7 @@ jobs:
     #       sleep 3
     #     done
     
-     - name: Start API in background
+    - name: Start API in background
       shell: pwsh
       run: |
         $logPath = "apilog.txt"
