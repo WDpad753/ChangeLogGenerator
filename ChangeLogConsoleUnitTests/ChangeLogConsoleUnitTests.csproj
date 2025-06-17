@@ -27,7 +27,7 @@
     <ProjectReference Include="..\..\BaseClassLibrary\BaseClass\BaseClass.csproj" />
     <ProjectReference Include="..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj" />
     <ProjectReference Include="..\ChangeLogCoreLibrary\ChangeLogCoreLibrary.csproj" />
-    <ProjectReference Include="..\ChangeLogTestAPI\ChangeLogTestAPI.csproj" />
+    <ProjectReference Include="..\TestAPI\TestAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>

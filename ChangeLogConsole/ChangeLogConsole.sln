@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseClass", "..\..\BaseClas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseLogger", "..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj", "{EBA21783-FFF6-46BF-B40A-032DF1D9AEE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeLogTestAPI", "..\ChangeLogTestAPI\ChangeLogTestAPI.csproj", "{E7631CC2-4E3B-4AB1-9B24-375CD49CF4B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAPI", "..\TestAPI\TestAPI.csproj", "{5258C6C6-372F-41E1-BB0C-2BDC76799618}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,10 @@ Global
 		{EBA21783-FFF6-46BF-B40A-032DF1D9AEE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBA21783-FFF6-46BF-B40A-032DF1D9AEE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBA21783-FFF6-46BF-B40A-032DF1D9AEE9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E7631CC2-4E3B-4AB1-9B24-375CD49CF4B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E7631CC2-4E3B-4AB1-9B24-375CD49CF4B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E7631CC2-4E3B-4AB1-9B24-375CD49CF4B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E7631CC2-4E3B-4AB1-9B24-375CD49CF4B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5258C6C6-372F-41E1-BB0C-2BDC76799618}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5258C6C6-372F-41E1-BB0C-2BDC76799618}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5258C6C6-372F-41E1-BB0C-2BDC76799618}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5258C6C6-372F-41E1-BB0C-2BDC76799618}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
