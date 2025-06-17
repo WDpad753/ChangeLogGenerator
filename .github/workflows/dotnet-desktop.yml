@@ -127,13 +127,15 @@ jobs:
       run: |
         $logPath = "apilog.txt"
         $projectPath = $env:Api_Project_Path
-        $url = "http://localhost:5237"
+        $url = $env:HealthCheckUrl
 
-        # Build command and execute in background job with redirection
-        $cmd = "dotnet run --project `"$projectPath`" --urls=$url *> `"$logPath`""
-        Start-Job -ScriptBlock { Invoke-Expression $using:cmd } | Out-Null
+        # Launch via pwsh so you can use PowerShell’s *> operator:
+        Start-Process -FilePath "pwsh" `
+          -ArgumentList "-NoProfile", "-Command", "dotnet run --project `"$projectPath`" --urls=$url *> `"$PWD\$logPath`"" `
+          -NoNewWindow `
+          -PassThru | Out-Null
 
-        Write-Host "🚀 API process started on $url"
+        Write-Host "🚀 API process started on $url; combined logs => $logPath"
 
     - name: Build the test project
       run: dotnet build ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
@@ -149,20 +151,6 @@ jobs:
     #       echo "Waiting for API..."
     #       sleep 3
     #     done
-    
-    - name: Start API in background
-      shell: pwsh
-      run: |
-        $logPath = "apilog.txt"
-        $projectPath = $env:Api_Project_Path
-        $url = "http://localhost:5237"
-
-        # Use Start-Job instead of Start-Process for better control in background
-        $script = "dotnet run --project `"$projectPath`" --urls=$url *> `"$logPath`""
-        Start-Job -ScriptBlock { Invoke-Expression $using:script } | Out-Null
-
-        Write-Host "🚀 API process started on $url"
-    
     
     - name: Wait for API health check
       shell: pwsh
@@ -180,7 +168,6 @@ jobs:
           }
           Start-Sleep -Seconds 3
         }
-
         if ($i -eq $maxAttempts) {
           Write-Host "❌ API failed to start. Dumping logs..."
           Get-Content "apilog.txt"
