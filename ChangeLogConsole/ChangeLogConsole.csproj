@@ -17,4 +17,10 @@
     <Folder Include="JsonFiles\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Config\App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

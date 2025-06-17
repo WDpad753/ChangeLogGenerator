@@ -29,7 +29,7 @@ namespace ChangeLogCoreLibrary.Model
         public string DateChecker { get; set; }
     }
 
-    public class MapJson
+    public class MapAzureJson
     {
         public int Count { get; set; }
         public List<Value> Value { get; set; }

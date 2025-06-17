@@ -27,7 +27,7 @@ namespace ChangeLogCoreLibrary.Classes
             _reader = Reader;
         }
 
-        public void MapJsonReader(MapJson mapJson, MapJson prevMapJson, string mapJsonHS, string filepath)
+        public void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath)
         {
 
         }

@@ -10,6 +10,6 @@ namespace ChangeLogCoreLibrary.APIRepositories.Interface
     public interface IAPIRepo
     {
         //string GetLine(int Switch, List<object> jsonvalue);
-        void MapJsonReader(MapJson mapJson, MapJson prevMapJson, string mapJsonHS, string filepath);
+        void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath);
     }
 }

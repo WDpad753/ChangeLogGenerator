@@ -22,7 +22,7 @@ namespace ChangeLogCoreLibrary.Classes
         private LogWriter _logger;
         private JSONFileHandler _fileHandler;
         private ConfigHandler _reader;
-        private static MapJson prevMapJson = new MapJson();
+        private static MapAzureJson prevMapJson = new MapAzureJson();
 
         public AzureDevOps(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler configReader,  LogWriter Logger)
         {
@@ -32,7 +32,7 @@ namespace ChangeLogCoreLibrary.Classes
             _reader = configReader;
         }
 
-        public void MapJsonReader(MapJson mapJson, MapJson prevMapJson, string mapJsonHS, string filepath)
+        public void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath)
         {
             int Switch;
             Dictionary<long, List<object>> JsonMap = new Dictionary<long, List<object>>();
@@ -45,6 +45,8 @@ namespace ChangeLogCoreLibrary.Classes
             string line;
             string prevMapJsonHS = "";
             int printcount = 0;
+            var jsonData = mapJson as MapAzureJson;
+            var prevJsonData = prevMapJson as MapAzureJson;
 
             if (mapJson == null)
             {
@@ -52,7 +54,7 @@ namespace ChangeLogCoreLibrary.Classes
             }
             else
             {
-                foreach (var value in mapJson.Value)
+                foreach (var value in jsonData.Value)
                 {
                     List<object> JsonMapValues = new List<object>();
                     value.DateChecker = DateTime.Parse(value.Author.Date.ToString()).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
@@ -184,7 +186,7 @@ namespace ChangeLogCoreLibrary.Classes
                 else if (File.Exists(filepath) && fileInfo.Length > 0 && !mapJsonHS.Equals(prevMapJsonHS))
                 {
                     JsonMap = new Dictionary<long, List<object>>();
-                    foreach (var value in prevMapJson.Value)
+                    foreach (var value in prevJsonData.Value)
                     {
                         List<object> JsonMapValues = new List<object>();
                         value.DateChecker = DateTime.Parse(value.Author.Date.ToString()).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);

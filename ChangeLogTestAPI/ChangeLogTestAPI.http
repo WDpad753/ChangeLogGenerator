@@ -1,0 +1,6 @@
+@ChangeLogTestAPI_HostAddress = http://localhost:5171
+
+GET {{ChangeLogTestAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
