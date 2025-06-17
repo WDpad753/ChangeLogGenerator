@@ -122,14 +122,22 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
+    - name: Run API in background
+      run: |
+        $apiLog = "apilog.txt"
+        $job = Start-Job -ScriptBlock {
+          dotnet run --project $env:Api_Project_Path --urls=http://localhost:5237
+        }
+
+        # Wait a moment to allow process to start
+        Start-Sleep -Seconds 3
+
+        # Optionally: dump early logs
+        Receive-Job $job -Keep > $apiLog
+      shell: pwsh
+
     - name: Build the test project
       run: dotnet build ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
-
-    - name: Run API in background
-      shell: pwsh
-      run: |
-        Start-Process "dotnet" "run --project $env:Api_Project_Path --urls=http://localhost:5237"
-        Start-Sleep -Seconds 5
     
     # - name: Wait for API health check
     #   shell: bash
@@ -142,21 +150,29 @@ jobs:
     #       echo "Waiting for API..."
     #       sleep 3
     #     done
-    # 
+    
+    
     - name: Wait for API health check
       run: |
         $maxAttempts = 10
         for ($i = 0; $i -lt $maxAttempts; $i++) {
           try {
-            $response = Invoke-WebRequest -Uri $env:HealthCheckUrl -UseBasicParsing -TimeoutSec 3
+            $response = Invoke-WebRequest -Uri "$env:HealthCheckUrl/health" -UseBasicParsing -TimeoutSec 3
             if ($response.StatusCode -eq 200) {
               Write-Host "✅ API is healthy"
               break
             }
           } catch {
-            Write-Host "⏳ Waiting for API..."
+            Write-Host "⏳ Waiting for API (attempt $i)..."
           }
           Start-Sleep -Seconds 3
+        }
+
+        # Dump log if still not healthy
+        if ($i -eq $maxAttempts) {
+          Write-Host "❌ API failed to start. Dumping logs..."
+          Get-Content "apilog.txt"
+          exit 1
         }
       shell: pwsh
 
