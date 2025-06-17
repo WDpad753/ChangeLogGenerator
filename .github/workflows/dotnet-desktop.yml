@@ -59,6 +59,7 @@ jobs:
       Solution_Name: ChangeLogConsole\ChangeLogConsole.sln                         # Replace with your solution name, i.e. MyWpfApp.sln.
       Test_Project_Path: ChangeLogConsoleUnitTests\ChangeLogConsoleUnitTests.csproj                 # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
       Api_Project_Path: TestAPI\TestAPI.csproj
+      HealthCheckUrl: http://localhost:5237
       # Wap_Project_Directory: your-wap-project-directory-name    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
       # Wap_Project_Path: your-wap-project-path                   # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
 
@@ -119,17 +120,34 @@ jobs:
         Start-Process "dotnet" "run --project $env:Api_Project_Path --urls=http://localhost:5237"
         Start-Sleep -Seconds 5
     
+    # - name: Wait for API health check
+    #   shell: bash
+    #   run: |
+    #     for i in {1..10}; do
+    #       if curl --fail "http://localhost:5237/health; then
+    #         echo "API is healthy"
+    #         break
+    #       fi
+    #       echo "Waiting for API..."
+    #       sleep 3
+    #     done
+    # 
     - name: Wait for API health check
-      shell: bash
       run: |
-        for i in {1..10}; do
-          if curl --fail "http://localhost:5237/health; then
-            echo "API is healthy"
-            break
-          fi
-          echo "Waiting for API..."
-          sleep 3
-        done
+        $maxAttempts = 10
+        for ($i = 0; $i -lt $maxAttempts; $i++) {
+          try {
+            $response = Invoke-WebRequest -Uri $env:HealthCheckUrl -UseBasicParsing -TimeoutSec 3
+            if ($response.StatusCode -eq 200) {
+              Write-Host "✅ API is healthy"
+              break
+            }
+          } catch {
+            Write-Host "⏳ Waiting for API..."
+          }
+          Start-Sleep -Seconds 3
+        }
+      shell: pwsh
 
     - name: Patch ProjectReference paths
       shell: pwsh
