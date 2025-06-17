@@ -122,40 +122,21 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
-    - name: Run API in background
+    - name: Start API in background
       shell: pwsh
       run: |
-        $apiLog = "apilog.txt"
-        if (Test-Path $apiLog) { Remove-Item $apiLog }
-        $startInfo = New-Object System.Diagnostics.ProcessStartInfo
-        $startInfo.FileName = "dotnet"
-        $startInfo.Arguments = "run --project $env:Api_Project_Path --urls=http://localhost:5237"
-        $startInfo.RedirectStandardOutput = $true
-        $startInfo.RedirectStandardError = $true
-        $startInfo.UseShellExecute = $false
-        $startInfo.CreateNoWindow = $true
+        $logPath = "apilog.txt"
+        $projectPath = $env:Api_Project_Path
+        $url = "http://localhost:5237"
 
-        $process = New-Object System.Diagnostics.Process
-        $process.StartInfo = $startInfo
-        $process.Start() | Out-Null
+        # Start API and redirect output to apilog.txt
+        Start-Process -FilePath "dotnet" `
+          -ArgumentList "run", "--project", $projectPath, "--urls=$url" `
+          -RedirectStandardOutput $logPath `
+          -RedirectStandardError $logPath `
+          -NoNewWindow
 
-        # Asynchronously read output and error streams to file
-        $stdOut = $process.StandardOutput
-        $stdErr = $process.StandardError
-
-        Start-Job -ScriptBlock {
-          param($out, $err, $file)
-          while (-not $out.EndOfStream) {
-            $line = $out.ReadLine()
-            Add-Content -Path $file -Value $line
-          }
-          while (-not $err.EndOfStream) {
-            $line = $err.ReadLine()
-            Add-Content -Path $file -Value $line
-          }
-        } -ArgumentList $stdOut, $stdErr, $apiLog | Out-Null
-
-        Start-Sleep -Seconds 5
+        Write-Host "🚀 API process started on $url"
 
     - name: Build the test project
       run: dotnet build ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
@@ -174,6 +155,7 @@ jobs:
     
     
     - name: Wait for API health check
+      shell: pwsh
       run: |
         $maxAttempts = 10
         for ($i = 0; $i -lt $maxAttempts; $i++) {
@@ -189,13 +171,11 @@ jobs:
           Start-Sleep -Seconds 3
         }
 
-        # Dump log if still not healthy
         if ($i -eq $maxAttempts) {
           Write-Host "❌ API failed to start. Dumping logs..."
           Get-Content "apilog.txt"
           exit 1
         }
-      shell: pwsh
 
     - name: Run tests
       run: dotnet test ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }} --no-build --verbosity normal
