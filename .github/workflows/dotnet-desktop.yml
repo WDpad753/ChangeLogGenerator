@@ -113,7 +113,18 @@ jobs:
     #         Set-Content $f.FullName $patched
     #       }
     #     }
-    
+
+    - name: Patch ProjectReference paths
+      shell: pwsh
+      run: tools/Patch-ProjectReferences.ps1
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Build the test project
+      run: dotnet build ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
+
     - name: Run API in background
       shell: pwsh
       run: |
@@ -148,17 +159,6 @@ jobs:
           Start-Sleep -Seconds 3
         }
       shell: pwsh
-
-    - name: Patch ProjectReference paths
-      shell: pwsh
-      run: tools/Patch-ProjectReferences.ps1
-
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Build the test project
-      run: dotnet build ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
 
     - name: Run tests
       run: dotnet test ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }} --no-build --verbosity normal
