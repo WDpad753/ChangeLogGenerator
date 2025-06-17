@@ -129,12 +129,9 @@ jobs:
         $projectPath = $env:Api_Project_Path
         $url = "http://localhost:5237"
 
-        # Start API and redirect output to apilog.txt
-        Start-Process -FilePath "dotnet" `
-          -ArgumentList "run", "--project", $projectPath, "--urls=$url" `
-          -RedirectStandardOutput $logPath `
-          -RedirectStandardError $logPath `
-          -NoNewWindow
+        # Build command and execute in background job with redirection
+        $cmd = "dotnet run --project `"$projectPath`" --urls=$url *> `"$logPath`""
+        Start-Job -ScriptBlock { Invoke-Expression $using:cmd } | Out-Null
 
         Write-Host "🚀 API process started on $url"
 
