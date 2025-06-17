@@ -13,10 +13,11 @@ using UtilityClass = BaseClass.MethodNameExtractor.FuncNameExtractor;
 
 namespace ChangeLogConsole
 {
-    public static class ProgramConfig
-    {
-        public static string? commitMessagesPath { get; set; }
-    }
+    //public class ProgramConfig
+    //{
+    //    public string? commitMessagesPath { get; set; }
+    //    public string? ConfigFilePath { get; set; }
+    //}
 
     public class Program
     {
@@ -25,22 +26,27 @@ namespace ChangeLogConsole
         private static LogWriter? logwriter;
         private static ConfigHandler? reader;
         private static string? NameSpace = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+        private static ChangeLogWrite clg;
 
-        public static CLGConfig _config { get; }
+        public static CLGConfig _config { get; set; }
 
         static void Main(string[] args)
         {
+            _config = new();
+
             // Get the current directory (where your executable is located):
             string currentDirectory = Directory.GetCurrentDirectory();
             string currentDirectory2 = AppDomain.CurrentDomain.BaseDirectory;
 
             string configFilePath = Path.Combine(currentDirectory2, "Config");
             string[] files = Directory.GetFiles(configFilePath);
+            bool val = Directory.Exists(configFilePath);
 
             // Double check
-            if(!Directory.Exists(configFilePath) || files.Count() > 0)
+            if (!Directory.Exists(configFilePath) || files.Count() < 0)
             {
                 throw new Exception("Either the Config File Path does not exist or there are different Configs in the assigned path.");
+                //configFilePath = commitMessagesPath;
             }
 
             string configFile = files[0];
@@ -48,6 +54,8 @@ namespace ChangeLogConsole
 
             logwriter = new(configFile, logFilePath);
             reader = new(configFile, logwriter);
+            _config.ConfigFilePath = configFile;
+            _config.logfilepath = logFilePath;
 
             // Setting up and running ChangeLogConsole for Creating/Appending ChangeLog:
             //string? commitmessagespath = ProgramConfig.commitMessagesPath;
@@ -98,7 +106,7 @@ namespace ChangeLogConsole
                 }
             }
 
-            ChangeLogWrite clg = new(_config, mode, logwriter, logFilePath);
+            clg = new(_config, mode, logwriter, logFilePath);
 
             try
             {

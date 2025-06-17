@@ -10,7 +10,7 @@ namespace ChangeLogCoreLibrary.Helper
 {
     public static class Crc32
     {
-        public static string CalculateHash(MapJson input)
+        public static string CalculateHash(MapAzureJson input)
         {
             StringBuilder sb = new StringBuilder();
             int cnt = 0;
