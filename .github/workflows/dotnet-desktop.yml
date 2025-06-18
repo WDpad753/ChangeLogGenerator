@@ -125,6 +125,7 @@ jobs:
     - name: Build API project
       shell: pwsh
       run: |
+        Write-Host "Building API project..."
         dotnet build ${{ env.Api_Project_Path }} --configuration ${{ matrix.configuration }}
 
     - name: Start API in background
@@ -135,59 +136,55 @@ jobs:
         $url = $env:HealthCheckUrl
 
         Write-Host "Launching pre-built API for health-check..."
-        # Use a nested pwsh process to redirect both stdout and stderr into one file
+        # Launch via pwsh so we can use *> to combine stdout+stderr
         Start-Process -FilePath "pwsh" `
           -ArgumentList "-NoProfile", "-Command", "dotnet run --project `"$projectPath`" --urls=$url --no-build *> `"$PWD\$logPath`"" `
           -NoNewWindow -PassThru | Out-Null
 
-        Write-Host "🚀 API process started on $url; logs => $logPath"
+        Write-Host "🚀 API process started; logs => $logPath"
+        # Brief pause to let process spawn and log file appear
+        Start-Sleep -Seconds 2
+        if (Test-Path $logPath) {
+            Write-Host "apilog.txt exists after start."
+            Get-Content $logPath -TotalCount 20 | ForEach-Object { Write-Host "[startup log] $_" }
+        } else {
+            Write-Host "Warning: apilog.txt not found immediately after start."
+        }
 
-    # - name: Build API project
-    #   run: dotnet build ${{ env.Api_Project_Path }} --configuration ${{ matrix.configuration }}
-    # 
-    # - name: Start API in background
-    #   shell: pwsh
-    #   run: |
-    #     $logPath = "apilog.txt"
-    #     $projectPath = $env:Api_Project_Path
-    #     $url = $env:HealthCheckUrl  # e.g., "http://localhost:5237"
-    # 
-    #     Write-Host "Launching pre-built API for health-check..."
-    #     # Use pwsh’s *> operator inside a pwsh process, to combine stdout+stderr
-    #     Start-Process -FilePath "pwsh" `
-    #       -ArgumentList "-NoProfile", "-Command", "dotnet run --project `"$projectPath`" --urls=$url --no-build *> `"$PWD\$logPath`"" `
-    #       -NoNewWindow `
-    #       -PassThru | Out-Null
-    # 
-    #     Write-Host "🚀 API process started on $url; logs => $logPath"
-    # 
     - name: Build the test project
-      run: dotnet build ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
-    
-    # - name: Wait for API health check
-    #   shell: bash
-    #   run: |
-    #     for i in {1..10}; do
-    #       if curl --fail "http://localhost:5237/health; then
-    #         echo "API is healthy"
-    #         break
-    #       fi
-    #       echo "Waiting for API..."
-    #       sleep 3
-    #     done
-    
+      shell: pwsh
+      run: |
+        Write-Host "Building test project..."
+        dotnet build ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
+
+    - name: Debug: test health endpoint early
+      shell: pwsh
+      run: |
+        $url = $env:HealthCheckUrl
+        Write-Host "Waiting 5s before first test call..."
+        Start-Sleep -Seconds 5
+        try {
+            $resp = Invoke-WebRequest -Uri "$url/health" -UseBasicParsing -TimeoutSec 5
+            Write-Host "EARLY TEST: StatusCode=$($resp.StatusCode)"
+            Write-Host "Content: $($resp.Content)"
+        } catch {
+            Write-Host "EARLY TEST: Invoke-WebRequest exception: $($_.Exception.Message)"
+        }
+
     - name: Wait for API listening and health-check
       shell: pwsh
       run: |
         $logPath = "apilog.txt"
         $url = $env:HealthCheckUrl  # e.g. "http://localhost:5237"
 
-        # 1. Wait until "Now listening on" appears in the log (timeout ~60s)
+        Write-Host "=== Waiting for 'Now listening on' in apilog.txt ==="
+        # 1. Wait until "Now listening on" appears in apilog.txt (timeout ~60s)
         $timeoutListeningSec = 60
         $start = Get-Date
-        while ((Get-Date) - $start).TotalSeconds -lt $timeoutListeningSec) {
+        while (((Get-Date) - $start).TotalSeconds -lt $timeoutListeningSec) {
             if (Test-Path $logPath) {
-                if (Get-Content $logPath -Raw -ErrorAction SilentlyContinue | Select-String "Now listening on") {
+                $log = Get-Content $logPath -Raw -ErrorAction SilentlyContinue
+                if ($log -match "Now listening on") {
                     Write-Host "Detected 'Now listening on' in logs."
                     break
                 }
@@ -195,76 +192,178 @@ jobs:
             Write-Host "Waiting for 'Now listening on' in apilog.txt..."
             Start-Sleep -Seconds 2
         }
-        if ((Get-Date) - $start).TotalSeconds -ge $timeoutListeningSec) {
+        if (((Get-Date) - $start).TotalSeconds -ge $timeoutListeningSec) {
             Write-Host "❌ Timeout waiting for listening log."
-            Get-Content $logPath -ErrorAction SilentlyContinue
+            Get-Content $logPath -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "[log] $_" }
             exit 1
         }
 
-        # 2. Poll /health until HTTP 200 (up to ~30s)
-        $maxAttempts = 10
+        Write-Host "=== Now polling /health until HTTP 200 ==="
+        # 2. Poll /health until HTTP 200 (up to ~60s)
+        $maxAttempts = 20
         for ($i = 0; $i -lt $maxAttempts; $i++) {
             try {
-                $resp = Invoke-WebRequest -Uri "$url/health" -UseBasicParsing -TimeoutSec 3
+                $resp = Invoke-WebRequest -Uri "$url/health" -UseBasicParsing -TimeoutSec 5
+                Write-Host "Attempt $i: StatusCode=$($resp.StatusCode)"
                 if ($resp.StatusCode -eq 200) {
                     Write-Host "✅ API is healthy"
                     break
-                } else {
-                    Write-Host "Unexpected status code $($resp.StatusCode)."
                 }
             } catch {
-                Write-Host "⏳ Waiting for API health (attempt $i)..."
+                Write-Host "Attempt $i: Exception calling /health: $($_.Exception.Message)"
             }
             Start-Sleep -Seconds 3
         }
         if ($i -eq $maxAttempts) {
-            Write-Host "❌ API failed health-check. Dumping logs..."
-            Get-Content $logPath
+            Write-Host "❌ API failed health-check after $maxAttempts attempts. Dumping logs..."
+            Get-Content $logPath | ForEach-Object { Write-Host "[log] $_" }
             exit 1
         }
 
-    - name: Run tests
-      run: dotnet test ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }} --no-build --verbosity normal
-      #env:
-      #  Test: Hello_Unit_Test
-
-    - name: Dump API logs if startup failed
-      if: failure()  # or run only after health check failure
-      shell: pwsh
-      run: |
-        Write-Host "=== API Logs ==="
-        Get-Content apilog.txt
-
-
-    # # Restore the application to populate the obj folder with RuntimeIdentifiers
-    # - name: Restore the application
-    #   run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
-    #   env:
-    #     Configuration: ${{ matrix.configuration }}
-
-    # # Decode the base 64 encoded pfx and save the Signing_Certificate
-    # - name: Decode the pfx
-    #   run: |
-    #     $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.Base64_Encoded_Pfx }}")
-    #     $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath GitHubActionsWorkflow.pfx
-    #     [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
-
-    # # Create the app package by building and packaging the Windows Application Packaging project
-    # - name: Create the app package
-    #   run: msbuild $env:Wap_Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
-    #   env:
-    #     Appx_Bundle: Always
-    #     Appx_Bundle_Platforms: x86|x64
-    #     Appx_Package_Build_Mode: StoreUpload
-    #     Configuration: ${{ matrix.configuration }}
-
-    # # Remove the pfx
-    # - name: Remove the pfx
-    #   run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
-
-    # # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
-    # - name: Upload build artifacts
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: MSIX Package
-    #     path: ${{ env.Wap_Project_Directory }}\AppPackages
+    #- name: Build API project
+    #  shell: pwsh
+    #  run: |
+    #    dotnet build ${{ env.Api_Project_Path }} --configuration ${{ matrix.configuration }}
+    #
+    #- name: Start API in background
+    #  shell: pwsh
+    #  run: |
+    #    $logPath = "apilog.txt"
+    #    $projectPath = $env:Api_Project_Path
+    #    $url = $env:HealthCheckUrl
+    #
+    #    Write-Host "Launching pre-built API for health-check..."
+    #    # Use a nested pwsh process to redirect both stdout and stderr into one file
+    #    Start-Process -FilePath "pwsh" `
+    #      -ArgumentList "-NoProfile", "-Command", "dotnet run --project `"$projectPath`" --urls=$url --no-build *> `"$PWD\$logPath`"" `
+    #      -NoNewWindow -PassThru | Out-Null
+    #
+    #    Write-Host "🚀 API process started on $url; logs => $logPath"
+    #
+    ## - name: Build API project
+    ##   run: dotnet build ${{ env.Api_Project_Path }} --configuration ${{ matrix.configuration }}
+    ## 
+    ## - name: Start API in background
+    ##   shell: pwsh
+    ##   run: |
+    ##     $logPath = "apilog.txt"
+    ##     $projectPath = $env:Api_Project_Path
+    ##     $url = $env:HealthCheckUrl  # e.g., "http://localhost:5237"
+    ## 
+    ##     Write-Host "Launching pre-built API for health-check..."
+    ##     # Use pwsh’s *> operator inside a pwsh process, to combine stdout+stderr
+    ##     Start-Process -FilePath "pwsh" `
+    ##       -ArgumentList "-NoProfile", "-Command", "dotnet run --project `"$projectPath`" --urls=$url --no-build *> `"$PWD\$logPath`"" `
+    ##       -NoNewWindow `
+    ##       -PassThru | Out-Null
+    ## 
+    ##     Write-Host "🚀 API process started on $url; logs => $logPath"
+    ## 
+    #- name: Build the test project
+    #  run: dotnet build ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
+    #
+    ## - name: Wait for API health check
+    ##   shell: bash
+    ##   run: |
+    ##     for i in {1..10}; do
+    ##       if curl --fail "http://localhost:5237/health; then
+    ##         echo "API is healthy"
+    ##         break
+    ##       fi
+    ##       echo "Waiting for API..."
+    ##       sleep 3
+    ##     done
+    #
+    #- name: Wait for API listening and health-check
+    #  shell: pwsh
+    #  run: |
+    #    $logPath = "apilog.txt"
+    #    $url = $env:HealthCheckUrl  # e.g. "http://localhost:5237"
+    #
+    #    # 1. Wait until "Now listening on" appears in the log (timeout ~60s)
+    #    $timeoutListeningSec = 60
+    #    $start = Get-Date
+    #    while ((Get-Date) - $start).TotalSeconds -lt $timeoutListeningSec) {
+    #        if (Test-Path $logPath) {
+    #            if (Get-Content $logPath -Raw -ErrorAction SilentlyContinue | Select-String "Now listening on") {
+    #                Write-Host "Detected 'Now listening on' in logs."
+    #                break
+    #            }
+    #        }
+    #        Write-Host "Waiting for 'Now listening on' in apilog.txt..."
+    #        Start-Sleep -Seconds 2
+    #    }
+    #    if ((Get-Date) - $start).TotalSeconds -ge $timeoutListeningSec) {
+    #        Write-Host "❌ Timeout waiting for listening log."
+    #        Get-Content $logPath -ErrorAction SilentlyContinue
+    #        exit 1
+    #    }
+    #
+    #    # 2. Poll /health until HTTP 200 (up to ~30s)
+    #    $maxAttempts = 10
+    #    for ($i = 0; $i -lt $maxAttempts; $i++) {
+    #        try {
+    #            $resp = Invoke-WebRequest -Uri "$url/health" -UseBasicParsing -TimeoutSec 3
+    #            if ($resp.StatusCode -eq 200) {
+    #                Write-Host "✅ API is healthy"
+    #                break
+    #            } else {
+    #                Write-Host "Unexpected status code $($resp.StatusCode)."
+    #            }
+    #        } catch {
+    #            Write-Host "⏳ Waiting for API health (attempt $i)..."
+    #        }
+    #        Start-Sleep -Seconds 3
+    #    }
+    #    if ($i -eq $maxAttempts) {
+    #        Write-Host "❌ API failed health-check. Dumping logs..."
+    #        Get-Content $logPath
+    #        exit 1
+    #    }
+    #
+    #- name: Run tests
+    #  run: dotnet test ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }} --no-build --verbosity normal
+    #  #env:
+    #  #  Test: Hello_Unit_Test
+    #
+    #- name: Dump API logs if startup failed
+    #  if: failure()  # or run only after health check failure
+    #  shell: pwsh
+    #  run: |
+    #    Write-Host "=== API Logs ==="
+    #    Get-Content apilog.txt
+    #
+    #
+    ## # Restore the application to populate the obj folder with RuntimeIdentifiers
+    ## - name: Restore the application
+    ##   run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+    ##   env:
+    ##     Configuration: ${{ matrix.configuration }}
+    #
+    ## # Decode the base 64 encoded pfx and save the Signing_Certificate
+    ## - name: Decode the pfx
+    ##   run: |
+    ##     $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.Base64_Encoded_Pfx }}")
+    ##     $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath GitHubActionsWorkflow.pfx
+    ##     [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+    #
+    ## # Create the app package by building and packaging the Windows Application Packaging project
+    ## - name: Create the app package
+    ##   run: msbuild $env:Wap_Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
+    ##   env:
+    ##     Appx_Bundle: Always
+    ##     Appx_Bundle_Platforms: x86|x64
+    ##     Appx_Package_Build_Mode: StoreUpload
+    ##     Configuration: ${{ matrix.configuration }}
+    #
+    ## # Remove the pfx
+    ## - name: Remove the pfx
+    ##   run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
+    #
+    ## # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
+    ## - name: Upload build artifacts
+    ##   uses: actions/upload-artifact@v4
+    ##   with:
+    ##     name: MSIX Package
+    ##     path: ${{ env.Wap_Project_Directory }}\AppPackages
+    #
