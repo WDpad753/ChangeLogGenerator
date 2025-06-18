@@ -122,20 +122,24 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
+    - name: Build API project
+      run: dotnet build ${{ env.Api_Project_Path }} --configuration ${{ matrix.configuration }}
+
     - name: Start API in background
       shell: pwsh
       run: |
         $logPath = "apilog.txt"
         $projectPath = $env:Api_Project_Path
-        $url = $env:HealthCheckUrl
+        $url = $env:HealthCheckUrl  # e.g., "http://localhost:5237"
 
-        # Launch via pwsh so you can use PowerShell’s *> operator:
+        Write-Host "Launching pre-built API for health-check..."
+        # Use pwsh’s *> operator inside a pwsh process, to combine stdout+stderr
         Start-Process -FilePath "pwsh" `
-          -ArgumentList "-NoProfile", "-Command", "dotnet run --project `"$projectPath`" --urls=$url *> `"$PWD\$logPath`"" `
+          -ArgumentList "-NoProfile", "-Command", "dotnet run --project `"$projectPath`" --urls=$url --no-build *> `"$PWD\$logPath`"" `
           -NoNewWindow `
           -PassThru | Out-Null
 
-        Write-Host "🚀 API process started on $url; combined logs => $logPath"
+        Write-Host "🚀 API process started on $url; logs => $logPath"
 
     - name: Build the test project
       run: dotnet build ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
