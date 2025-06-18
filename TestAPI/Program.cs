@@ -1,6 +1,6 @@
 namespace TestAPI
 {
-    public class Program
+    public partial class Program
     {
         public static void Main(string[] args)
         {
@@ -45,4 +45,6 @@ namespace TestAPI
             app.Run();
         }
     }
+
+    //public partial class Program { }
 }
