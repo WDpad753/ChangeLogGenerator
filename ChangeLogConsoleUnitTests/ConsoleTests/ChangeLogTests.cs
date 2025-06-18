@@ -98,7 +98,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             
             var content = await response.Content.ReadAsStringAsync();
 
-            logwriter.LogWrite(content.ToString(), this.GetType().Name, UtilityClass.GetMethodName(), MessageLevels.Main);
+            logwriter.LogWrite(content.ToString(), this.GetType().Name, UtilityClass.GetMethodName(), MessageLevels.Log);
 
             Assert.That(content, Is.Not.Null.And.Not.Empty, "Health endpoint returned empty content");
         }
@@ -116,7 +116,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             //var content = await response.Content.ReadAsStringAsync();
 
-            //logwriter.LogWrite(content.ToString(), this.GetType().Name, UtilityClass.GetMethodName(), MessageLevels.Main);
+            //logwriter.LogWrite(content.ToString(), this.GetType().Name, UtilityClass.GetMethodName(), MessageLevels.Log);
 
             //Assert.That(content, Is.Not.Null.And.Not.Empty, "Health endpoint returned empty content");
         }
