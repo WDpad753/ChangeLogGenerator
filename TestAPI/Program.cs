@@ -32,6 +32,12 @@ namespace TestAPI
             app.UseAuthorization();
 
             // Enable health check endpoint at /health
+            app.Use(async (ctx, next) =>
+            {
+                if (ctx.Request.Path == "/health")
+                    Console.WriteLine("Health endpoint requested");
+                await next();
+            });
             app.MapHealthChecks("/health");
 
             app.MapControllers();

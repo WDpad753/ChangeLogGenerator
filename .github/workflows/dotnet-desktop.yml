@@ -123,24 +123,44 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Build API project
-      run: dotnet build ${{ env.Api_Project_Path }} --configuration ${{ matrix.configuration }}
+      shell: pwsh
+      run: |
+        dotnet build ${{ env.Api_Project_Path }} --configuration ${{ matrix.configuration }}
 
     - name: Start API in background
       shell: pwsh
       run: |
         $logPath = "apilog.txt"
         $projectPath = $env:Api_Project_Path
-        $url = $env:HealthCheckUrl  # e.g., "http://localhost:5237"
+        $url = $env:HealthCheckUrl
 
         Write-Host "Launching pre-built API for health-check..."
-        # Use pwsh’s *> operator inside a pwsh process, to combine stdout+stderr
+        # Use a nested pwsh process to redirect both stdout and stderr into one file
         Start-Process -FilePath "pwsh" `
           -ArgumentList "-NoProfile", "-Command", "dotnet run --project `"$projectPath`" --urls=$url --no-build *> `"$PWD\$logPath`"" `
-          -NoNewWindow `
-          -PassThru | Out-Null
+          -NoNewWindow -PassThru | Out-Null
 
         Write-Host "🚀 API process started on $url; logs => $logPath"
 
+    # - name: Build API project
+    #   run: dotnet build ${{ env.Api_Project_Path }} --configuration ${{ matrix.configuration }}
+    # 
+    # - name: Start API in background
+    #   shell: pwsh
+    #   run: |
+    #     $logPath = "apilog.txt"
+    #     $projectPath = $env:Api_Project_Path
+    #     $url = $env:HealthCheckUrl  # e.g., "http://localhost:5237"
+    # 
+    #     Write-Host "Launching pre-built API for health-check..."
+    #     # Use pwsh’s *> operator inside a pwsh process, to combine stdout+stderr
+    #     Start-Process -FilePath "pwsh" `
+    #       -ArgumentList "-NoProfile", "-Command", "dotnet run --project `"$projectPath`" --urls=$url --no-build *> `"$PWD\$logPath`"" `
+    #       -NoNewWindow `
+    #       -PassThru | Out-Null
+    # 
+    #     Write-Host "🚀 API process started on $url; logs => $logPath"
+    # 
     - name: Build the test project
       run: dotnet build ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
     
@@ -156,26 +176,51 @@ jobs:
     #       sleep 3
     #     done
     
-    - name: Wait for API health check
+    - name: Wait for API listening and health-check
       shell: pwsh
       run: |
+        $logPath = "apilog.txt"
+        $url = $env:HealthCheckUrl  # e.g. "http://localhost:5237"
+
+        # 1. Wait until "Now listening on" appears in the log (timeout ~60s)
+        $timeoutListeningSec = 60
+        $start = Get-Date
+        while ((Get-Date) - $start).TotalSeconds -lt $timeoutListeningSec) {
+            if (Test-Path $logPath) {
+                if (Get-Content $logPath -Raw -ErrorAction SilentlyContinue | Select-String "Now listening on") {
+                    Write-Host "Detected 'Now listening on' in logs."
+                    break
+                }
+            }
+            Write-Host "Waiting for 'Now listening on' in apilog.txt..."
+            Start-Sleep -Seconds 2
+        }
+        if ((Get-Date) - $start).TotalSeconds -ge $timeoutListeningSec) {
+            Write-Host "❌ Timeout waiting for listening log."
+            Get-Content $logPath -ErrorAction SilentlyContinue
+            exit 1
+        }
+
+        # 2. Poll /health until HTTP 200 (up to ~30s)
         $maxAttempts = 10
         for ($i = 0; $i -lt $maxAttempts; $i++) {
-          try {
-            $response = Invoke-WebRequest -Uri "$env:HealthCheckUrl/health" -UseBasicParsing -TimeoutSec 3
-            if ($response.StatusCode -eq 200) {
-              Write-Host "✅ API is healthy"
-              break
+            try {
+                $resp = Invoke-WebRequest -Uri "$url/health" -UseBasicParsing -TimeoutSec 3
+                if ($resp.StatusCode -eq 200) {
+                    Write-Host "✅ API is healthy"
+                    break
+                } else {
+                    Write-Host "Unexpected status code $($resp.StatusCode)."
+                }
+            } catch {
+                Write-Host "⏳ Waiting for API health (attempt $i)..."
             }
-          } catch {
-            Write-Host "⏳ Waiting for API (attempt $i)..."
-          }
-          Start-Sleep -Seconds 3
+            Start-Sleep -Seconds 3
         }
         if ($i -eq $maxAttempts) {
-          Write-Host "❌ API failed to start. Dumping logs..."
-          Get-Content "apilog.txt"
-          exit 1
+            Write-Host "❌ API failed health-check. Dumping logs..."
+            Get-Content $logPath
+            exit 1
         }
 
     - name: Run tests
