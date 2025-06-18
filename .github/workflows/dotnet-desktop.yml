@@ -157,7 +157,7 @@ jobs:
         Write-Host "Building test project..."
         dotnet build ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
 
-    - name: Debug: test health endpoint early
+    - name: Debug -> test health endpoint early
       shell: pwsh
       run: |
         $url = $env:HealthCheckUrl
