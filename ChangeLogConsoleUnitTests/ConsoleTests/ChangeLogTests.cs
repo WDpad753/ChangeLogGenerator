@@ -104,8 +104,10 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         }
 
         [Test]
-        public async Task AzureEndpoint_Returns200()
+        public async Task AzureEndpoint()
         {
+            string baseUrl = _client.BaseAddress!.ToString();
+
             //// Act
             //var response = await _client.GetAsync("/health");
 

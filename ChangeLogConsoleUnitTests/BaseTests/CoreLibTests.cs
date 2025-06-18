@@ -186,6 +186,24 @@ namespace ChangeLogConsoleUnitTests.BaseTests
             {
                 Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
             }
+        } 
+        
+        
+        [Test]
+        public void CustomConfigReadTest()
+        {
+            string val = "ConsoleTest";
+
+            string? res = configReader.ReadInfo("AppName", "loggerSettings");
+
+            if (res != null)
+            {
+                Assert.That(val == res, "Value is not equal after modification");
+            }
+            else
+            {
+                Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
+            }
         }
     }
 }
