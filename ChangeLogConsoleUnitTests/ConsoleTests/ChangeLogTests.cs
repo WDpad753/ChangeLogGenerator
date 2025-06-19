@@ -3,6 +3,7 @@ using BaseClass.JSON;
 using BaseClass.Model;
 using BaseLogger;
 using BaseLogger.Models;
+using ChangeLogConsole.Writer;
 using ChangeLogCoreLibrary.APIRepositories.Factory;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
 using ChangeLogCoreLibrary.Classes;
@@ -28,6 +29,9 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         private IAPIRepo _repo;
         private WebApplicationFactory<TestAPI.Program> _factory = null!;
         private HttpClient _client = null!;
+        private CLGConfig _config;
+        private JSONFileHandler _jsonFileHandler;
+        private string logFilePath;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -56,6 +60,8 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         {
             string configpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest.config";
             logpath = @$"{AppDomain.CurrentDomain.BaseDirectory}TempLogs\";
+            string jsonpath = @$"{AppDomain.CurrentDomain.BaseDirectory}JsonFiles\AppJson.json";
+            string logfilepath = @$"{AppDomain.CurrentDomain.BaseDirectory}ChangeLog.txt";
 
             if (Directory.Exists(logpath))
             {
@@ -66,6 +72,17 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             configReader = new(configpath, logwriter);
             Environment.SetEnvironmentVariable("Test", "Hello_Unit_Test", EnvironmentVariableTarget.Process);
+
+            _config = new CLGConfig();
+            _jsonFileHandler = new JSONFileHandler(logwriter);
+
+            _config.ConfigFilePath = configpath;
+            _config.logfilepath = logfilepath;
+            _config.runType = "AzureDevOps";
+            _config.JsonFilePath = jsonpath;
+            _config.testClient = _client;
+
+            logFilePath = logfilepath;
         }
 
         [Test]
@@ -107,6 +124,34 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         public async Task AzureEndpoint()
         {
             string baseUrl = _client.BaseAddress!.ToString();
+
+            if(baseUrl == null || baseUrl == string.Empty)
+            {
+                Assert.Fail("Base URL is not set or is empty.");
+            }
+
+            _repo = APIFactory.GetAPIRepo(RepoMode.APITest,
+                _config,
+                _jsonFileHandler,
+                configReader,
+                logwriter);
+
+            if (_repo == null)
+            {
+                Assert.Fail("Unable to obtain a valid API Repository Mode");
+            }
+
+            ChangeLogWrite clg = new ChangeLogWrite(_repo, _config, logwriter, logFilePath);
+
+            try
+            {
+                //Task.Run(async () => await clg.ChangeLogReaderWriter(commitfilepath));
+                clg.ChangeLogReaderWriter().Wait(15000000);
+            }
+            catch (Exception ex)
+            {
+                //logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",UtilityClass.GetMethodName(), MessageLevels.Fatal);
+            }
 
             //// Act
             //var response = await _client.GetAsync("/health");
