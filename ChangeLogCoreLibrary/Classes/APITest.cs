@@ -20,6 +20,8 @@ namespace ChangeLogCoreLibrary.Classes
         private LogWriter _logger;
         private JSONFileHandler _fileHandler;
         private ConfigHandler _reader;
+        private AzureDevOps DevOps;
+        private GitHub Github;
 
         public APITest(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler Reader, LogWriter Logger)
         {
@@ -27,6 +29,8 @@ namespace ChangeLogCoreLibrary.Classes
             _logger = Logger;
             _fileHandler = JsonReader;
             _reader = Reader;
+            DevOps = new(config,JsonReader,Reader,Logger);
+            Github = new(config,JsonReader,Reader,Logger);
         }
 
         public void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath)
@@ -42,25 +46,28 @@ namespace ChangeLogCoreLibrary.Classes
             string line;
             string prevMapJsonHS = "";
             int printcount = 0;
+
             dynamic jsonData;
             dynamic prevJsonData;
 
-            if(_config.runType == "AzureDevOps")
+            if (_config.runType == "AzureDevOps")
             {
                 jsonData = mapJson as MapAzureJson;
                 prevJsonData = prevMapJson as MapAzureJson;
+                DevOps.MapJsonReader<MapAzureJson>(jsonData, prevJsonData, mapJsonHS, filepath);
             }
             else if (_config.runType == "GitHub")
             {
                 jsonData = mapJson as MapGitHubJson;
                 prevJsonData = prevMapJson as MapGitHubJson;
+                Github.MapJsonReader<MapGitHubJson>(jsonData, prevJsonData, mapJsonHS, filepath);
             }
             else
             {
                 throw new NotSupportedException("Unsupported run type");
             }
 
-            if(_config.runType == "AzureDevOps")
+            if (_config.runType == "AzureDevOps")
             {
                 if (mapJson == null)
                 {

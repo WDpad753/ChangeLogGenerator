@@ -1,14 +1,18 @@
 ﻿using BaseClass;
 using BaseClass.Config;
+using BaseClass.JSON;
 using BaseClass.Model;
 using BaseLogger;
 using BaseLogger.Models;
 using ChangeLogConsole.Writer;
 using ChangeLogCoreLibrary.Model;
+using System;
+
 //using Common.Abstractions;
 //using Common.Abstractions.Models;
 using System.Diagnostics;
 using System.Reflection.Metadata;
+using static System.Net.Mime.MediaTypeNames;
 using UtilityClass = BaseClass.MethodNameExtractor.FuncNameExtractor;
 
 namespace ChangeLogConsole
@@ -27,7 +31,8 @@ namespace ChangeLogConsole
         private static ConfigHandler? reader;
         private static string? NameSpace = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
         private static ChangeLogWrite clg;
-
+        private static JSONFileHandler jsonHandler;
+        private static List<string> ext = new List<string> { "config" };
         public static CLGConfig _config { get; set; }
 
         static void Main(string[] args)
@@ -39,7 +44,8 @@ namespace ChangeLogConsole
             string currentDirectory2 = AppDomain.CurrentDomain.BaseDirectory;
 
             string configFilePath = Path.Combine(currentDirectory2, "Config");
-            string[] files = Directory.GetFiles(configFilePath);
+            //string[] files = Directory.GetFiles(configFilePath).Where(s => s.EndsWith(".config", StringComparison.OrdinalIgnoreCase));
+            string[] files = (string[])Directory.GetFiles(configFilePath, "*.*", SearchOption.AllDirectories).Where(s => ext.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()));
             bool val = Directory.Exists(configFilePath);
 
             // Double check
@@ -54,6 +60,7 @@ namespace ChangeLogConsole
 
             logwriter = new(configFile, logFilePath);
             reader = new(configFile, logwriter);
+            jsonHandler = new(logwriter);
             _config.ConfigFilePath = configFile;
             //_config.logfilepath = logFilePath;
 
