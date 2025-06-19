@@ -55,7 +55,7 @@ namespace ChangeLogConsole
             logwriter = new(configFile, logFilePath);
             reader = new(configFile, logwriter);
             _config.ConfigFilePath = configFile;
-            _config.logfilepath = logFilePath;
+            //_config.logfilepath = logFilePath;
 
             // Setting up and running ChangeLogConsole for Creating/Appending ChangeLog:
             //string? commitmessagespath = ProgramConfig.commitMessagesPath;
@@ -106,17 +106,17 @@ namespace ChangeLogConsole
                 }
             }
 
-            clg = new(_config, mode, logwriter, logFilePath);
+            //clg = new(_config, mode, logwriter, logFilePath);
 
-            try
-            {
-                //Task.Run(async () => await clg.ChangeLogReaderWriter(commitfilepath));
-                clg.ChangeLogReaderWriter().Wait(15000000);
-            }
-            catch (Exception ex)
-            {
-                //logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",UtilityClass.GetMethodName(), MessageLevels.Fatal);
-            }
+            //try
+            //{
+            //    //Task.Run(async () => await clg.ChangeLogReaderWriter(commitfilepath));
+            //    clg.ChangeLogReaderWriter().Wait(15000000);
+            //}
+            //catch (Exception ex)
+            //{
+            //    //logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",UtilityClass.GetMethodName(), MessageLevels.Fatal);
+            //}
         }
     }
 }

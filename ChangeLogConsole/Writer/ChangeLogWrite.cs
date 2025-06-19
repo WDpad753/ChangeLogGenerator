@@ -57,13 +57,13 @@ namespace ChangeLogConsole.Writer
         private readonly IAPIRepo _repo;
         private string _logFilePath;
 
-        public ChangeLogWrite(CLGConfig config, RepoMode mode, LogWriter Logger, string logFilePath)
+        public ChangeLogWrite(IAPIRepo repo, CLGConfig config, LogWriter Logger, string logFilePath)
         {
             _config = config;
             _logger = Logger;
             _fileHandler = new(Logger);
-            _reader = new(_config.ConfigFilePath, Logger);
-            _repo = APIFactory.GetAPIRepo(mode, config, _fileHandler, _reader, Logger);
+            _reader = new(config.ConfigFilePath, Logger);
+            _repo = repo;
             _logFilePath = logFilePath;
         }
 
@@ -128,6 +128,72 @@ namespace ChangeLogConsole.Writer
                         if (prevMapGithubJson == null)
                         {
                             prevMapGithubJson = _fileHandler.GetJson<MapGitHubJson>(Path.Combine(_config.backupjsonpath, _config.jsonfilename));
+                        }
+                    }
+
+                    if (!mapJsonHS.Equals(prevMapJsonHS))
+                    {
+                        _repo.MapJsonReader(mapJson, prevMapGithubJson, mapJsonHS, _logFilePath);
+                    }
+                    else
+                    {
+                        Console.WriteLine("No Changes in the Commit history data");
+                        return null;
+                    }
+                }
+                else
+                {
+                    throw new Exception("MapJson is empty");
+                }
+            }
+            else if (_repo.GetType() == typeof(APITest))
+            {
+                object? mapJson = null;
+                object? prevMapGithubJson = null;
+                string mapJsonHS = "";
+                object? prevMapJson = "";
+                string? testAdd = _config.testClient.BaseAddress.ToString();
+
+                if (_config.runType == "AzureDevOps")
+                {
+                    _client = new APIClient(PathCombine.CombinePath(CombinationType.URL, testAdd, organization, project, "_apis/git/repositories", repositoryName, "commits"), null, 60);
+                    mapJson = await _client.Get<MapAzureJson>();
+                    mapJsonHS = Crc32.CalculateHash<MapAzureJson>(mapJson as MapAzureJson);
+                }
+                else if(_config.runType == "GitHub")
+                {
+                    _client = new APIClient(PathCombine.CombinePath(CombinationType.URL, testAdd, organization, project, "_apis/git/repositories", repositoryName, "commits"), null, 60);
+                    mapJson = await _client.Get<MapGitHubJson>();
+                    mapJsonHS = Crc32.CalculateHash<MapGitHubJson>(mapJson as MapGitHubJson);
+                }
+
+                if (mapJson != null)
+                {
+                    if (File.Exists(Path.Combine(_config.jsonpath, _config.jsonfilename)))
+                    {
+                        if (_config.runType == "AzureDevOps")
+                        {
+                            _client = new APIClient(PathCombine.CombinePath(CombinationType.URL, APIRepoPath.APITest, organization, project, "_apis/git/repositories", repositoryName, "commits"), null, 60);
+                            mapJson = await _client.Get<MapAzureJson>();
+                            mapJsonHS = Crc32.CalculateHash<MapAzureJson>(mapJson as MapAzureJson);
+                            prevMapJson = _fileHandler.GetJson<MapAzureJson>(Path.Combine(_config.jsonpath, _config.jsonfilename));
+                            
+                            if (prevMapJson == null)
+                            {
+                                prevMapJson = _fileHandler.GetJson<MapAzureJson>(Path.Combine(_config.backupjsonpath, _config.jsonfilename));
+                            }
+                        }
+                        else if (_config.runType == "GitHub")
+                        {
+                            _client = new APIClient(PathCombine.CombinePath(CombinationType.URL, APIRepoPath.APITest, organization, project, "_apis/git/repositories", repositoryName, "commits"), null, 60);
+                            mapJson = await _client.Get<MapGitHubJson>();
+                            mapJsonHS = Crc32.CalculateHash<MapGitHubJson>(mapJson as MapGitHubJson);
+                            prevMapJson = _fileHandler.GetJson<MapGitHubJson>(Path.Combine(_config.jsonpath, _config.jsonfilename));
+                            
+                            if (prevMapJson == null)
+                            {
+                                prevMapJson = _fileHandler.GetJson<MapGitHubJson>(Path.Combine(_config.backupjsonpath, _config.jsonfilename));
+                            }
                         }
                     }
 

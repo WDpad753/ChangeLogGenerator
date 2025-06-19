@@ -9,6 +9,7 @@ namespace ChangeLogCoreLibrary.Model
     public enum RepoMode
     {
         AzureDevOps,
-        GitHub
+        GitHub,
+        APITest
     }
 }
