@@ -49,6 +49,7 @@ namespace ChangeLogConsole.Writer
         private CLGConfig _config;
         private JSONFileHandler _fileHandler;
         private APIClient _client;
+        private HttpClient _testClient;
         //private readonly IConfigReader _reader;
         private ConfigHandler _reader;
         private LogWriter _logger;
@@ -156,13 +157,17 @@ namespace ChangeLogConsole.Writer
 
                 if (_config.runType == "AzureDevOps")
                 {
-                    _client = new APIClient(PathCombine.CombinePath(CombinationType.URL, testAdd, organization, project, "_apis/git/repositories", repositoryName, "commits"), null, 60);
+                    _config.testClient.BaseAddress = new Uri(PathCombine.CombinePath(CombinationType.URL, testAdd, organization, project, "_apis/git/repositories", repositoryName, "commits"));
+                    _testClient = _config.testClient;
+                    _client = new APIClient(PathCombine.CombinePath(CombinationType.URL, testAdd, organization, project, "_apis/git/repositories", repositoryName, "commits"), null, 60, _testClient);
                     mapJson = await _client.Get<MapAzureJson>();
                     mapJsonHS = Crc32.CalculateHash<MapAzureJson>(mapJson as MapAzureJson);
                 }
                 else if(_config.runType == "GitHub")
                 {
-                    _client = new APIClient(PathCombine.CombinePath(CombinationType.URL, testAdd, organization, project, "_apis/git/repositories", repositoryName, "commits"), null, 60);
+                    _config.testClient.BaseAddress = new Uri(PathCombine.CombinePath(CombinationType.URL, testAdd, organization, project, "_apis/git/repositories", repositoryName, "commits"));
+                    _testClient = _config.testClient;
+                    _client = new APIClient(PathCombine.CombinePath(CombinationType.URL, testAdd, organization, project, "_apis/git/repositories", repositoryName, "commits"), null, 60, _testClient);
                     mapJson = await _client.Get<MapGitHubJson>();
                     mapJsonHS = Crc32.CalculateHash<MapGitHubJson>(mapJson as MapGitHubJson);
                 }
@@ -173,8 +178,8 @@ namespace ChangeLogConsole.Writer
                     {
                         if (_config.runType == "AzureDevOps")
                         {
-                            _client = new APIClient(PathCombine.CombinePath(CombinationType.URL, APIRepoPath.APITest, organization, project, "_apis/git/repositories", repositoryName, "commits"), null, 60);
-                            mapJson = await _client.Get<MapAzureJson>();
+                            //_client = new APIClient(PathCombine.CombinePath(CombinationType.URL, APIRepoPath.APITest, organization, project, "_apis/git/repositories", repositoryName, "commits"), null, 60);
+                            //mapJson = await _client.Get<MapAzureJson>();
                             mapJsonHS = Crc32.CalculateHash<MapAzureJson>(mapJson as MapAzureJson);
                             prevMapJson = _fileHandler.GetJson<MapAzureJson>(Path.Combine(_config.jsonpath, _config.jsonfilename));
                             
@@ -185,8 +190,8 @@ namespace ChangeLogConsole.Writer
                         }
                         else if (_config.runType == "GitHub")
                         {
-                            _client = new APIClient(PathCombine.CombinePath(CombinationType.URL, APIRepoPath.APITest, organization, project, "_apis/git/repositories", repositoryName, "commits"), null, 60);
-                            mapJson = await _client.Get<MapGitHubJson>();
+                            //_client = new APIClient(PathCombine.CombinePath(CombinationType.URL, APIRepoPath.APITest, organization, project, "_apis/git/repositories", repositoryName, "commits"), null, 60);
+                            //mapJson = await _client.Get<MapGitHubJson>();
                             mapJsonHS = Crc32.CalculateHash<MapGitHubJson>(mapJson as MapGitHubJson);
                             prevMapJson = _fileHandler.GetJson<MapGitHubJson>(Path.Combine(_config.jsonpath, _config.jsonfilename));
                             

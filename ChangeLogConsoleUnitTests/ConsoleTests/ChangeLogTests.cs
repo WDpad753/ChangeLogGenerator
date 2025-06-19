@@ -60,12 +60,18 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         {
             string configpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest.config";
             logpath = @$"{AppDomain.CurrentDomain.BaseDirectory}TempLogs\";
-            string jsonpath = @$"{AppDomain.CurrentDomain.BaseDirectory}JsonFiles\AppJson.json";
+            string jsonpath = @$"{AppDomain.CurrentDomain.BaseDirectory}JsonFiles\";
+            string jsonfile = "AppJson.json";
             string logfilepath = @$"{AppDomain.CurrentDomain.BaseDirectory}ChangeLog.txt";
 
             if (Directory.Exists(logpath))
             {
                 Directory.Delete(logpath, true); // Ensure the log directory is clean before starting the test
+            }
+
+            if(File.Exists(logfilepath))
+            {
+                File.Delete(logfilepath);
             }
 
             logwriter = new LogWriter(configpath, logpath);
@@ -79,10 +85,15 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             _config.ConfigFilePath = configpath;
             _config.logfilepath = logfilepath;
             _config.runType = "AzureDevOps";
-            _config.JsonFilePath = jsonpath;
+            _config.jsonpath = jsonpath;
+            _config.jsonfilename = jsonfile;
             _config.testClient = _client;
+            _config.backupjsonpath = jsonpath;
 
             logFilePath = logfilepath;
+
+            string projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
+            string projectRoot2 = Directory.GetCurrentDirectory();
         }
 
         [Test]
@@ -153,17 +164,19 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
                 //logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",UtilityClass.GetMethodName(), MessageLevels.Fatal);
             }
 
-            //// Act
-            //var response = await _client.GetAsync("/health");
+            bool ChangeLogExists = File.Exists(_config.logfilepath);
+            bool PrevJsonExists = File.Exists(Path.Combine(_config.jsonpath, _config.jsonfilename));
+            string? PrevJsonHS = configReader.ReadInfo("PrevMapJSONHS");
+            bool PrevJsonHSExists = PrevJsonHS != null ? true : false;
 
-            //// Assert
-            //Assert.That(response.IsSuccessStatusCode, Is.True, "Expected /health to return 200 OK");
-
-            //var content = await response.Content.ReadAsStringAsync();
-
-            //logwriter.LogWrite(content.ToString(), this.GetType().Name, UtilityClass.GetMethodName(), MessageLevels.Log);
-
-            //Assert.That(content, Is.Not.Null.And.Not.Empty, "Health endpoint returned empty content");
+            if(ChangeLogExists == true && PrevJsonExists == true && PrevJsonHSExists == true)
+            {
+                Assert.Pass();
+            }
+            else
+            {
+                Assert.Fail();
+            }
         }
     }
 }
