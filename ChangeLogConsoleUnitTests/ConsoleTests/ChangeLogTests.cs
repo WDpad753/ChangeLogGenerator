@@ -21,43 +21,47 @@ using UtilityClass = BaseClass.MethodNameExtractor.FuncNameExtractor;
 
 namespace ChangeLogConsoleUnitTests.ConsoleTests
 {
+    [SetUpFixture]
+    public class TestEnvironment
+    {
+        public static WebApplicationFactory<TestAPI.Program> Factory { get; private set; }
+
+        [OneTimeSetUp]
+        public void GlobalSetup()
+        {
+            Factory = new WebApplicationFactory<TestAPI.Program>()
+                .WithWebHostBuilder(builder =>
+                {
+                    // builder.UseEnvironment("Testing");
+                });
+        }
+
+        [OneTimeTearDown]
+        public void GlobalTeardown()
+        {
+            Factory.Dispose();
+        }
+    }
+
+    [TestFixture]
+    //public class ChangeLogTests : ApiTestBase
     public class ChangeLogTests
     {
         private LogWriter logwriter;
         private ConfigHandler configReader;
         private string logpath;
         private IAPIRepo _repo;
-        private WebApplicationFactory<TestAPI.Program> _factory = null!;
-        private HttpClient _client = null!;
+        //private WebApplicationFactory<TestAPI.Program> _factory = null!;
+        private HttpClient _client = null;
         private CLGConfig _config;
         private JSONFileHandler _jsonFileHandler;
         private string logFilePath;
 
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            // Initialize the in-memory test server factory
-            _factory = new WebApplicationFactory<TestAPI.Program>()
-                // Optionally configure the factory, e.g., override configuration:
-                .WithWebHostBuilder(builder =>
-                {
-                    // Example: you could configure environment, services, etc.
-                    // builder.UseEnvironment("Testing");
-                    // builder.ConfigureServices(services => { ... });
-                });
-            _client = _factory.CreateClient(); // Creates HttpClient with a random port
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            _client.Dispose();
-            _factory.Dispose();
-        }
-
         [SetUp]
         public void Setup()
         {
+            _client = TestEnvironment.Factory.CreateClient();
+
             string configpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest.config";
             logpath = @$"{AppDomain.CurrentDomain.BaseDirectory}TempLogs\";
             string jsonpath = @$"{AppDomain.CurrentDomain.BaseDirectory}JsonFiles\";
@@ -115,7 +119,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             }
         }
 
-        [Test]
+        [Test, Order(1)]
         public async Task HealthEndpoint_Returns200()
         {
             // Act
@@ -131,7 +135,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             Assert.That(content, Is.Not.Null.And.Not.Empty, "Health endpoint returned empty content");
         }
 
-        [Test]
+        [Test, Order(2)]
         public async Task AzureEndpoint()
         {
             string baseUrl = _client.BaseAddress!.ToString();
@@ -140,12 +144,16 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             {
                 Assert.Fail("Base URL is not set or is empty.");
             }
+            else
+            {
+                logwriter.LogWrite(baseUrl, "", "", MessageLevels.Log);
+            }
 
-            _repo = APIFactory.GetAPIRepo(RepoMode.APITest,
-                _config,
-                _jsonFileHandler,
-                configReader,
-                logwriter);
+                _repo = APIFactory.GetAPIRepo(RepoMode.APITest,
+                    _config,
+                    _jsonFileHandler,
+                    configReader,
+                    logwriter);
 
             if (_repo == null)
             {
@@ -177,6 +185,12 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             {
                 Assert.Fail();
             }
+        }
+
+        [TearDown]
+        public void Teardown()
+        {
+            _client?.Dispose();
         }
     }
 }
