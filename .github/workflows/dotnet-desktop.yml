@@ -84,9 +84,11 @@ jobs:
       run: |
         Write-Host "Working dir: $(Get-Location)"
         Get-ChildItem -Force -Recurse
+    
     - name: Setting Up environment variables for Unit Tests
       run: |
         echo "Test=Hello_Unit_Test" >> $env:GITHUB_ENV
+    
     # Install the .NET Core workload
     - name: Install .NET Core
       uses: actions/setup-dotnet@v4
@@ -122,7 +124,7 @@ jobs:
       run: dotnet build ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
 
     - name: Run tests
-      run: dotnet test ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }} --no-build --verbosity normal
+      run: dotnet test ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }} --no-build --parallel none --verbosity normal
       #env:
       #  Test: Hello_Unit_Test
 
