@@ -41,6 +41,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Config\AppTest2.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Config\AppTest.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
