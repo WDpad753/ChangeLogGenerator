@@ -24,6 +24,10 @@
     <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
   </ItemGroup>
 
+	<PropertyGroup>
+		<ParallelizeTestCollections>false</ParallelizeTestCollections>
+	</PropertyGroup>
+	
   <ItemGroup>
     <ProjectReference Include="..\..\BaseClassLibrary\BaseClass\BaseClass.csproj" />
     <ProjectReference Include="..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj" />
