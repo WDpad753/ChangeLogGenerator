@@ -215,7 +215,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
             }
         }
         
-        [Test]
+        [Test, Order(2)]
         public void CustomConfigWriteTest()
         {
             string val = "NewConsoleTest";
@@ -234,12 +234,16 @@ namespace ChangeLogConsoleUnitTests.BaseTests
             }
         }
         
-        [Test, Order(2)]
+        [Test, Order(3)]
         public void CustomConfigWrite2Test()
         {
             DeleteAdd("loggerSettings", "AppName");
 
             string val = "NewConsoleTest";
+
+            string configpath2 = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest2.config";
+
+            configReader = new(configpath2, logwriter);
 
             configReader.SaveInfo("NewConsoleTest", "AppName", "loggerSettings");
 
