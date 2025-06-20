@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChangeLogCoreLibrary.Model
 {
-    public class Author
+    public class AzureAuthor
     {
         public DateTime Date { get; set; }
         public string Name { get; set; }
@@ -21,11 +21,11 @@ namespace ChangeLogCoreLibrary.Model
 
     public class Value
     {
-        public Author Author { get; set; }
+        public AzureAuthor Author { get; set; }
         public ChangeCounts ChangeCounts { get; set; }
         public string Comment { get; set; }
         public string CommitId { get; set; }
-        public Author Committer { get; set; }
+        public AzureAuthor Committer { get; set; }
         public string DateChecker { get; set; }
     }
 

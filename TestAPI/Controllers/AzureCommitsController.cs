@@ -10,7 +10,7 @@ namespace TestAPI.Controllers
     public class AzureCommitsController : ControllerBase
     {
         [HttpGet]
-        public IActionResult GetCommits(
+        public IActionResult GetAzureCommits(
             string organization,
             string project,
             string repositoryId,

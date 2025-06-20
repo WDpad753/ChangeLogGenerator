@@ -146,7 +146,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             }
             else
             {
-                logwriter.LogWrite(baseUrl, "", "", MessageLevels.Log);
+                logwriter.LogWrite(baseUrl, this.GetType().Name, UtilityClass.GetMethodName(), MessageLevels.Log);
             }
 
                 _repo = APIFactory.GetAPIRepo(RepoMode.APITest,
@@ -186,6 +186,61 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
                 Assert.Fail();
             }
         }
+        
+        //[Test, Order(3)]
+        //public async Task GitHubEndpoint()
+        //{
+        //    string baseUrl = _client.BaseAddress!.ToString();
+
+        //    _config.runType = "GitHub";
+
+        //    if (baseUrl == null || baseUrl == string.Empty)
+        //    {
+        //        Assert.Fail("Base URL is not set or is empty.");
+        //    }
+        //    else
+        //    {
+        //        logwriter.LogWrite(baseUrl, this.GetType().Name, UtilityClass.GetMethodName(), MessageLevels.Log);
+        //    }
+
+        //        _repo = APIFactory.GetAPIRepo(RepoMode.APITest,
+        //            _config,
+        //            _jsonFileHandler,
+        //            configReader,
+        //            logwriter);
+
+        //    if (_repo == null)
+        //    {
+        //        Assert.Fail("Unable to obtain a valid API Repository Mode");
+        //    }
+
+        //    ChangeLogWrite clg = new ChangeLogWrite(_repo, _config, logwriter, logFilePath);
+
+        //    try
+        //    {
+        //        //Task.Run(async () => await clg.ChangeLogReaderWriter(commitfilepath));
+                
+        //        clg.ChangeLogReaderWriter().Wait(15000000);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",UtilityClass.GetMethodName(), MessageLevels.Fatal);
+        //    }
+
+        //    bool ChangeLogExists = File.Exists(_config.logfilepath);
+        //    bool PrevJsonExists = File.Exists(Path.Combine(_config.jsonpath, _config.jsonfilename));
+        //    string? PrevJsonHS = configReader.ReadInfo("PrevMapJSONHS");
+        //    bool PrevJsonHSExists = PrevJsonHS != null ? true : false;
+
+        //    if(ChangeLogExists == true && PrevJsonExists == true && PrevJsonHSExists == true)
+        //    {
+        //        Assert.Pass();
+        //    }
+        //    else
+        //    {
+        //        Assert.Fail();
+        //    }
+        //}
 
         [TearDown]
         public void Teardown()
