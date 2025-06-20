@@ -1,4 +1,5 @@
-﻿using BaseClass.Config;
+﻿using BaseClass.API;
+using BaseClass.Config;
 using BaseClass.Helper;
 using BaseClass.JSON;
 using BaseClass.Model;
@@ -32,7 +33,7 @@ namespace ChangeLogCoreLibrary.Classes
             _reader = configReader;
         }
 
-        public void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath)
+        public void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient? client = null, string? EnvVar = null)
         {
             int Switch;
             Dictionary<long, List<object>> JsonMap = new Dictionary<long, List<object>>();
