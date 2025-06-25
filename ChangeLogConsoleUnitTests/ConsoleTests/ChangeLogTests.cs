@@ -1,4 +1,5 @@
-﻿using BaseClass.Config;
+﻿using BaseClass.API.Interface;
+using BaseClass.Config;
 using BaseClass.JSON;
 using BaseClass.Model;
 using BaseLogger;
@@ -33,7 +34,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             Factory = new WebApplicationFactory<TestAPI.Program>()
                 .WithWebHostBuilder(builder =>
                 {
-                     builder.UseEnvironment("Testing");
+                     //builder.UseEnvironment("Testing");
                 });
         }
 
@@ -41,6 +42,23 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         public void GlobalTeardown()
         {
             Factory.Dispose();
+        }
+    }
+
+    public class TestClientProvider : IWebFactoryProvider
+    {
+        private readonly WebApplicationFactory<TestAPI.Program> _factory;
+
+        public TestClientProvider(WebApplicationFactory<TestAPI.Program> factory)
+        {
+            _factory = factory;
+        }
+
+        public HttpClient CreateClient(Uri baseAddress)
+        {
+            var client = _factory.CreateClient();
+            client.BaseAddress = baseAddress;
+            return client;
         }
     }
 
@@ -140,8 +158,9 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         public async Task AzureEndpoint()
         {
             string baseUrl = _client.BaseAddress!.ToString();
+            var factoryProvider = new TestClientProvider(TestEnvironment.Factory);
 
-            if(baseUrl == null || baseUrl == string.Empty)
+            if (baseUrl == null || baseUrl == string.Empty)
             {
                 Assert.Fail("Base URL is not set or is empty.");
             }
@@ -164,7 +183,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
                 Assert.Fail("Unable to obtain a valid API Repository Mode");
             }
 
-            ChangeLogWrite clg = new ChangeLogWrite(_repo, _config, logwriter, logFilePath);
+            ChangeLogWrite clg = new ChangeLogWrite(_repo, _config, logwriter, logFilePath, factoryProvider);
 
             try
             {
@@ -195,6 +214,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         public async Task GitHubEndpoint()
         {
             string baseUrl = _client.BaseAddress!.ToString();
+            var factoryProvider = new TestClientProvider(TestEnvironment.Factory);
 
             _config.runType = "GitHub";
 
@@ -220,13 +240,13 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
                 Assert.Fail("Unable to obtain a valid API Repository Mode");
             }
 
-            ChangeLogWrite clg = new ChangeLogWrite(_repo, _config, logwriter, logFilePath);
+            ChangeLogWrite clg = new ChangeLogWrite(_repo, _config, logwriter, logFilePath, factoryProvider);
 
             try
             {
                 //Task.Run(async () => await clg.ChangeLogReaderWriter(commitfilepath));
 
-                clg.ChangeLogReaderWriter().Wait(15000000);
+                clg.ChangeLogReaderWriter().Wait();
             }
             catch (Exception ex)
             {

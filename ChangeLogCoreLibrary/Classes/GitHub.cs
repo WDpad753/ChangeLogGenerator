@@ -33,7 +33,7 @@ namespace ChangeLogCoreLibrary.Classes
             _pathCombiner = new(Logger);
         }
 
-        public void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient? client = null, string? EnvVar = null)
+        public async void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient? client = null, string? EnvVar = null)
         {
             int Switch;
             Dictionary<long, List<object>> JsonMap = new Dictionary<long, List<object>>();
@@ -67,21 +67,25 @@ namespace ChangeLogCoreLibrary.Classes
 
                     //client.testClient.BaseAddress = new Uri(_pathCombiner.CombinePath(CombinationType.URL, testAdd, "azure", organization, project, "_apis/git/repositories", repositoryName, "commits"));
 
-                    if(client.testClient != null)
-                    {
-                        client.testClient.BaseAddress = new Uri(value.url);
+                    //if (client.testClient == true)
+                    //{
+                    //    client.APIURL = value.sha;
+                    //}
+                    //if (client.testClient != true)
+                    //{
+                    //    //client.testClient.BaseAddress = new Uri(value.url);
 
-                        HttpClient testClient = client.testClient;
-                        client.testClient = testClient;
-                    }
-                    else
-                    {
-                        client.APIURL = value.url;
-                    }
+                    //    //HttpClient testClient = client.testClient;
+                    //    //client.testClient = testClient;
+                    //}
+                    //else
+                    //{
+                    //    client.APIURL = value.url;
+                    //}
 
-                    var jsonFile = client.Get<MapGitHubCommitJson>(value.url);
+                    var jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
 
-                    JsonMapValues.Add(jsonFile.Status);
+                    JsonMapValues.Add(jsonFile.stats);
                     JsonMapValues.Add(value.DateChecker);
                     JsonMap.Add(DateTimeOffset.Parse(value.author.date.ToString()).ToUnixTimeSeconds(), JsonMapValues);
                 }

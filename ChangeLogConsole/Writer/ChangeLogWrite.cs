@@ -1,4 +1,5 @@
 ﻿using BaseClass.API;
+using BaseClass.API.Interface;
 using BaseClass.Config;
 using BaseClass.Helper;
 using BaseClass.JSON;
@@ -8,6 +9,7 @@ using ChangeLogCoreLibrary.APIRepositories.Factory;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
 using ChangeLogCoreLibrary.Classes;
 using ChangeLogCoreLibrary.Model;
+using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -30,8 +32,9 @@ namespace ChangeLogConsole.Writer
         private static MapGitHubJson prevMapGithubJson = new MapGitHubJson();
         private readonly IAPIRepo _repo;
         private string _logFilePath;
+        private readonly IWebFactoryProvider? _factoryProvider;
 
-        public ChangeLogWrite(IAPIRepo repo, CLGConfig config, LogWriter Logger, string logFilePath)
+        public ChangeLogWrite(IAPIRepo repo, CLGConfig config, LogWriter Logger, string logFilePath, IWebFactoryProvider? clientFactory = null)
         {
             _config = config;
             _logger = Logger;
@@ -40,7 +43,7 @@ namespace ChangeLogConsole.Writer
             _repo = repo;
             _logFilePath = logFilePath;
             _pathCombiner = new(Logger);
-            _client = new(Logger);
+            _client = new(Logger, clientFactory);
         }
 
         public async Task<string?> ChangeLogReaderWriter()
@@ -65,6 +68,7 @@ namespace ChangeLogConsole.Writer
                 _client.PerAccTok = EnvVar;
                 _client.timeOut = 60;
 
+                //MapAzureJson mapJson = await _client.Get<MapAzureJson>();
                 MapAzureJson mapJson = await _client.Get<MapAzureJson>();
                 string mapJsonHS = Crc32.CalculateHash<MapAzureJson>(mapJson);
 
@@ -152,8 +156,9 @@ namespace ChangeLogConsole.Writer
                     _client.timeOut = 60;
                     _config.testClient.BaseAddress = new Uri(_pathCombiner.CombinePath(CombinationType.URL, testAdd, "azure", organization, project, "_apis/git/repositories", repositoryName, "commits"));
                     _testClient = _config.testClient;
-                    _client.testClient = _testClient;
+                    _client.testClient = true;
 
+                    //mapJson = await _client.Get<MapAzureJson>();
                     mapJson = await _client.Get<MapAzureJson>();
                     mapJsonHS = Crc32.CalculateHash<MapAzureJson>(mapJson as MapAzureJson);
                 }
@@ -169,8 +174,9 @@ namespace ChangeLogConsole.Writer
                     _client.timeOut = 60;
                     _config.testClient.BaseAddress = new Uri(_pathCombiner.CombinePath(CombinationType.URL, testAdd, "repos", organization, repositoryName, "commits"));
                     _testClient = _config.testClient;
-                    _client.testClient = _testClient;
+                    _client.testClient = true;
 
+                    //mapJson = await _client.Get<List<MapGitHubJson>>();
                     mapJson = await _client.Get<List<MapGitHubJson>>();
                     mapJsonHS = Crc32.CalculateHash<List<MapGitHubJson>>(mapJson as List<MapGitHubJson>);
                 }
