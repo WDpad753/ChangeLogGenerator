@@ -19,38 +19,10 @@ namespace ChangeLogConsole.Writer
 {
     public class ChangeLogWrite
     {
-        //public string configpathfull
-        //{
-        //    get
-        //    {
-        //        // Get the current directory (where your executable is located) and set the configpath:
-        //        string currentDirectory = Directory.GetCurrentDirectory();
-        //        string configfpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config";
-        //        string configfilename = @"App.config";
-        //        string configpath = Path.Combine(configfpath, configfilename);
-        //        return configpath;
-        //    }
-        //}
-
-        public string configpathfull
-        {
-            get; set;
-            //get
-            //{
-            //    // Get the current directory (where your executable is located) and set the configpath:
-            //    string currentDirectory = Directory.GetCurrentDirectory();
-            //    string configfpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config";
-            //    string configfilename = @"App.config";
-            //    string configpath = Path.Combine(configfpath, configfilename);
-            //    return configpath;
-            //}
-        }
-
         private CLGConfig _config;
         private JSONFileHandler _fileHandler;
         private APIClient _client;
         private HttpClient _testClient;
-        //private readonly IConfigReader _reader;
         private ConfigHandler _reader;
         private LogWriter _logger;
         private PathCombine _pathCombiner;
@@ -68,6 +40,7 @@ namespace ChangeLogConsole.Writer
             _repo = repo;
             _logFilePath = logFilePath;
             _pathCombiner = new(Logger);
+            _client = new(Logger);
         }
 
         public async Task<string?> ChangeLogReaderWriter()
@@ -86,7 +59,12 @@ namespace ChangeLogConsole.Writer
             {
                 EnvVar = Environment.GetEnvironmentVariable("Azure_PAT");
 
-                _client = new APIClient(_pathCombiner.CombinePath(CombinationType.URL, APIRepoPath.AzureDevOps, organization, project, "_apis/git/repositories", repositoryName, "commits"),EnvVar,60);
+                //_client = new APIClient(_pathCombiner.CombinePath(CombinationType.URL, APIRepoPath.AzureDevOps, organization, project, "_apis/git/repositories", repositoryName, "commits"),EnvVar,60);
+
+                _client.APIURL = _pathCombiner.CombinePath(CombinationType.URL, APIRepoPath.AzureDevOps, organization, project, "_apis/git/repositories", repositoryName, "commits");
+                _client.PerAccTok = EnvVar;
+                _client.timeOut = 60;
+
                 MapAzureJson mapJson = await _client.Get<MapAzureJson>();
                 string mapJsonHS = Crc32.CalculateHash<MapAzureJson>(mapJson);
 
@@ -120,7 +98,12 @@ namespace ChangeLogConsole.Writer
             {
                 EnvVar = Environment.GetEnvironmentVariable("GitHub_PAT");
 
-                _client = new APIClient(_pathCombiner.CombinePath(CombinationType.URL, APIRepoPath.Github, organization, project, "_apis/git/repositories", repositoryName, "commits"), EnvVar, 60);
+                //_client = new APIClient(_pathCombiner.CombinePath(CombinationType.URL, APIRepoPath.Github, organization, project, "_apis/git/repositories", repositoryName, "commits"), EnvVar, 60);
+
+                _client.APIURL = _pathCombiner.CombinePath(CombinationType.URL, APIRepoPath.Github, "repos", organization, repositoryName, "commits");
+                _client.PerAccTok = EnvVar;
+                _client.timeOut = 60;
+
                 MapGitHubJson mapJson = await _client.Get<MapGitHubJson>();
                 string mapJsonHS = Crc32.CalculateHash<MapGitHubJson>(mapJson);
 
@@ -160,18 +143,34 @@ namespace ChangeLogConsole.Writer
 
                 if (_config.runType == "AzureDevOps")
                 {
+                    //_config.testClient.BaseAddress = new Uri(_pathCombiner.CombinePath(CombinationType.URL, testAdd, "azure", organization, project, "_apis/git/repositories", repositoryName, "commits"));
+                    //_testClient = _config.testClient;
+                    //_client = new APIClient(_pathCombiner.CombinePath(CombinationType.URL, testAdd, organization, project, "_apis/git/repositories", repositoryName, "commits"), null, 60, _testClient);
+
+                    _client.APIURL = _pathCombiner.CombinePath(CombinationType.URL, testAdd, organization, project, "_apis/git/repositories", repositoryName, "commits");
+                    _client.PerAccTok = EnvVar;
+                    _client.timeOut = 60;
                     _config.testClient.BaseAddress = new Uri(_pathCombiner.CombinePath(CombinationType.URL, testAdd, "azure", organization, project, "_apis/git/repositories", repositoryName, "commits"));
                     _testClient = _config.testClient;
-                    _client = new APIClient(_pathCombiner.CombinePath(CombinationType.URL, testAdd, organization, project, "_apis/git/repositories", repositoryName, "commits"), null, 60, _testClient);
+                    _client.testClient = _testClient;
+
                     mapJson = await _client.Get<MapAzureJson>();
                     mapJsonHS = Crc32.CalculateHash<MapAzureJson>(mapJson as MapAzureJson);
                 }
                 else if(_config.runType == "GitHub")
                 {
                     ///repos/{ owner}/{ repo}/commits
-                    _config.testClient.BaseAddress = new Uri(_pathCombiner.CombinePath(CombinationType.URL, testAdd,"repos", organization, repositoryName, "commits"));
+                    //_config.testClient.BaseAddress = new Uri(_pathCombiner.CombinePath(CombinationType.URL, testAdd,"repos", organization, repositoryName, "commits"));
+                    //_testClient = _config.testClient;
+                    //_client = new APIClient(_pathCombiner.CombinePath(CombinationType.URL, testAdd, "repos", organization, repositoryName, "commits"), null, 60, _testClient);
+
+                    _client.APIURL = _pathCombiner.CombinePath(CombinationType.URL, testAdd, "repos", organization, repositoryName, "commits");
+                    _client.PerAccTok = EnvVar;
+                    _client.timeOut = 60;
+                    _config.testClient.BaseAddress = new Uri(_pathCombiner.CombinePath(CombinationType.URL, testAdd, "repos", organization, repositoryName, "commits"));
                     _testClient = _config.testClient;
-                    _client = new APIClient(_pathCombiner.CombinePath(CombinationType.URL, testAdd, "repos", organization, repositoryName, "commits"), null, 60, _testClient);
+                    _client.testClient = _testClient;
+
                     mapJson = await _client.Get<List<MapGitHubJson>>();
                     mapJsonHS = Crc32.CalculateHash<List<MapGitHubJson>>(mapJson as List<MapGitHubJson>);
                 }

@@ -1,0 +1,96 @@
+{
+  "url": "http://localhost/repos/dan/website/commits/998877112233",
+  "sha": "998877112233",
+  "node_id": "NODEID6",
+  "html_url": "http://localhost/dan/website/commit/998877112233",
+  "comments_url": "http://localhost/repos/dan/website/commits/998877112233/comments",
+  "commit": {
+    "url": "http://localhost/repos/dan/website/git/commits/998877112233",
+    "author": {
+      "name": "Dan Web",
+      "email": "dan@localhost",
+      "date": "2024-06-06T11:11:11Z"
+    },
+    "committer": {
+      "name": "Dan Web",
+      "email": "dan@localhost",
+      "date": "2024-06-06T11:11:11Z"
+    },
+    "message": "Improve homepage SEO",
+    "tree": {
+      "url": "http://localhost/repos/dan/website/tree/998877112233",
+      "sha": "998877112233"
+    },
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "author": {
+    "login": "dan",
+    "id": 106,
+    "node_id": "USER6",
+    "avatar_url": "http://localhost/images/dan.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/dan",
+    "html_url": "http://localhost/dan",
+    "followers_url": "http://localhost/users/dan/followers",
+    "following_url": "http://localhost/users/dan/following{/other_user}",
+    "gists_url": "http://localhost/users/dan/gists{/gist_id}",
+    "starred_url": "http://localhost/users/dan/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/dan/subscriptions",
+    "organizations_url": "http://localhost/users/dan/orgs",
+    "repos_url": "http://localhost/users/dan/repos",
+    "events_url": "http://localhost/users/dan/events{/privacy}",
+    "received_events_url": "http://localhost/users/dan/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "dan",
+    "id": 106,
+    "node_id": "USER6",
+    "avatar_url": "http://localhost/images/dan.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/dan",
+    "html_url": "http://localhost/dan",
+    "followers_url": "http://localhost/users/dan/followers",
+    "following_url": "http://localhost/users/dan/following{/other_user}",
+    "gists_url": "http://localhost/users/dan/gists{/gist_id}",
+    "starred_url": "http://localhost/users/dan/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/dan/subscriptions",
+    "organizations_url": "http://localhost/users/dan/orgs",
+    "repos_url": "http://localhost/users/dan/repos",
+    "events_url": "http://localhost/users/dan/events{/privacy}",
+    "received_events_url": "http://localhost/users/dan/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "url": "http://localhost/repos/dan/website/commits/556677889900",
+      "sha": "556677889900"
+    }
+  ],
+  "stats": {
+    "additions": 30,
+    "deletions": 10,
+    "total": 40
+  },
+  "files": [
+    {
+      "filename": "index.html",
+      "additions": 30,
+      "deletions": 10,
+      "changes": 40,
+      "status": "modified",
+      "raw_url": "http://localhost/dan/website/raw/998877112233/index.html",
+      "blob_url": "http://localhost/dan/website/blob/998877112233/index.html",
+      "patch": "@@ -1,20 +1,50 @@\n..."
+    }
+  ]
+}

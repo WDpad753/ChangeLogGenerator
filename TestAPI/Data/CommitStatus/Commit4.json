@@ -1,0 +1,96 @@
+{
+  "url": "http://localhost/repos/bob/infra/commits/998877665544",
+  "sha": "998877665544",
+  "node_id": "NODEID4",
+  "html_url": "http://localhost/bob/infra/commit/998877665544",
+  "comments_url": "http://localhost/repos/bob/infra/commits/998877665544/comments",
+  "commit": {
+    "url": "http://localhost/repos/bob/infra/git/commits/998877665544",
+    "author": {
+      "name": "Bob Ops",
+      "email": "bob@localhost",
+      "date": "2024-06-04T09:00:00Z"
+    },
+    "committer": {
+      "name": "Bob Ops",
+      "email": "bob@localhost",
+      "date": "2024-06-04T09:00:00Z"
+    },
+    "message": "Update deployment scripts",
+    "tree": {
+      "url": "http://localhost/repos/bob/infra/tree/998877665544",
+      "sha": "998877665544"
+    },
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "author": {
+    "login": "bob",
+    "id": 104,
+    "node_id": "USER4",
+    "avatar_url": "http://localhost/images/bob.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/bob",
+    "html_url": "http://localhost/bob",
+    "followers_url": "http://localhost/users/bob/followers",
+    "following_url": "http://localhost/users/bob/following{/other_user}",
+    "gists_url": "http://localhost/users/bob/gists{/gist_id}",
+    "starred_url": "http://localhost/users/bob/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/bob/subscriptions",
+    "organizations_url": "http://localhost/users/bob/orgs",
+    "repos_url": "http://localhost/users/bob/repos",
+    "events_url": "http://localhost/users/bob/events{/privacy}",
+    "received_events_url": "http://localhost/users/bob/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "bob",
+    "id": 104,
+    "node_id": "USER4",
+    "avatar_url": "http://localhost/images/bob.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/bob",
+    "html_url": "http://localhost/bob",
+    "followers_url": "http://localhost/users/bob/followers",
+    "following_url": "http://localhost/users/bob/following{/other_user}",
+    "gists_url": "http://localhost/users/bob/gists{/gist_id}",
+    "starred_url": "http://localhost/users/bob/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/bob/subscriptions",
+    "organizations_url": "http://localhost/users/bob/orgs",
+    "repos_url": "http://localhost/users/bob/repos",
+    "events_url": "http://localhost/users/bob/events{/privacy}",
+    "received_events_url": "http://localhost/users/bob/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "url": "http://localhost/repos/bob/infra/commits/abcabcabcabc",
+      "sha": "abcabcabcabc"
+    }
+  ],
+  "stats": {
+    "additions": 10,
+    "deletions": 0,
+    "total": 10
+  },
+  "files": [
+    {
+      "filename": "deploy.sh",
+      "additions": 10,
+      "deletions": 0,
+      "changes": 10,
+      "status": "modified",
+      "raw_url": "http://localhost/bob/infra/raw/998877665544/deploy.sh",
+      "blob_url": "http://localhost/bob/infra/blob/998877665544/deploy.sh",
+      "patch": "@@ -1,5 +1,15 @@\n..."
+    }
+  ]
+}

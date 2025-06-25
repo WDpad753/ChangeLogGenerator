@@ -1,0 +1,96 @@
+{
+  "url": "http://localhost/repos/testuser/repo-1/commits/a1b2c3d4e5f6",
+  "sha": "a1b2c3d4e5f6",
+  "node_id": "NODEID1",
+  "html_url": "http://localhost/testuser/repo-1/commit/a1b2c3d4e5f6",
+  "comments_url": "http://localhost/repos/testuser/repo-1/commits/a1b2c3d4e5f6/comments",
+  "commit": {
+    "url": "http://localhost/repos/testuser/repo-1/git/commits/a1b2c3d4e5f6",
+    "author": {
+      "name": "John Doe",
+      "email": "john@example.com",
+      "date": "2024-06-01T10:00:00Z"
+    },
+    "committer": {
+      "name": "John Doe",
+      "email": "john@example.com",
+      "date": "2024-06-01T10:00:00Z"
+    },
+    "message": "Initial commit",
+    "tree": {
+      "url": "http://localhost/repos/testuser/repo-1/tree/a1b2c3d4e5f6",
+      "sha": "a1b2c3d4e5f6"
+    },
+    "comment_count": 0,
+    "verification": {
+      "verified": true,
+      "reason": "valid",
+      "signature": "signed_data_here",
+      "payload": "payload_data",
+      "verified_at": "2024-06-01T10:01:00Z"
+    }
+  },
+  "author": {
+    "login": "testuser",
+    "id": 101,
+    "node_id": "USER1",
+    "avatar_url": "http://localhost/images/testuser.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/testuser",
+    "html_url": "http://localhost/testuser",
+    "followers_url": "http://localhost/users/testuser/followers",
+    "following_url": "http://localhost/users/testuser/following{/other_user}",
+    "gists_url": "http://localhost/users/testuser/gists{/gist_id}",
+    "starred_url": "http://localhost/users/testuser/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/testuser/subscriptions",
+    "organizations_url": "http://localhost/users/testuser/orgs",
+    "repos_url": "http://localhost/users/testuser/repos",
+    "events_url": "http://localhost/users/testuser/events{/privacy}",
+    "received_events_url": "http://localhost/users/testuser/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "testuser",
+    "id": 101,
+    "node_id": "USER1",
+    "avatar_url": "http://localhost/images/testuser.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/testuser",
+    "html_url": "http://localhost/testuser",
+    "followers_url": "http://localhost/users/testuser/followers",
+    "following_url": "http://localhost/users/testuser/following{/other_user}",
+    "gists_url": "http://localhost/users/testuser/gists{/gist_id}",
+    "starred_url": "http://localhost/users/testuser/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/testuser/subscriptions",
+    "organizations_url": "http://localhost/users/testuser/orgs",
+    "repos_url": "http://localhost/users/testuser/repos",
+    "events_url": "http://localhost/users/testuser/events{/privacy}",
+    "received_events_url": "http://localhost/users/testuser/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "url": "http://localhost/repos/testuser/repo-1/commits/000000000000",
+      "sha": "000000000000"
+    }
+  ],
+  "stats": {
+    "additions": 42,
+    "deletions": 5,
+    "total": 47
+  },
+  "files": [
+    {
+      "filename": "README.md",
+      "additions": 42,
+      "deletions": 5,
+      "changes": 47,
+      "status": "added",
+      "raw_url": "http://localhost/testuser/repo-1/raw/a1b2c3d4e5f6/README.md",
+      "blob_url": "http://localhost/testuser/repo-1/blob/a1b2c3d4e5f6/README.md",
+      "patch": "@@ -0,0 +1,42 @@\n# Hello World\n..."
+    }
+  ]
+}

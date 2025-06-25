@@ -1,5 +1,6 @@
 ﻿using BaseClass.API;
 using BaseClass.Config;
+using BaseClass.Helper;
 using BaseClass.JSON;
 using BaseClass.Model;
 using BaseLogger;
@@ -20,13 +21,16 @@ namespace ChangeLogCoreLibrary.Classes
         private LogWriter _logger;
         private JSONFileHandler _fileHandler;
         private ConfigHandler _reader;
-        
+        private PathCombine _pathCombiner;
+        //private APIClient _client;
+
         public GitHub(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler Reader, LogWriter Logger)
         {
             _config = config;
             _logger = Logger;
             _fileHandler = JsonReader;
             _reader = Reader;
+            _pathCombiner = new(Logger);
         }
 
         public void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient? client = null, string? EnvVar = null)
@@ -54,18 +58,30 @@ namespace ChangeLogCoreLibrary.Classes
                 foreach (var value in jsonData)
                 {
                     List<object> JsonMapValues = new List<object>();
-                    value.DateChecker = DateTime.Parse(value.author.date.ToString()).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-                    JsonMapValues.Add(DateTime.Parse(value.author.date.ToString()));
+                    value.DateChecker = DateTime.Parse(value.commit.author.date.ToString()).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    JsonMapValues.Add(DateTime.Parse(value.commit.author.date.ToString()));
                     JsonMapValues.Add(value.committer.id);
                     JsonMapValues.Add(value.sha);
                     JsonMapValues.Add(value.committer.name);
                     JsonMapValues.Add(value.commit.message);
 
-                    client = new(value.url, EnvVar, 60, null);
+                    //client.testClient.BaseAddress = new Uri(_pathCombiner.CombinePath(CombinationType.URL, testAdd, "azure", organization, project, "_apis/git/repositories", repositoryName, "commits"));
 
-                    var jsonFile = client.Get<MapGitHubJson.ChangeCounts>();
+                    if(client.testClient != null)
+                    {
+                        client.testClient.BaseAddress = new Uri(value.url);
 
-                    JsonMapValues.Add(jsonFile);
+                        HttpClient testClient = client.testClient;
+                        client.testClient = testClient;
+                    }
+                    else
+                    {
+                        client.APIURL = value.url;
+                    }
+
+                    var jsonFile = client.Get<MapGitHubCommitJson>(value.url);
+
+                    JsonMapValues.Add(jsonFile.Status);
                     JsonMapValues.Add(value.DateChecker);
                     JsonMap.Add(DateTimeOffset.Parse(value.author.date.ToString()).ToUnixTimeSeconds(), JsonMapValues);
                 }

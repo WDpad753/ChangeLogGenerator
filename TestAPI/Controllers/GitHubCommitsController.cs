@@ -28,16 +28,21 @@ namespace TestAPI.Controllers
         [HttpGet("{sha}")]
         public IActionResult GetGitHubCommitChanges(string sha)
         {
+            Random rand = new Random();
             string fileDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string fullpath = Path.Combine(fileDirectory, "Data");
+            string fullpath = Path.Combine(fileDirectory, "Data", "CommitStatus");
 
-            var commitsJson = System.IO.File.ReadAllText($"{fullpath}\\GithubCommits.json");
+            string[] Files = Directory.GetFiles(fullpath);
+            int fileInd = rand.Next(0, Files.Length - 1);
+
+            //var commitsJson = System.IO.File.ReadAllText($"{fullpath}\\GithubCommits.json");
+            var commitsJson = System.IO.File.ReadAllText(Files[fileInd]);
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
 
-            var response = JsonSerializer.Deserialize<List<GitHubCommit>>(commitsJson, options);
+            var response = JsonSerializer.Deserialize<GitHubStats>(commitsJson, options);
 
             return Ok(response);
         }
