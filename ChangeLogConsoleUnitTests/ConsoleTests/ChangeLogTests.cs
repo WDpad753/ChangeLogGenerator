@@ -96,12 +96,15 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             if(File.Exists(logfilepath))
             {
                 File.Delete(logfilepath);
+                File.Delete(Path.Combine(jsonpath, githubJsonfile));
             }
 
             logwriter = new LogWriter(configpath, logpath);
 
             configReader = new(configpath, logwriter);
             Environment.SetEnvironmentVariable("Test", "Hello_Unit_Test", EnvironmentVariableTarget.Process);
+
+            configReader.SaveInfo("", "PrevMapJSONHS");
 
             _config = new CLGConfig();
             _jsonFileHandler = new JSONFileHandler(logwriter);
@@ -256,7 +259,9 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             bool ChangeLogExists = File.Exists(_config.logfilepath);
             bool PrevJsonExists = File.Exists(Path.Combine(_config.jsonpath, _config.jsonfilename));
             string? PrevJsonHS = configReader.ReadInfo("PrevMapJSONHS");
-            bool PrevJsonHSExists = PrevJsonHS != null ? true : false;
+            bool PrevJsonHSExists = PrevJsonHS != null && PrevJsonHS != "" ? true : false;
+
+            //Assert.Pass();
 
             if (ChangeLogExists == true && PrevJsonExists == true && PrevJsonHSExists == true)
             {
