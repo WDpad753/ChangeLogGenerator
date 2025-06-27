@@ -88,6 +88,7 @@ namespace ChangeLogCoreLibrary.Classes
                     var jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
 
                     JsonMapValues.Add(jsonFile.stats);
+                    //JsonMapValues.Add(jsonFile.files);
                     JsonMapValues.Add(value.DateChecker);
                     JsonMap.Add(DateTimeOffset.Parse(value.commit.author.date.ToString()).ToUnixTimeSeconds(), JsonMapValues);
                 }
