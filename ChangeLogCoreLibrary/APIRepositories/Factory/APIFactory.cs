@@ -13,15 +13,15 @@ using System.Threading.Tasks;
 
 namespace ChangeLogCoreLibrary.APIRepositories.Factory
 {
-    public class APIFactory
+    public class APIFactory<TEntryPoint> where TEntryPoint : class
     {
-        public static IAPIRepo GetAPIRepo(RepoMode mode, CLGConfig settings, JSONFileHandler JsonReader, ConfigHandler configReader, LogWriter logger)
+        public static IAPIRepo<TEntryPoint> GetAPIRepo(RepoMode mode, CLGConfig settings, JSONFileHandler JsonReader, ConfigHandler configReader, LogWriter logger)
         {
             return mode switch
             {
-                RepoMode.AzureDevOps => new AzureDevOps(settings, JsonReader, configReader, logger),
-                RepoMode.GitHub => new GitHub(settings, JsonReader, configReader, logger),
-                RepoMode.APITest => new APITest(settings, JsonReader, configReader, logger),
+                RepoMode.AzureDevOps => new AzureDevOps<TEntryPoint>(settings, JsonReader, configReader, logger),
+                RepoMode.GitHub => new GitHub<TEntryPoint>(settings, JsonReader, configReader, logger),
+                RepoMode.APITest => new APITest<TEntryPoint>(settings, JsonReader, configReader, logger),
                 _ => throw new ArgumentException("Invalid mode", nameof(mode))
             };
         }

@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace ChangeLogCoreLibrary.Classes
 {
-    public class GitHub : IAPIRepo
+    public class GitHub<TEntryPoint> : IAPIRepo<TEntryPoint> where TEntryPoint : class
     {
         private CLGConfig _config;
         private LogWriter _logger;
@@ -34,7 +34,7 @@ namespace ChangeLogCoreLibrary.Classes
             _pathCombiner = new(Logger);
         }
 
-        public async void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient? client = null, string? EnvVar = null)
+        public async void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient<TEntryPoint>? client = null, string? EnvVar = null)
         {
             int Switch;
             Dictionary<long, List<object>> JsonMap = new Dictionary<long, List<object>>();

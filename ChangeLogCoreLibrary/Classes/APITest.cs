@@ -15,14 +15,14 @@ using System.Threading.Tasks;
 
 namespace ChangeLogCoreLibrary.Classes
 {
-    public class APITest : IAPIRepo
+    public class APITest<TEntryPoint> : IAPIRepo<TEntryPoint> where TEntryPoint : class
     {
         private CLGConfig _config;
         private LogWriter _logger;
         private JSONFileHandler _fileHandler;
         private ConfigHandler _reader;
-        private AzureDevOps DevOps;
-        private GitHub Github;
+        private AzureDevOps<TEntryPoint> DevOps;
+        private GitHub<TEntryPoint> Github;
 
         public APITest(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler Reader, LogWriter Logger)
         {
@@ -34,7 +34,7 @@ namespace ChangeLogCoreLibrary.Classes
             Github = new(config,JsonReader,Reader,Logger);
         }
 
-        public void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient? client = null, string? EnvVar = null)
+        public void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient<TEntryPoint>? client = null, string? EnvVar = null)
         {
             int Switch;
             Dictionary<long, List<object>> JsonMap = new Dictionary<long, List<object>>();

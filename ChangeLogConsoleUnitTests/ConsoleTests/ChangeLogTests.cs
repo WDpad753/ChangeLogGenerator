@@ -1,14 +1,16 @@
-﻿using BaseClass.API.Interface;
+﻿using BaseClass.API;
+using BaseClass.API.Interface;
 using BaseClass.Config;
 using BaseClass.JSON;
 using BaseClass.Model;
 using BaseLogger;
 using BaseLogger.Models;
-using ChangeLogConsole.Writer;
+//using ChangeLogConsole.Writer;
 using ChangeLogCoreLibrary.APIRepositories.Factory;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
 using ChangeLogCoreLibrary.Classes;
 using ChangeLogCoreLibrary.Model;
+using ChangeLogCoreLibrary.Writer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
@@ -45,23 +47,6 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         }
     }
 
-    public class TestClientProvider : IWebFactoryProvider
-    {
-        private readonly WebApplicationFactory<TestAPI.Program> _factory;
-
-        public TestClientProvider(WebApplicationFactory<TestAPI.Program> factory)
-        {
-            _factory = factory;
-        }
-
-        public HttpClient CreateClient(Uri baseAddress)
-        {
-            var client = _factory.CreateClient();
-            client.BaseAddress = baseAddress;
-            return client;
-        }
-    }
-
     [TestFixture]
     //public class ChangeLogTests : ApiTestBase
     public class ChangeLogTests
@@ -69,7 +54,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         private LogWriter logwriter;
         private ConfigHandler configReader;
         private string logpath;
-        private IAPIRepo _repo;
+        private IAPIRepo<TestAPI.Program> _repo;
         //private WebApplicationFactory<TestAPI.Program> _factory = null!;
         private HttpClient _client = null;
         private CLGConfig _config;
@@ -125,7 +110,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         [Test]
         public void CommitCaptureModeTestSelection()
         {
-            var mode = APIFactory.GetAPIRepo(RepoMode.AzureDevOps,
+            var mode = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.AzureDevOps,
                 new CLGConfig(),
                 new JSONFileHandler(logwriter),
                 configReader,
@@ -133,7 +118,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             if (mode != null)
             {
-                Assert.That(mode.GetType() == typeof(AzureDevOps), "Mode is not Azure DevOps");
+                Assert.That(mode.GetType() == typeof(AzureDevOps<TestAPI.Program>), "Mode is not Azure DevOps");
             }
             else
             {
@@ -161,7 +146,9 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         public async Task AzureEndpoint()
         {
             string baseUrl = _client.BaseAddress!.ToString();
-            var factoryProvider = new TestClientProvider(TestEnvironment.Factory);
+            //var factoryProvider = new TestClientProvider(TestEnvironment.Factory);
+            var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, TestEnvironment.Factory);
+            clientProvider.testClient = true;
 
             if (baseUrl == null || baseUrl == string.Empty)
             {
@@ -175,7 +162,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             _config.jsonfilename = azureJsonfile;
 
 
-            _repo = APIFactory.GetAPIRepo(RepoMode.APITest,
+            _repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.APITest,
                     _config,
                     _jsonFileHandler,
                     configReader,
@@ -186,7 +173,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
                 Assert.Fail("Unable to obtain a valid API Repository Mode");
             }
 
-            ChangeLogWrite clg = new ChangeLogWrite(_repo, _config, logwriter, logFilePath, factoryProvider);
+            ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, logwriter, logFilePath, clientProvider);
 
             try
             {
@@ -217,7 +204,9 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         public async Task GitHubEndpoint()
         {
             string baseUrl = _client.BaseAddress!.ToString();
-            var factoryProvider = new TestClientProvider(TestEnvironment.Factory);
+            //var factoryProvider = new TestClientProvider(TestEnvironment.Factory);
+            var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, TestEnvironment.Factory);
+            clientProvider.testClient = true;
 
             _config.runType = "GitHub";
 
@@ -232,7 +221,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             _config.jsonfilename = githubJsonfile;
 
-            _repo = APIFactory.GetAPIRepo(RepoMode.APITest,
+            _repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.APITest,
                 _config,
                 _jsonFileHandler,
                 configReader,
@@ -243,7 +232,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
                 Assert.Fail("Unable to obtain a valid API Repository Mode");
             }
 
-            ChangeLogWrite clg = new ChangeLogWrite(_repo, _config, logwriter, logFilePath, factoryProvider);
+            ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, logwriter, logFilePath, clientProvider);
 
             try
             {

@@ -4,8 +4,9 @@ using BaseClass.JSON;
 using BaseClass.Model;
 using BaseLogger;
 using BaseLogger.Models;
-using ChangeLogConsole.Writer;
+//using ChangeLogConsole.Writer;
 using ChangeLogCoreLibrary.Model;
+using ChangeLogCoreLibrary.Writer;
 using System;
 
 //using Common.Abstractions;
@@ -30,7 +31,7 @@ namespace ChangeLogConsole
         private static LogWriter? logwriter;
         private static ConfigHandler? reader;
         private static string? NameSpace = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-        private static ChangeLogWrite clg;
+        //private static ChangeLogWrite<null> clg;
         private static JSONFileHandler jsonHandler;
         private static List<string> ext = new List<string> { "config" };
         public static CLGConfig _config { get; set; }

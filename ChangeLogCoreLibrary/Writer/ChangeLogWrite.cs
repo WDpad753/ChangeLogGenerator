@@ -17,7 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChangeLogConsole.Writer
+namespace ChangeLogCoreLibrary.Writer
 {
     public class ChangeLogWrite<T> where T : class
     {

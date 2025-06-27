@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace ChangeLogCoreLibrary.Classes
 {
-    public class AzureDevOps : IAPIRepo
+    public class AzureDevOps<TEntryPoint> : IAPIRepo<TEntryPoint> where TEntryPoint : class
     {
         private CLGConfig _config;
         private LogWriter _logger;
@@ -33,7 +33,7 @@ namespace ChangeLogCoreLibrary.Classes
             _reader = configReader;
         }
 
-        public void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient? client = null, string? EnvVar = null)
+        public void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient<TEntryPoint>? client = null, string? EnvVar = null)
         {
             int Switch;
             Dictionary<long, List<object>> JsonMap = new Dictionary<long, List<object>>();
