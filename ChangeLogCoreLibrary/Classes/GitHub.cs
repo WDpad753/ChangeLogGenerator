@@ -24,6 +24,7 @@ namespace ChangeLogCoreLibrary.Classes
         private ConfigHandler _reader;
         private PathCombine _pathCombiner;
         //private APIClient _client;
+        private Guid commiterID;
 
         public GitHub(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler Reader, LogWriter Logger)
         {
@@ -32,6 +33,7 @@ namespace ChangeLogCoreLibrary.Classes
             _fileHandler = JsonReader;
             _reader = Reader;
             _pathCombiner = new(Logger);
+            commiterID = Guid.NewGuid();
         }
 
         public async void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient<TEntryPoint>? client = null, string? EnvVar = null)
@@ -61,7 +63,7 @@ namespace ChangeLogCoreLibrary.Classes
                     List<object> JsonMapValues = new List<object>();
                     value.DateChecker = DateTime.Parse(value.commit.author.date.ToString()).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
                     JsonMapValues.Add(DateTime.Parse(value.commit.author.date.ToString()));
-                    JsonMapValues.Add(value.committer.id);
+                    JsonMapValues.Add(value.committer == null ? commiterID.ToString().Replace("-","") : value.committer.id);
                     JsonMapValues.Add(value.commit.author.name);
                     JsonMapValues.Add(value.commit.author.name);
                     //JsonMapValues.Add(value.committer.name);
@@ -85,7 +87,30 @@ namespace ChangeLogCoreLibrary.Classes
                     //    client.APIURL = value.url;
                     //}
 
-                    var jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
+                    MapGitHubCommitJson? jsonFile = null;
+
+                    if (_config.testURL != null)
+                    {
+                        if (_config.testClient.BaseAddress.ToString().Contains(_config.testURL))
+                        {
+                            jsonFile = await client.Get<MapGitHubCommitJson>(value.sha);
+                        }
+                        else
+                        {
+                            jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
+                        }
+                    }
+                    else if(_config.testURL == null && _config.testClient != null)
+                    {
+                        jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
+                    }
+
+                    if (_config.testClient == null)
+                    {
+                        jsonFile = await client.Get<MapGitHubCommitJson>(value.sha);
+                    }
+
+                    //jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
 
                     JsonMapValues.Add(jsonFile.stats);
                     //JsonMapValues.Add(jsonFile.files);
@@ -328,7 +353,7 @@ namespace ChangeLogCoreLibrary.Classes
                 }
                 else
                 {
-                    using (StreamWriter writer = new StreamWriter(filepath))
+                    using (StreamWriter writer = new StreamWriter(_pathCombiner.CombinePath(CombinationType.Folder, filepath, _config.logfilename)))
                     {
                         int cnt = 0;
 
@@ -342,7 +367,7 @@ namespace ChangeLogCoreLibrary.Classes
                                 var CommitterName = list[3].ToString();
                                 var CommitMessage = list[4].ToString();
                                 //var ChangeCounts = list[5];
-                                var ChangeCounts = list.OfType<Stats>().FirstOrDefault();  
+                                var ChangeCounts = list.OfType<Stats>().FirstOrDefault();
 
                                 DateTime dt = DateTime.Parse(Datetime);
                                 string date = dt.ToString("dddd, yyyy-MM-dd", CultureInfo.InvariantCulture);

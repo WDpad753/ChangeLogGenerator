@@ -19,3 +19,7 @@ obj/
 
 # Others you may want
 *.log
+
+# Ignore specific files
+/ChangeLogConsole/*.txt
+/ChangeLogConsole/Config/*.config
