@@ -418,6 +418,6 @@ FodyWeavers.xsd
 *.msp
 
 # Ignore Files
-ChangeLogGenerator/ChangeLogConsole/*.txt
-ChangeLogGenerator/ChangeLogConsole/Config/*.config
-ChangeLogGenerator/TestAPI/Properties/PublishProfiles/*.pubxml
+ChangeLogConsole/*.txt
+ChangeLogConsole/Config/*.config
+TestAPI/Properties/PublishProfiles/*.pubxml

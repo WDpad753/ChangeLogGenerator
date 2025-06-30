@@ -29,7 +29,7 @@ namespace ChangeLogCoreLibrary.Writer
         private LogWriter _logger;
         private PathCombine _pathCombiner;
         private static MapAzureJson prevMapAzureJson = new MapAzureJson();
-        private static MapGitHubJson prevMapGithubJson = new MapGitHubJson();
+        private static List<MapGitHubJson> prevMapGithubJson = new List<MapGitHubJson>();
         private readonly IAPIRepo<T> _repo;
         private string _logFilePath;
         //private readonly IWebFactoryProvider? _factoryProvider;
@@ -51,11 +51,25 @@ namespace ChangeLogCoreLibrary.Writer
         public async Task<string?> ChangeLogReaderWriter()
         {
             string? EnvVar = null;
-            string prevMapJsonHS = _reader.ReadInfo("PrevMapJSONHS");
+            string? prevMapJsonHS = null;
+            string? organization = null;
+            string? project = null;
+            string? repositoryName = null;
 
-            var organization = _reader.ReadInfo("Organisation");
-            var project = _reader.ReadInfo("Project");
-            var repositoryName = _reader.ReadInfo("RepositoryName");
+            if (_config.testClient != null)
+            {
+                prevMapJsonHS = _reader.ReadInfo("PrevMapJSONHS");
+                organization = _reader.ReadInfo("Organisation");
+                project = _reader.ReadInfo("Project");
+                repositoryName = _reader.ReadInfo("RepositoryName");
+            }
+            else
+            {
+                prevMapJsonHS = _reader.ReadInfo("PrevMapJSONHS", "changelogSettings");
+                organization = _reader.ReadInfo("Organisation", "changelogSettings");
+                project = _reader.ReadInfo("Project", "changelogSettings");
+                repositoryName = _reader.ReadInfo("RepositoryName", "changelogSettings");
+            }
 
             //// Base URL for Azure DevOps REST API
             //string baseUrl = $"https://dev.azure.com/{organization}/{project}/_apis/git/repositories/{repositoryName}/commits";
@@ -106,21 +120,25 @@ namespace ChangeLogCoreLibrary.Writer
 
                 //_client = new APIClient(_pathCombiner.CombinePath(CombinationType.URL, APIRepoPath.Github, organization, project, "_apis/git/repositories", repositoryName, "commits"), EnvVar, 60);
 
-                _client.APIURL = _pathCombiner.CombinePath(CombinationType.URL, APIRepoPath.Github, "repos", organization, repositoryName, "commits");
+                _client.APIURL = _pathCombiner.CombinePath(CombinationType.URL, APIRepoPath.Github, "repos", organization, repositoryName, "commits").TrimEnd('/');
+                //_client.APIURL = _client.APIURL.TrimEnd('/');
                 _client.PerAccTok = EnvVar;
                 _client.timeOut = 60;
 
-                MapGitHubJson mapJson = await _client.Get<MapGitHubJson>();
-                string mapJsonHS = Crc32.CalculateHash<MapGitHubJson>(mapJson);
+                //MapGitHubJson mapJson = await _client.Get<MapGitHubJson>();
+                //string mapJsonHS = Crc32.CalculateHash<MapGitHubJson>(mapJson);
+
+                List<MapGitHubJson> mapJson = await _client.Get<List<MapGitHubJson>>();
+                string mapJsonHS = Crc32.CalculateHash<List<MapGitHubJson>>(mapJson as List<MapGitHubJson>);
 
                 if (mapJson != null)
                 {
                     if (File.Exists(Path.Combine(_config.jsonpath, _config.jsonfilename)))
                     {
-                        prevMapGithubJson = _fileHandler.GetJson<MapGitHubJson>(Path.Combine(_config.jsonpath, _config.jsonfilename));
+                        prevMapGithubJson = _fileHandler.GetJson<List<MapGitHubJson>>(Path.Combine(_config.jsonpath, _config.jsonfilename));
                         if (prevMapGithubJson == null)
                         {
-                            prevMapGithubJson = _fileHandler.GetJson<MapGitHubJson>(Path.Combine(_config.backupjsonpath, _config.jsonfilename));
+                            prevMapGithubJson = _fileHandler.GetJson<List<MapGitHubJson>>(Path.Combine(_config.backupjsonpath, _config.jsonfilename));
                         }
                     }
 
@@ -164,7 +182,7 @@ namespace ChangeLogCoreLibrary.Writer
                     mapJson = await _client.Get<MapAzureJson>();
                     mapJsonHS = Crc32.CalculateHash<MapAzureJson>(mapJson as MapAzureJson);
                 }
-                else if(_config.runType == "GitHub")
+                else if (_config.runType == "GitHub")
                 {
                     ///repos/{ owner}/{ repo}/commits
                     //_config.testClient.BaseAddress = new Uri(_pathCombiner.CombinePath(CombinationType.URL, testAdd,"repos", organization, repositoryName, "commits"));
@@ -193,7 +211,7 @@ namespace ChangeLogCoreLibrary.Writer
                             //mapJson = await _client.Get<MapAzureJson>();
                             mapJsonHS = Crc32.CalculateHash<MapAzureJson>(mapJson as MapAzureJson);
                             prevMapJson = _fileHandler.GetJson<MapAzureJson>(Path.Combine(_config.jsonpath, _config.jsonfilename));
-                            
+
                             if (prevMapJson == null)
                             {
                                 prevMapJson = _fileHandler.GetJson<MapAzureJson>(Path.Combine(_config.backupjsonpath, _config.jsonfilename));
@@ -205,7 +223,7 @@ namespace ChangeLogCoreLibrary.Writer
                             //mapJson = await _client.Get<MapGitHubJson>();
                             mapJsonHS = Crc32.CalculateHash<List<MapGitHubJson>>(mapJson as List<MapGitHubJson>);
                             prevMapJson = _fileHandler.GetJson<List<MapGitHubJson>>(Path.Combine(_config.jsonpath, _config.jsonfilename));
-                            
+
                             if (prevMapJson == null)
                             {
                                 prevMapJson = _fileHandler.GetJson<List<MapGitHubJson>>(Path.Combine(_config.backupjsonpath, _config.jsonfilename));

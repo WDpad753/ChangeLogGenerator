@@ -24,6 +24,7 @@ namespace ChangeLogCoreLibrary.Classes
         private JSONFileHandler _fileHandler;
         private ConfigHandler _reader;
         private static MapAzureJson prevMapJson = new MapAzureJson();
+        private readonly PathCombine _pathHandler;
 
         public AzureDevOps(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler configReader,  LogWriter Logger)
         {
@@ -31,6 +32,7 @@ namespace ChangeLogCoreLibrary.Classes
             _logger = Logger;
             _fileHandler = JsonReader;
             _reader = configReader;
+            _pathHandler = new(Logger);
         }
 
         public void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient<TEntryPoint>? client = null, string? EnvVar = null)
@@ -331,7 +333,8 @@ namespace ChangeLogCoreLibrary.Classes
                 }
                 else
                 {
-                    using (StreamWriter writer = new StreamWriter(filepath))
+                    //using (StreamWriter writer = new StreamWriter(filepath))
+                    using (StreamWriter writer = new StreamWriter(_pathHandler.CombinePath(CombinationType.Folder, filepath, _config.logfilename)))
                     {
                         foreach (object valueItem in listOfLists)
                         {
