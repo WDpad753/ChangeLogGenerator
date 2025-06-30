@@ -418,5 +418,5 @@ FodyWeavers.xsd
 *.msp
 
 # Ignore Files
-ChangeLogGenerator\ChangeLogConsole\*.txt
-TestAPI\Properties\PublishProfiles\*.pubxml
+ChangeLogGenerator/ChangeLogConsole/*.txt
+TestAPI/Properties/PublishProfiles/*.pubxml
