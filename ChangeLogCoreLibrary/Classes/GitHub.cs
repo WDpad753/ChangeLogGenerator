@@ -66,27 +66,7 @@ namespace ChangeLogCoreLibrary.Classes
                     JsonMapValues.Add(value.committer == null ? commiterID.ToString().Replace("-","") : value.committer.id);
                     JsonMapValues.Add(value.commit.author.name);
                     JsonMapValues.Add(value.commit.author.name);
-                    //JsonMapValues.Add(value.committer.name);
                     JsonMapValues.Add(value.commit.message);
-
-                    //client.testClient.BaseAddress = new Uri(_pathCombiner.CombinePath(CombinationType.URL, testAdd, "azure", organization, project, "_apis/git/repositories", repositoryName, "commits"));
-
-                    //if (client.testClient == true)
-                    //{
-                    //    client.APIURL = value.sha;
-                    //}
-                    //if (client.testClient != true)
-                    //{
-                    //    //client.testClient.BaseAddress = new Uri(value.url);
-
-                    //    //HttpClient testClient = client.testClient;
-                    //    //client.testClient = testClient;
-                    //}
-                    //else
-                    //{
-                    //    client.APIURL = value.url;
-                    //}
-
                     MapGitHubCommitJson? jsonFile = null;
 
                     if (_config.testURL != null)
@@ -207,7 +187,15 @@ namespace ChangeLogCoreLibrary.Classes
                     _fileHandler.SaveJson(mapJson, Path.Combine(_config.jsonpath, _config.jsonfilename).ToString());
                     //_fileHandler.SaveJson(mapJson, Path.Combine(_config.backupjsonpath, _config.jsonfilename).ToString());
                     prevMapJsonHS = Crc32.CalculateHash(mapJson);
-                    _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS");
+                    
+                    if(_config.testClient != null)
+                    {
+                        _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS");
+                    }
+                    else
+                    {
+                        _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
+                    }
                 }
                 else if (File.Exists(filepath) && fileInfo.Length > 0 && !mapJsonHS.Equals(prevMapJsonHS))
                 {
@@ -344,7 +332,17 @@ namespace ChangeLogCoreLibrary.Classes
                                 _fileHandler.SaveJson(mapJson, Path.Combine(_config.jsonpath, _config.jsonfilename).ToString());
                                 //_fileHandler.SaveJson(mapJson, Path.Combine(_config.backupjsonpath, _config.jsonfilename).ToString());
                                 prevMapJsonHS = Crc32.CalculateHash(mapJson);
-                                _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS");
+                                //_reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
+
+                                if (_config.testClient != null)
+                                {
+                                    _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS");
+                                }
+                                else
+                                {
+                                    _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
+                                }
+
                                 sw.Close();
                             }
                             Console.WriteLine("Done");
@@ -443,8 +441,18 @@ namespace ChangeLogCoreLibrary.Classes
                         _fileHandler.SaveJson(mapJson, Path.Combine(_config.jsonpath, _config.jsonfilename).ToString());
                         //_fileHandler.SaveJson(mapJson, Path.Combine(_config.backupjsonpath, _config.jsonfilename).ToString());
                         prevMapJsonHS = Crc32.CalculateHash(mapJson);
-                        _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS");
+                        //_reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
                         //writer.Close();
+
+                        if (_config.testClient != null)
+                        {
+                            _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS");
+                        }
+                        else
+                        {
+                            _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
+                        }
+
                     }
                 }
             }

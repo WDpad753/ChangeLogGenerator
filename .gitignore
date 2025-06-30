@@ -420,4 +420,4 @@ FodyWeavers.xsd
 # Ignore Files
 ChangeLogConsole/*.txt
 ChangeLogConsole/Config/*.config
-TestAPI/Properties/PublishProfiles/*.pubxml
+TestAPI/Properties/PublishProfiles/*
