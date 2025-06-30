@@ -1,0 +1,96 @@
+{
+  "url": "http://localhost/repos/devuser/app/commits/abc123def456",
+  "sha": "abc123def456",
+  "node_id": "NODEID2",
+  "html_url": "http://localhost/devuser/app/commit/abc123def456",
+  "comments_url": "http://localhost/repos/devuser/app/commits/abc123def456/comments",
+  "commit": {
+    "url": "http://localhost/repos/devuser/app/git/commits/abc123def456",
+    "author": {
+      "name": "Dev User",
+      "email": "dev@localhost",
+      "date": "2024-06-02T12:34:56Z"
+    },
+    "committer": {
+      "name": "Dev User",
+      "email": "dev@localhost",
+      "date": "2024-06-02T12:34:56Z"
+    },
+    "message": "Add feature A",
+    "tree": {
+      "url": "http://localhost/repos/devuser/app/tree/abc123def456",
+      "sha": "abc123def456"
+    },
+    "comment_count": 1,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "author": {
+    "login": "devuser",
+    "id": 102,
+    "node_id": "USER2",
+    "avatar_url": "http://localhost/images/devuser.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/devuser",
+    "html_url": "http://localhost/devuser",
+    "followers_url": "http://localhost/users/devuser/followers",
+    "following_url": "http://localhost/users/devuser/following{/other_user}",
+    "gists_url": "http://localhost/users/devuser/gists{/gist_id}",
+    "starred_url": "http://localhost/users/devuser/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/devuser/subscriptions",
+    "organizations_url": "http://localhost/users/devuser/orgs",
+    "repos_url": "http://localhost/users/devuser/repos",
+    "events_url": "http://localhost/users/devuser/events{/privacy}",
+    "received_events_url": "http://localhost/users/devuser/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "devuser",
+    "id": 102,
+    "node_id": "USER2",
+    "avatar_url": "http://localhost/images/devuser.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/devuser",
+    "html_url": "http://localhost/devuser",
+    "followers_url": "http://localhost/users/devuser/followers",
+    "following_url": "http://localhost/users/devuser/following{/other_user}",
+    "gists_url": "http://localhost/users/devuser/gists{/gist_id}",
+    "starred_url": "http://localhost/users/devuser/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/devuser/subscriptions",
+    "organizations_url": "http://localhost/users/devuser/orgs",
+    "repos_url": "http://localhost/users/devuser/repos",
+    "events_url": "http://localhost/users/devuser/events{/privacy}",
+    "received_events_url": "http://localhost/users/devuser/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "url": "http://localhost/repos/devuser/app/commits/abcdefabcdef",
+      "sha": "abcdefabcdef"
+    }
+  ],
+  "stats": {
+    "additions": 100,
+    "deletions": 20,
+    "total": 120
+  },
+  "files": [
+    {
+      "filename": "featureA.js",
+      "additions": 100,
+      "deletions": 20,
+      "changes": 120,
+      "status": "added",
+      "raw_url": "http://localhost/devuser/app/raw/abc123def456/featureA.js",
+      "blob_url": "http://localhost/devuser/app/blob/abc123def456/featureA.js",
+      "patch": "@@ -0,0 +1,100 @@\nfunction featureA() { return true; }\n..."
+    }
+  ]
+}

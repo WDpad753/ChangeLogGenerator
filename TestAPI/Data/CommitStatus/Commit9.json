@@ -1,0 +1,85 @@
+{
+  "url": "http://localhost/repos/nobody/nothing/commits/000000000000",
+  "sha": "000000000000",
+  "node_id": "NODEID_ZERO",
+  "html_url": "http://localhost/nobody/nothing/commit/000000000000",
+  "comments_url": "http://localhost/repos/nobody/nothing/commits/000000000000/comments",
+  "commit": {
+    "url": "http://localhost/repos/nobody/nothing/git/commits/000000000000",
+    "author": {
+      "name": "Nobody",
+      "email": "nobody@localhost",
+      "date": "2024-06-10T00:00:00Z"
+    },
+    "committer": {
+      "name": "Nobody",
+      "email": "nobody@localhost",
+      "date": "2024-06-10T00:00:00Z"
+    },
+    "message": "Empty commit for trigger only",
+    "tree": {
+      "url": "http://localhost/repos/nobody/nothing/tree/000000000000",
+      "sha": "000000000000"
+    },
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "author": {
+    "login": "nobody",
+    "id": 999,
+    "node_id": "USER_ZERO",
+    "avatar_url": "http://localhost/images/nobody.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/nobody",
+    "html_url": "http://localhost/nobody",
+    "followers_url": "http://localhost/users/nobody/followers",
+    "following_url": "http://localhost/users/nobody/following{/other_user}",
+    "gists_url": "http://localhost/users/nobody/gists{/gist_id}",
+    "starred_url": "http://localhost/users/nobody/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/nobody/subscriptions",
+    "organizations_url": "http://localhost/users/nobody/orgs",
+    "repos_url": "http://localhost/users/nobody/repos",
+    "events_url": "http://localhost/users/nobody/events{/privacy}",
+    "received_events_url": "http://localhost/users/nobody/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "nobody",
+    "id": 999,
+    "node_id": "USER_ZERO",
+    "avatar_url": "http://localhost/images/nobody.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/nobody",
+    "html_url": "http://localhost/nobody",
+    "followers_url": "http://localhost/users/nobody/followers",
+    "following_url": "http://localhost/users/nobody/following{/other_user}",
+    "gists_url": "http://localhost/users/nobody/gists{/gist_id}",
+    "starred_url": "http://localhost/users/nobody/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/nobody/subscriptions",
+    "organizations_url": "http://localhost/users/nobody/orgs",
+    "repos_url": "http://localhost/users/nobody/repos",
+    "events_url": "http://localhost/users/nobody/events{/privacy}",
+    "received_events_url": "http://localhost/users/nobody/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "url": "http://localhost/repos/nobody/nothing/commits/ffffffffffff",
+      "sha": "ffffffffffff"
+    }
+  ],
+  "stats": {
+    "additions": 0,
+    "deletions": 0,
+    "total": 0
+  },
+  "files": []
+}

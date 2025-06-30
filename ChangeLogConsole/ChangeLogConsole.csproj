@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Writer\**" />
+    <EmbeddedResource Remove="Writer\**" />
+    <None Remove="Writer\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BaseClassLibrary\BaseClass\BaseClass.csproj" />
+    <ProjectReference Include="..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj" />
+    <ProjectReference Include="..\ChangeLogCoreLibrary\ChangeLogCoreLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="JsonFiles\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Config\App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

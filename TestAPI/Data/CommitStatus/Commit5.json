@@ -1,0 +1,96 @@
+{
+  "url": "http://localhost/repos/carol/mobile-app/commits/112233445566",
+  "sha": "112233445566",
+  "node_id": "NODEID5",
+  "html_url": "http://localhost/carol/mobile-app/commit/112233445566",
+  "comments_url": "http://localhost/repos/carol/mobile-app/commits/112233445566/comments",
+  "commit": {
+    "url": "http://localhost/repos/carol/mobile-app/git/commits/112233445566",
+    "author": {
+      "name": "Carol Dev",
+      "email": "carol@localhost",
+      "date": "2024-06-05T15:00:00Z"
+    },
+    "committer": {
+      "name": "Carol Dev",
+      "email": "carol@localhost",
+      "date": "2024-06-05T15:00:00Z"
+    },
+    "message": "Fix crash on login screen",
+    "tree": {
+      "url": "http://localhost/repos/carol/mobile-app/tree/112233445566",
+      "sha": "112233445566"
+    },
+    "comment_count": 2,
+    "verification": {
+      "verified": true,
+      "reason": "valid",
+      "signature": "signaturedata",
+      "payload": "payloaddata",
+      "verified_at": "2024-06-05T15:05:00Z"
+    }
+  },
+  "author": {
+    "login": "carol",
+    "id": 105,
+    "node_id": "USER5",
+    "avatar_url": "http://localhost/images/carol.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/carol",
+    "html_url": "http://localhost/carol",
+    "followers_url": "http://localhost/users/carol/followers",
+    "following_url": "http://localhost/users/carol/following{/other_user}",
+    "gists_url": "http://localhost/users/carol/gists{/gist_id}",
+    "starred_url": "http://localhost/users/carol/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/carol/subscriptions",
+    "organizations_url": "http://localhost/users/carol/orgs",
+    "repos_url": "http://localhost/users/carol/repos",
+    "events_url": "http://localhost/users/carol/events{/privacy}",
+    "received_events_url": "http://localhost/users/carol/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "carol",
+    "id": 105,
+    "node_id": "USER5",
+    "avatar_url": "http://localhost/images/carol.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/carol",
+    "html_url": "http://localhost/carol",
+    "followers_url": "http://localhost/users/carol/followers",
+    "following_url": "http://localhost/users/carol/following{/other_user}",
+    "gists_url": "http://localhost/users/carol/gists{/gist_id}",
+    "starred_url": "http://localhost/users/carol/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/carol/subscriptions",
+    "organizations_url": "http://localhost/users/carol/orgs",
+    "repos_url": "http://localhost/users/carol/repos",
+    "events_url": "http://localhost/users/carol/events{/privacy}",
+    "received_events_url": "http://localhost/users/carol/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "url": "http://localhost/repos/carol/mobile-app/commits/445566778899",
+      "sha": "445566778899"
+    }
+  ],
+  "stats": {
+    "additions": 15,
+    "deletions": 5,
+    "total": 20
+  },
+  "files": [
+    {
+      "filename": "login.js",
+      "additions": 15,
+      "deletions": 5,
+      "changes": 20,
+      "status": "modified",
+      "raw_url": "http://localhost/carol/mobile-app/raw/112233445566/login.js",
+      "blob_url": "http://localhost/carol/mobile-app/blob/112233445566/login.js",
+      "patch": "@@ -45,10 +45,20 @@\n..."
+    }
+  ]
+}

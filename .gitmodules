@@ -1,0 +1,3 @@
+[submodule "BaseClassLibrary"]
+	path = BaseClassLibrary
+	url = https://github.com/WDpad753/BaseClassLibrary.git

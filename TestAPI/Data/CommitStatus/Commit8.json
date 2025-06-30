@@ -1,0 +1,96 @@
+{
+  "url": "http://localhost/repos/frank/tools/commits/abcdef123456",
+  "sha": "abcdef123456",
+  "node_id": "NODEID8",
+  "html_url": "http://localhost/frank/tools/commit/abcdef123456",
+  "comments_url": "http://localhost/repos/frank/tools/commits/abcdef123456/comments",
+  "commit": {
+    "url": "http://localhost/repos/frank/tools/git/commits/abcdef123456",
+    "author": {
+      "name": "Frank Tools",
+      "email": "frank@localhost",
+      "date": "2024-06-08T12:30:00Z"
+    },
+    "committer": {
+      "name": "Frank Tools",
+      "email": "frank@localhost",
+      "date": "2024-06-08T12:30:00Z"
+    },
+    "message": "Add new CLI command",
+    "tree": {
+      "url": "http://localhost/repos/frank/tools/tree/abcdef123456",
+      "sha": "abcdef123456"
+    },
+    "comment_count": 0,
+    "verification": {
+      "verified": true,
+      "reason": "valid",
+      "signature": "signaturedata",
+      "payload": "payloaddata",
+      "verified_at": "2024-06-08T12:35:00Z"
+    }
+  },
+  "author": {
+    "login": "frank",
+    "id": 108,
+    "node_id": "USER8",
+    "avatar_url": "http://localhost/images/frank.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/frank",
+    "html_url": "http://localhost/frank",
+    "followers_url": "http://localhost/users/frank/followers",
+    "following_url": "http://localhost/users/frank/following{/other_user}",
+    "gists_url": "http://localhost/users/frank/gists{/gist_id}",
+    "starred_url": "http://localhost/users/frank/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/frank/subscriptions",
+    "organizations_url": "http://localhost/users/frank/orgs",
+    "repos_url": "http://localhost/users/frank/repos",
+    "events_url": "http://localhost/users/frank/events{/privacy}",
+    "received_events_url": "http://localhost/users/frank/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "frank",
+    "id": 108,
+    "node_id": "USER8",
+    "avatar_url": "http://localhost/images/frank.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/frank",
+    "html_url": "http://localhost/frank",
+    "followers_url": "http://localhost/users/frank/followers",
+    "following_url": "http://localhost/users/frank/following{/other_user}",
+    "gists_url": "http://localhost/users/frank/gists{/gist_id}",
+    "starred_url": "http://localhost/users/frank/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/frank/subscriptions",
+    "organizations_url": "http://localhost/users/frank/orgs",
+    "repos_url": "http://localhost/users/frank/repos",
+    "events_url": "http://localhost/users/frank/events{/privacy}",
+    "received_events_url": "http://localhost/users/frank/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "url": "http://localhost/repos/frank/tools/commits/123456abcdef",
+      "sha": "123456abcdef"
+    }
+  ],
+  "stats": {
+    "additions": 100,
+    "deletions": 0,
+    "total": 100
+  },
+  "files": [
+    {
+      "filename": "cli.js",
+      "additions": 100,
+      "deletions": 0,
+      "changes": 100,
+      "status": "added",
+      "raw_url": "http://localhost/frank/tools/raw/abcdef123456/cli.js",
+      "blob_url": "http://localhost/frank/tools/blob/abcdef123456/cli.js",
+      "patch": "@@ -0,0 +1,100 @@\n..."
+    }
+  ]
+}

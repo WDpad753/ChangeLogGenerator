@@ -1,0 +1,96 @@
+{
+  "url": "http://localhost/repos/alice/project-x/commits/ffeeddccbbaa",
+  "sha": "ffeeddccbbaa",
+  "node_id": "NODEID3",
+  "html_url": "http://localhost/alice/project-x/commit/ffeeddccbbaa",
+  "comments_url": "http://localhost/repos/alice/project-x/commits/ffeeddccbbaa/comments",
+  "commit": {
+    "url": "http://localhost/repos/alice/project-x/git/commits/ffeeddccbbaa",
+    "author": {
+      "name": "Alice Dev",
+      "email": "alice@localhost",
+      "date": "2024-06-03T14:22:00Z"
+    },
+    "committer": {
+      "name": "Alice Dev",
+      "email": "alice@localhost",
+      "date": "2024-06-03T14:22:00Z"
+    },
+    "message": "Refactor module X",
+    "tree": {
+      "url": "http://localhost/repos/alice/project-x/tree/ffeeddccbbaa",
+      "sha": "ffeeddccbbaa"
+    },
+    "comment_count": 3,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "author": {
+    "login": "alice",
+    "id": 103,
+    "node_id": "USER3",
+    "avatar_url": "http://localhost/images/alice.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/alice",
+    "html_url": "http://localhost/alice",
+    "followers_url": "http://localhost/users/alice/followers",
+    "following_url": "http://localhost/users/alice/following{/other_user}",
+    "gists_url": "http://localhost/users/alice/gists{/gist_id}",
+    "starred_url": "http://localhost/users/alice/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/alice/subscriptions",
+    "organizations_url": "http://localhost/users/alice/orgs",
+    "repos_url": "http://localhost/users/alice/repos",
+    "events_url": "http://localhost/users/alice/events{/privacy}",
+    "received_events_url": "http://localhost/users/alice/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "alice",
+    "id": 103,
+    "node_id": "USER3",
+    "avatar_url": "http://localhost/images/alice.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/alice",
+    "html_url": "http://localhost/alice",
+    "followers_url": "http://localhost/users/alice/followers",
+    "following_url": "http://localhost/users/alice/following{/other_user}",
+    "gists_url": "http://localhost/users/alice/gists{/gist_id}",
+    "starred_url": "http://localhost/users/alice/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/alice/subscriptions",
+    "organizations_url": "http://localhost/users/alice/orgs",
+    "repos_url": "http://localhost/users/alice/repos",
+    "events_url": "http://localhost/users/alice/events{/privacy}",
+    "received_events_url": "http://localhost/users/alice/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "url": "http://localhost/repos/alice/project-x/commits/bb11aa22cc33",
+      "sha": "bb11aa22cc33"
+    }
+  ],
+  "stats": {
+    "additions": 58,
+    "deletions": 12,
+    "total": 70
+  },
+  "files": [
+    {
+      "filename": "moduleX.js",
+      "additions": 58,
+      "deletions": 12,
+      "changes": 70,
+      "status": "modified",
+      "raw_url": "http://localhost/alice/project-x/raw/ffeeddccbbaa/moduleX.js",
+      "blob_url": "http://localhost/alice/project-x/blob/ffeeddccbbaa/moduleX.js",
+      "patch": "@@ -10,7 +10,7 @@\n..."
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "url": "http://localhost/repos/erin/api-server/commits/a1b2c3d4e5f6",
+  "sha": "a1b2c3d4e5f6",
+  "node_id": "NODEID7",
+  "html_url": "http://localhost/erin/api-server/commit/a1b2c3d4e5f6",
+  "comments_url": "http://localhost/repos/erin/api-server/commits/a1b2c3d4e5f6/comments",
+  "commit": {
+    "url": "http://localhost/repos/erin/api-server/git/commits/a1b2c3d4e5f6",
+    "author": {
+      "name": "Erin Backend",
+      "email": "erin@localhost",
+      "date": "2024-06-07T08:45:00Z"
+    },
+    "committer": {
+      "name": "Erin Backend",
+      "email": "erin@localhost",
+      "date": "2024-06-07T08:45:00Z"
+    },
+    "message": "Fix bug in auth middleware",
+    "tree": {
+      "url": "http://localhost/repos/erin/api-server/tree/a1b2c3d4e5f6",
+      "sha": "a1b2c3d4e5f6"
+    },
+    "comment_count": 1,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "author": {
+    "login": "erin",
+    "id": 107,
+    "node_id": "USER7",
+    "avatar_url": "http://localhost/images/erin.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/erin",
+    "html_url": "http://localhost/erin",
+    "followers_url": "http://localhost/users/erin/followers",
+    "following_url": "http://localhost/users/erin/following{/other_user}",
+    "gists_url": "http://localhost/users/erin/gists{/gist_id}",
+    "starred_url": "http://localhost/users/erin/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/erin/subscriptions",
+    "organizations_url": "http://localhost/users/erin/orgs",
+    "repos_url": "http://localhost/users/erin/repos",
+    "events_url": "http://localhost/users/erin/events{/privacy}",
+    "received_events_url": "http://localhost/users/erin/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "erin",
+    "id": 107,
+    "node_id": "USER7",
+    "avatar_url": "http://localhost/images/erin.png",
+    "gravatar_id": "",
+    "url": "http://localhost/users/erin",
+    "html_url": "http://localhost/erin",
+    "followers_url": "http://localhost/users/erin/followers",
+    "following_url": "http://localhost/users/erin/following{/other_user}",
+    "gists_url": "http://localhost/users/erin/gists{/gist_id}",
+    "starred_url": "http://localhost/users/erin/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost/users/erin/subscriptions",
+    "organizations_url": "http://localhost/users/erin/orgs",
+    "repos_url": "http://localhost/users/erin/repos",
+    "events_url": "http://localhost/users/erin/events{/privacy}",
+    "received_events_url": "http://localhost/users/erin/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "url": "http://localhost/repos/erin/api-server/commits/ffeeddccbbaa",
+      "sha": "ffeeddccbbaa"
+    }
+  ],
+  "stats": {
+    "additions": 22,
+    "deletions": 8,
+    "total": 30
+  },
+  "files": [
+    {
+      "filename": "auth.js",
+      "additions": 22,
+      "deletions": 8,
+      "changes": 30,
+      "status": "modified",
+      "raw_url": "http://localhost/erin/api-server/raw/a1b2c3d4e5f6/auth.js",
+      "blob_url": "http://localhost/erin/api-server/blob/a1b2c3d4e5f6/auth.js",
+      "patch": "@@ -20,10 +20,20 @@\n..."
+    }
+  ]
+}
