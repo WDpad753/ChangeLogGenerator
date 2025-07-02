@@ -245,7 +245,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
             }
         }
         
-        [Test, Order(3)]
+        [Test, Order(50)]
         //[NonParallelizable]
         public void CustomConfigWrite2Test()
         {
@@ -263,6 +263,8 @@ namespace ChangeLogConsoleUnitTests.BaseTests
 
             if (res != null)
             {
+                configReader.SaveInfo("NewConsoleTest", "AppName", "loggerSettings");
+                configReader.SaveInfo("NewConsoleTest", "AppName");
                 Assert.That(val == res, "Value is not equal after modification");
             }
             else
