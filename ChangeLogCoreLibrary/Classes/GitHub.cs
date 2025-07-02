@@ -27,7 +27,7 @@ namespace ChangeLogCoreLibrary.Classes
         private ConfigHandler _reader;
         private PathCombine _pathCombiner;
         //private APIClient _client;
-        private Guid commiterID;
+        private string commiterID;
 
         public GitHub(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler Reader, LogWriter Logger)
         {
@@ -36,7 +36,6 @@ namespace ChangeLogCoreLibrary.Classes
             _fileHandler = JsonReader;
             _reader = Reader;
             _pathCombiner = new(Logger);
-            commiterID = Guid.NewGuid();
         }
 
         public async void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient<TEntryPoint>? client = null, string? EnvVar = null)
@@ -50,10 +49,12 @@ namespace ChangeLogCoreLibrary.Classes
             int firstentry = 0;
             List<object> values;
             string line;
+            string? prevline = null;
             string prevMapJsonHS = "";
             int printcount = 0;
             var jsonData = mapJson as List<MapGitHubJson>;
             var prevJsonData = prevMapJson as List<MapGitHubJson>;
+            string? prevAuthor = null;
 
             if (mapJson == null)
             {
@@ -66,7 +67,14 @@ namespace ChangeLogCoreLibrary.Classes
                     List<object> JsonMapValues = new List<object>();
                     value.DateChecker = DateTime.Parse(value.commit.author.date.ToString()).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
                     JsonMapValues.Add(DateTime.Parse(value.commit.author.date.ToString()));
-                    JsonMapValues.Add(value.committer == null ? commiterID.ToString().Replace("-","") : value.committer.id);
+                    
+                    if(commiterID == null || !value.commit.author.name.Equals(prevAuthor))
+                    {
+                        commiterID = Crc32.CalculateHash<string>(value.commit.author.name);
+                    }
+
+                    string ID = value.committer != null ? value.committer.id.ToString() : (value.commit.author.id != 0 ? value.commit.author.id.ToString() : commiterID);
+                    JsonMapValues.Add(ID);
                     JsonMapValues.Add(value.commit.author.name);
                     JsonMapValues.Add(value.commit.author.name);
                     JsonMapValues.Add(value.commit.message);
@@ -99,6 +107,7 @@ namespace ChangeLogCoreLibrary.Classes
                     //JsonMapValues.Add(jsonFile.files);
                     JsonMapValues.Add(value.DateChecker);
                     JsonMap.Add(DateTimeOffset.Parse(value.commit.author.date.ToString()).ToUnixTimeSeconds(), JsonMapValues);
+                    prevAuthor = value.commit.author.name;
                 }
 
                 Dictionary<long, List<object>> ascOrderedJsonMap = JsonMap.OrderBy(pair => pair.Key).ToDictionary(pair => pair.Key, pair => pair.Value);
@@ -384,13 +393,6 @@ namespace ChangeLogCoreLibrary.Classes
                                     {
                                         GitFile cc = ChangeCount;
 
-                                        string changeCountHS = Crc32.CalculateHash<GitFile>(cc);
-
-                                        if(changeCountHS == prevChangeCountHS)
-                                        {
-                                            continue;
-                                        }
-
                                         addition = cc.additions;
                                         alteration = cc.changes;
                                         deletion = cc.deletions;
@@ -416,53 +418,58 @@ namespace ChangeLogCoreLibrary.Classes
                                         {
                                             Switch = 0;
                                             line = GetLine(Switch, value);
-                                            writer.WriteLine(line);
+                                            //writer.WriteLine(line);
                                         }
                                         else if (addition == 0 && alteration > 0 && deletion == 0)
                                         {
                                             Switch = 1;
                                             line = GetLine(Switch, value);
-                                            writer.WriteLine(line);
+                                            //writer.WriteLine(line);
                                         }
                                         else if (addition == 0 && alteration == 0 && deletion > 0)
                                         {
                                             Switch = 2;
                                             line = GetLine(Switch, value);
-                                            writer.WriteLine(line);
+                                            //writer.WriteLine(line);
                                         }
                                         else if (addition > 0 && alteration > 0 && deletion == 0)
                                         {
                                             Switch = 3;
                                             line = GetLine(Switch, value);
-                                            writer.WriteLine(line);
+                                            //writer.WriteLine(line);
                                         }
                                         else if (addition > 0 && alteration == 0 && deletion > 0)
                                         {
                                             Switch = 4;
                                             line = GetLine(Switch, value);
-                                            writer.WriteLine(line);
+                                            //writer.WriteLine(line);
                                         }
                                         else if (addition == 0 && alteration > 0 && deletion > 0)
                                         {
                                             Switch = 5;
                                             line = GetLine(Switch, value);
-                                            writer.WriteLine(line);
+                                            //writer.WriteLine(line);
                                         }
                                         else if (addition > 0 && alteration > 0 && deletion > 0)
                                         {
                                             Switch = 6;
                                             line = GetLine(Switch, value);
-                                            writer.WriteLine(line);
+                                            //writer.WriteLine(line);
                                         }
                                         else
                                         {
                                             Switch = default;
                                             line = GetLine(Switch, value);
+                                            //writer.WriteLine(line);
+                                        }
+
+                                        if(!line.Equals(prevline))
+                                        {
                                             writer.WriteLine(line);
                                         }
 
                                         prevdatetime = datecheck;
-                                        prevChangeCountHS = changeCountHS;
+                                        prevline = line;
                                     }
                                 }
                                 else

@@ -96,7 +96,8 @@ namespace ChangeLogConsole
 
             //_config.ConfigFilePath = configFile;
             //_config.logfilepath = logFilePath;
-            _config.logfilepath = Path.Combine(Directory.GetParent(currentDirectory2).Parent.Parent.Parent.FullName, commitmessagesfilename);
+            //_config.logfilepath = Path.Combine(Directory.GetParent(currentDirectory2).Parent.Parent.Parent.FullName, commitmessagesfilename);
+            _config.logfilepath = Directory.GetParent(currentDirectory2).Parent.Parent.Parent.FullName;
             _config.runType = "GitHub";
             _config.jsonpath = targetcommitjsonpath;
             _config.jsonfilename = targetcommitjsonfile;
@@ -132,7 +133,7 @@ namespace ChangeLogConsole
             var clientProvider = new ClientProvider<DBNull>(logwriter);
             clientProvider.clientBase = _config.runType;
             clientProvider.appName = reader.ReadInfo("RepositoryName", "changelogSettings");
-            clg = new(_repo, _config, logwriter, logFilePath, clientProvider);
+            clg = new(_repo, _config, logwriter, _config.logfilepath, clientProvider);
 
             try
             {
