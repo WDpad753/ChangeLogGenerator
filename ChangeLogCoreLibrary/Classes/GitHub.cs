@@ -51,6 +51,7 @@ namespace ChangeLogCoreLibrary.Classes
             string line;
             string? prevline = null;
             string prevMapJsonHS = _reader.ReadInfo("PrevMapJSONHS", "changelogSettings");
+            //string prevMapJsonHS = Crc32.CalculateHash<List<MapGitHubJson>>(_fileHandler.GetJson<List<MapGitHubJson>>(_pathCombiner.CombinePath(CombinationType.Folder, _config.JsonFilePath, _config.jsonfilename)));
             int printcount = 0;
             var jsonData = mapJson as List<MapGitHubJson>;
             var prevJsonData = prevMapJson as List<MapGitHubJson>;

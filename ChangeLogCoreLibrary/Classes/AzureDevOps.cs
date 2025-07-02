@@ -46,7 +46,8 @@ namespace ChangeLogCoreLibrary.Classes
             int firstentry = 0;
             List<object> values;
             string line;
-            string prevMapJsonHS = "";
+            string prevMapJsonHS = _reader.ReadInfo("PrevMapJSONHS", "changelogSettings");
+            //string prevMapJsonHS = Crc32.CalculateHash<MapAzureJson>(_fileHandler.GetJson<MapAzureJson>(_pathHandler.CombinePath(CombinationType.Folder,_config.JsonFilePath,_config.jsonfilename)));
             int printcount = 0;
             var jsonData = mapJson as MapAzureJson;
             var prevJsonData = prevMapJson as MapAzureJson;
