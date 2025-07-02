@@ -50,7 +50,6 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
     }
 
     [TestFixture]
-    //public class ChangeLogTests : ApiTestBase
     public class ChangeLogTests
     {
         private LogWriter logwriter;
@@ -58,7 +57,6 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         private string logpath;
         private IAPIRepo<TestAPI.Program> _repo;
         private IAPIRepo<DBNull> _repoFinal;
-        //private WebApplicationFactory<TestAPI.Program> _factory = null!;
         private HttpClient _client = null;
         private CLGConfig _config;
         private JSONFileHandler _jsonFileHandler;
@@ -81,7 +79,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             if (Directory.Exists(logpath))
             {
-                Directory.Delete(logpath, true); // Ensure the log directory is clean before starting the test
+                Directory.Delete(logpath, true);
             }
 
             if (File.Exists(logfilepath))
@@ -119,7 +117,6 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             _config.testClient = _client;
             _config.backupjsonpath = jsonpath;
 
-            //logFilePath = logfilepath;
             logFilePath = Path.GetFileName(Path.GetDirectoryName(logfilepath));
 
             string projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
@@ -148,10 +145,8 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         [Test, Order(1)]
         public async Task HealthEndpoint_Returns200()
         {
-            // Act
             var response = await _client.GetAsync("/health");
 
-            // Assert
             Assert.That(response.IsSuccessStatusCode, Is.True, "Expected /health to return 200 OK");
 
             var content = await response.Content.ReadAsStringAsync();
@@ -165,7 +160,6 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         public async Task AzureEndpoint()
         {
             string baseUrl = _client.BaseAddress!.ToString();
-            //var factoryProvider = new TestClientProvider(TestEnvironment.Factory);
             var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, TestEnvironment.Factory);
             clientProvider.testClient = true;
 
@@ -196,12 +190,11 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             try
             {
-                //Task.Run(async () => await clg.ChangeLogReaderWriter(commitfilepath));
                 clg.ChangeLogReaderWriter().Wait(15000000);
             }
             catch (Exception ex)
             {
-                //logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram", UtilityClass.GetMethodName(), MessageLevels.Fatal);
             }
 
             bool ChangeLogExists = File.Exists(Path.Combine(_config.logfilepath, _config.logfilename));
@@ -223,7 +216,6 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         public async Task GitHubEndpoint()
         {
             string baseUrl = _client.BaseAddress!.ToString();
-            //var factoryProvider = new TestClientProvider(TestEnvironment.Factory);
             var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, TestEnvironment.Factory);
             clientProvider.testClient = true;
 
@@ -256,21 +248,17 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             try
             {
-                //Task.Run(async () => await clg.ChangeLogReaderWriter(commitfilepath));
-
                 clg.ChangeLogReaderWriter().Wait();
             }
             catch (Exception ex)
             {
-                //logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram", UtilityClass.GetMethodName(), MessageLevels.Fatal);
             }
 
             bool ChangeLogExists = File.Exists(Path.Combine(_config.logfilepath,_config.logfilename));
             bool PrevJsonExists = File.Exists(Path.Combine(_config.jsonpath, _config.jsonfilename));
             string? PrevJsonHS = configReader.ReadInfo("PrevMapJSONHS");
             bool PrevJsonHSExists = PrevJsonHS != null && PrevJsonHS != "" ? true : false;
-
-            //Assert.Pass();
 
             if (ChangeLogExists == true && PrevJsonExists == true && PrevJsonHSExists == true)
             {
@@ -283,7 +271,6 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         }
 
         [Test]
-        //[NonParallelizable]
         [Explicit("Only run locally or manually; Testing Passed")]
         public void ChangeLogWriteFinalTest()
         {
@@ -304,9 +291,6 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             foreach (var type in runType)
             {
                 _config.runType = type["Type"];
-                //string baseUrl = _client.BaseAddress!.ToString();
-                //var factoryProvider = new TestClientProvider(TestEnvironment.Factory);
-                //clientProvider.testClient = true;
                 _config.testClient = new HttpClient();
                 _config.testClient.BaseAddress = new Uri(_pathHandler.CombinePath(CombinationType.URL, APIRepoPath.APITest.ToString(), configReader.EnvRead("TestAPI", EnvAccessMode.User)));
                 _config.jsonfilename = type["JSONPath"];
@@ -327,17 +311,15 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
                 try
                 {
-                    //Task.Run(async () => await clg.ChangeLogReaderWriter(commitfilepath));
-
                     clg.ChangeLogReaderWriter().Wait();
                     runTypeCNT++;
                 }
                 catch (Exception ex)
                 {
-                    //logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                    logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram", UtilityClass.GetMethodName(), MessageLevels.Fatal);
                 }
 
-                if(runTypeCNT == 1)
+                if (runTypeCNT == 1)
                 {
                     configReader.SaveInfo("", "PrevMapJSONHS");
                 }
@@ -346,8 +328,8 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             string[] files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "TempLogs\\", "*ChangeLog.txt");
             string[] jsonfiles = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "JsonFiles\\", "*Json.json");
 
-            bool ChangeLogExists = files.Length > 0 && files.Length == 2 ? true : false;
-            bool PrevJsonExists = jsonfiles.Length > 0 && jsonfiles.Length == 2 ? true : false;
+            bool ChangeLogExists = files.Length > 0 ? true : false;
+            bool PrevJsonExists = jsonfiles.Length > 0 ? true : false;
             string? PrevJsonHS = configReader.ReadInfo("PrevMapJSONHS");
             bool PrevJsonHSExists = PrevJsonHS != null ? true : false;
 

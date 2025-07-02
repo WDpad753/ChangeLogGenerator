@@ -35,7 +35,6 @@ namespace TestAPI.Controllers
             string[] Files = Directory.GetFiles(fullpath);
             int fileInd = rand.Next(0, Files.Length - 1);
 
-            //var commitsJson = System.IO.File.ReadAllText($"{fullpath}\\GithubCommits.json");
             var commitsJson = System.IO.File.ReadAllText(Files[fileInd]);
             var options = new JsonSerializerOptions
             {

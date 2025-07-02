@@ -1,5 +1,4 @@
-﻿using BaseClass;
-using BaseClass.API;
+﻿using BaseClass.API;
 using BaseClass.Config;
 using BaseClass.JSON;
 using BaseClass.Model;
@@ -7,15 +6,9 @@ using BaseLogger;
 using BaseLogger.Models;
 using ChangeLogCoreLibrary.APIRepositories.Factory;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
-
-
-//using ChangeLogConsole.Writer;
 using ChangeLogCoreLibrary.Model;
 using ChangeLogCoreLibrary.Writer;
 using System;
-
-//using Common.Abstractions;
-//using Common.Abstractions.Models;
 using System.Diagnostics;
 using System.Reflection.Metadata;
 using static System.Net.Mime.MediaTypeNames;
@@ -23,23 +16,15 @@ using UtilityClass = BaseClass.MethodNameExtractor.FuncNameExtractor;
 
 namespace ChangeLogConsole
 {
-    //public class ProgramConfig
-    //{
-    //    public string? commitMessagesPath { get; set; }
-    //    public string? ConfigFilePath { get; set; }
-    //}
 
     public class Program
     {
-        //private static readonly ILogWriter logwriter;
-        //private static readonly IConfigReader reader;
         private static LogWriter? logwriter;
         private static ConfigHandler? reader;
         private static string? NameSpace = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
         private static ChangeLogWrite<DBNull> clg;
         private static JSONFileHandler jsonHandler;
         private static IAPIRepo<DBNull> _repo;
-        //private static List<string> ext = new List<string> { "config" };
         public static CLGConfig _config { get; set; }
 
         static void Main(string[] args)
@@ -62,18 +47,13 @@ namespace ChangeLogConsole
 
             string configFile = files[0];
             string logFilePath = Path.Combine(Path.GetPathRoot(Environment.SystemDirectory), "tmp");
-            //string logFilePath = Path.Combine("E:\\", "tmp");
 
             logwriter = new(configFile, logFilePath);
             reader = new(configFile, logwriter);
             jsonHandler = new(logwriter);
             _config.ConfigFilePath = configFile;
-            //_config.logfilepath = logFilePath;
 
             // Setting up and running ChangeLogConsole for Creating/Appending ChangeLog:
-            //string? commitmessagespath = ProgramConfig.commitMessagesPath;
-
-            //if (commitmessagespath == null)
             if (_config == null)
             {
                 logwriter.LogWrite($@"Error Message: Unable to find the path to save Commit File.", "MainProgram", UtilityClass.GetMethodName(), MessageLevels.Fatal);
@@ -86,17 +66,6 @@ namespace ChangeLogConsole
             string targetcommitjsonfile = "PrevMap.json";
             string backuptargetcommitjsonpath = $@"{Directory.GetParent(currentDirectory2).Parent.Parent.Parent.FullName}\JsonFiles\";
 
-            //Debug.WriteLine($"Old Directory => {currentDirectory}; tested Directory => {currentDirectory2}");
-            //_config.commitlogpath = commitmessagespath;
-            //_config.commitlogfilename = commitmessagesfilename;
-            //_config.jsonpath = targetcommitjsonpath;
-            //CLG.backupjsonpath = backuptargetcommitjsonpath;
-            //CLG.jsonfilename = targetcommitjsonfile;
-            //string commitfilepath = CLG.logfilepath;
-
-            //_config.ConfigFilePath = configFile;
-            //_config.logfilepath = logFilePath;
-            //_config.logfilepath = Path.Combine(Directory.GetParent(currentDirectory2).Parent.Parent.Parent.FullName, commitmessagesfilename);
             _config.logfilepath = Directory.GetParent(currentDirectory2).Parent.Parent.Parent.FullName;
             _config.runType = "GitHub";
             _config.jsonpath = targetcommitjsonpath;
@@ -129,7 +98,7 @@ namespace ChangeLogConsole
                 }
             }
 
-            _repo = APIFactory<DBNull>.GetAPIRepo(RepoMode.GitHub, _config, jsonHandler, reader, logwriter);
+            _repo = APIFactory<DBNull>.GetAPIRepo(mode, _config, jsonHandler, reader, logwriter);
             var clientProvider = new ClientProvider<DBNull>(logwriter);
             clientProvider.clientBase = _config.runType;
             clientProvider.appName = reader.ReadInfo("RepositoryName", "changelogSettings");
@@ -137,12 +106,11 @@ namespace ChangeLogConsole
 
             try
             {
-                //Task.Run(async () => await clg.ChangeLogReaderWriter(commitfilepath));
                 clg.ChangeLogReaderWriter().Wait(15000000);
             }
             catch (Exception ex)
             {
-                //logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",UtilityClass.GetMethodName(), MessageLevels.Fatal);
             }
         }
     }

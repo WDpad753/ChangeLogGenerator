@@ -12,12 +12,6 @@ namespace TestAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
-            //builder.Services.AddHttpClient(client =>
-            //{
-            //    client.BaseAddress = new Uri("https://dev.azure.com/");
-            //});
-
             builder.Services.AddHealthChecks();
 
             var app = builder.Build();
@@ -45,6 +39,4 @@ namespace TestAPI
             app.Run();
         }
     }
-
-    //public partial class Program { }
 }
