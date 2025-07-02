@@ -70,7 +70,7 @@ namespace ChangeLogCoreLibrary.Classes
                     
                     if(commiterID == null || !value.commit.author.name.Equals(prevAuthor))
                     {
-                        commiterID = Crc32.CalculateHash<string>(value.commit.author.name);
+                        commiterID = Crc32.ComputeFromDigits(value.commit.author.name).ToString();
                     }
 
                     string ID = value.committer != null ? value.committer.id.ToString() : (value.commit.author.id != 0 ? value.commit.author.id.ToString() : commiterID);
