@@ -50,7 +50,7 @@ namespace ChangeLogCoreLibrary.Classes
             List<object> values;
             string line;
             string? prevline = null;
-            string prevMapJsonHS = "";
+            string prevMapJsonHS = _reader.ReadInfo("PrevMapJSONHS", "changelogSettings");
             int printcount = 0;
             var jsonData = mapJson as List<MapGitHubJson>;
             var prevJsonData = prevMapJson as List<MapGitHubJson>;
@@ -124,68 +124,192 @@ namespace ChangeLogCoreLibrary.Classes
                         {
                             if (valueItem is IList<object> list && list.Count >= 5)
                             {
+                                //var Datetime = list[0].ToString();
+                                //var CommitID = list[1].ToString();
+                                //var AuthorName = list[2].ToString();
+                                //var CommitterName = list[3].ToString();
+                                //var CommitMessage = list[4].ToString();
+                                //var ChangeCounts = list[5];
+
+                                //DateTime dt = DateTime.Parse(Datetime);
+                                //string date = dt.ToString("dddd, yyyy-MM-dd", CultureInfo.InvariantCulture);
+                                //string datecheck = dt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                                //string time = dt.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+
+                                //if (ChangeCounts is ChangeCounts) // Check if the object is of type dataclass1
+                                //{
+                                //    ChangeCounts cc = (ChangeCounts)ChangeCounts;
+                                //    addition = cc.Add;
+                                //    alteration = cc.Edit;
+                                //    deletion = cc.Delete;
+                                //}
+                                //else
+                                //{
+                                //    throw new Exception("Cannot find the ChangeCounts in the List.");
+                                //}
+
+                                //if (datecheck == prevdatetime)
+                                //{
+                                //    //firstentry = 0;
+                                //}
+                                //else
+                                //{
+                                //    if (firstentry > 0)
+                                //    {
+                                //        sw.WriteLine();
+                                //        sw.WriteLine();
+                                //    }
+
+                                //    firstentry++;
+                                //    sw.WriteLine($"Date: {date}");
+                                //}
+
+                                //values = new List<object> { time, CommitID, AuthorName, CommitterName, CommitMessage };
+
+                                //if (addition > 0 && deletion == 0)
+                                //{
+                                //    Switch = 0;
+                                //    line = GetLine(Switch, values);
+                                //    sw.WriteLine(line);
+                                //}
+                                //else if (addition == 0 && deletion > 0)
+                                //{
+                                //    Switch = 1;
+                                //    line = GetLine(Switch, values);
+                                //    sw.WriteLine(line);
+                                //}
+                                //else if (addition > 0 && deletion > 0)
+                                //{
+                                //    Switch = 2;
+                                //    line = GetLine(Switch, values);
+                                //    sw.WriteLine(line);
+                                //}
+                                //else
+                                //{
+                                //    Switch = default;
+                                //    line = GetLine(Switch, values);
+                                //    sw.WriteLine(line);
+                                //}
+
+                                //prevdatetime = datecheck;
+
                                 var Datetime = list[0].ToString();
                                 var CommitID = list[1].ToString();
                                 var AuthorName = list[2].ToString();
                                 var CommitterName = list[3].ToString();
                                 var CommitMessage = list[4].ToString();
-                                var ChangeCounts = list[5];
+                                //var ChangeCounts = list[5];
+                                var ChangeCounts = list.OfType<GitFile[]>().FirstOrDefault();
 
                                 DateTime dt = DateTime.Parse(Datetime);
                                 string date = dt.ToString("dddd, yyyy-MM-dd", CultureInfo.InvariantCulture);
                                 string datecheck = dt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
                                 string time = dt.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
 
-                                if (ChangeCounts is ChangeCounts) // Check if the object is of type dataclass1
+                                if (ChangeCounts.Length > 0)
                                 {
-                                    ChangeCounts cc = (ChangeCounts)ChangeCounts;
-                                    addition = cc.Add;
-                                    alteration = cc.Edit;
-                                    deletion = cc.Delete;
-                                }
-                                else
-                                {
-                                    throw new Exception("Cannot find the ChangeCounts in the List.");
-                                }
-
-                                if (datecheck == prevdatetime)
-                                {
-                                    //firstentry = 0;
-                                }
-                                else
-                                {
-                                    if (firstentry > 0)
+                                    foreach (var ChangeCount in ChangeCounts)
                                     {
-                                        sw.WriteLine();
-                                        sw.WriteLine();
+                                        GitFile cc = ChangeCount;
+
+                                        addition = cc.additions;
+                                        alteration = cc.changes;
+                                        deletion = cc.deletions;
+
+                                        if (datecheck == prevdatetime)
+                                        {
+                                            //firstentry = 0;
+                                        }
+                                        else
+                                        {
+                                            if (firstentry > 0)
+                                            {
+                                                sw.WriteLine();
+                                                sw.WriteLine();
+                                            }
+                                            firstentry++;
+                                            sw.WriteLine($"Date: {date}");
+                                        }
+
+                                        values = new List<object> { time, CommitID, AuthorName, CommitterName, CommitMessage };
+
+                                        if (addition > 0 && alteration == 0 && deletion == 0)
+                                        {
+                                            Switch = 0;
+                                            line = GetLine(Switch, values);
+                                            //writer.WriteLine(line);
+                                        }
+                                        else if (addition == 0 && alteration > 0 && deletion == 0)
+                                        {
+                                            Switch = 1;
+                                            line = GetLine(Switch, values);
+                                            //writer.WriteLine(line);
+                                        }
+                                        else if (addition == 0 && alteration == 0 && deletion > 0)
+                                        {
+                                            Switch = 2;
+                                            line = GetLine(Switch, values);
+                                            //writer.WriteLine(line);
+                                        }
+                                        else if (addition > 0 && alteration > 0 && deletion == 0)
+                                        {
+                                            Switch = 3;
+                                            line = GetLine(Switch, values);
+                                            //writer.WriteLine(line);
+                                        }
+                                        else if (addition > 0 && alteration == 0 && deletion > 0)
+                                        {
+                                            Switch = 4;
+                                            line = GetLine(Switch, values);
+                                            //writer.WriteLine(line);
+                                        }
+                                        else if (addition == 0 && alteration > 0 && deletion > 0)
+                                        {
+                                            Switch = 5;
+                                            line = GetLine(Switch, values);
+                                            //writer.WriteLine(line);
+                                        }
+                                        else if (addition > 0 && alteration > 0 && deletion > 0)
+                                        {
+                                            Switch = 6;
+                                            line = GetLine(Switch, values);
+                                            //writer.WriteLine(line);
+                                        }
+                                        else
+                                        {
+                                            Switch = default;
+                                            line = GetLine(Switch, values);
+                                            //writer.WriteLine(line);
+                                        }
+
+                                        if (!line.Equals(prevline))
+                                        {
+                                            sw.WriteLine(line);
+                                        }
+
+                                        prevdatetime = datecheck;
+                                        prevline = line;
+                                    }
+                                }
+                                else
+                                {
+                                    if (datecheck == prevdatetime)
+                                    {
+                                        //firstentry = 0;
+                                    }
+                                    else
+                                    {
+                                        if (firstentry > 0)
+                                        {
+                                            sw.WriteLine();
+                                            sw.WriteLine();
+                                        }
+                                        firstentry++;
+                                        sw.WriteLine($"Date: {date}");
                                     }
 
-                                    firstentry++;
-                                    sw.WriteLine($"Date: {date}");
-                                }
+                                    values = new List<object> { time, CommitID, AuthorName, CommitterName, CommitMessage };
 
-                                values = new List<object> { time, CommitID, AuthorName, CommitterName, CommitMessage };
-
-                                if (addition > 0 && deletion == 0)
-                                {
-                                    Switch = 0;
-                                    line = GetLine(Switch, values);
-                                    sw.WriteLine(line);
-                                }
-                                else if (addition == 0 && deletion > 0)
-                                {
-                                    Switch = 1;
-                                    line = GetLine(Switch, values);
-                                    sw.WriteLine(line);
-                                }
-                                else if (addition > 0 && deletion > 0)
-                                {
-                                    Switch = 2;
-                                    line = GetLine(Switch, values);
-                                    sw.WriteLine(line);
-                                }
-                                else
-                                {
                                     Switch = default;
                                     line = GetLine(Switch, values);
                                     sw.WriteLine(line);
@@ -199,9 +323,10 @@ namespace ChangeLogCoreLibrary.Classes
 
                     _fileHandler.SaveJson(mapJson, Path.Combine(_config.jsonpath, _config.jsonfilename).ToString());
                     //_fileHandler.SaveJson(mapJson, Path.Combine(_config.backupjsonpath, _config.jsonfilename).ToString());
-                    prevMapJsonHS = Crc32.CalculateHash(mapJson);
-                    
-                    if(_config.testClient != null)
+                    //prevMapJsonHS = Crc32.CalculateHash(mapJson);
+                    prevMapJsonHS = mapJsonHS;
+
+                    if (_config.testClient != null)
                     {
                         _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS");
                     }
@@ -213,39 +338,65 @@ namespace ChangeLogCoreLibrary.Classes
                 else if (File.Exists(filepath) && fileInfo.Length > 0 && !mapJsonHS.Equals(prevMapJsonHS))
                 {
                     JsonMap = new Dictionary<long, List<object>>();
+
                     foreach (var value in prevJsonData)
                     {
                         List<object> JsonMapValues = new List<object>();
+                        //value.DateChecker = DateTime.Parse(value.commit.author.date.ToString()).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                        //JsonMapValues.Add(DateTime.Parse(value.commit.author.date.ToString()));
+                        //JsonMapValues.Add(value.committer.id);
+                        //JsonMapValues.Add(value.sha);
+                        //JsonMapValues.Add(value.committer.name);
+                        //JsonMapValues.Add(value.commit.message);
+                        //var jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
+
+                        //JsonMapValues.Add(jsonFile.stats);
+                        //JsonMapValues.Add(value.DateChecker);
+                        //JsonMap.Add(DateTimeOffset.Parse(value.commit.author.date.ToString()).ToUnixTimeSeconds(), JsonMapValues);
+
                         value.DateChecker = DateTime.Parse(value.commit.author.date.ToString()).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
                         JsonMapValues.Add(DateTime.Parse(value.commit.author.date.ToString()));
-                        JsonMapValues.Add(value.committer.id);
-                        JsonMapValues.Add(value.sha);
-                        JsonMapValues.Add(value.committer.name);
+
+                        if (commiterID == null || !value.commit.author.name.Equals(prevAuthor))
+                        {
+                            commiterID = Crc32.ComputeFromDigits(value.commit.author.name).ToString();
+                        }
+
+                        string ID = value.committer != null ? value.committer.id.ToString() : (value.commit.author.id != 0 ? value.commit.author.id.ToString() : commiterID);
+                        JsonMapValues.Add(ID);
+                        JsonMapValues.Add(value.commit.author.name);
+                        JsonMapValues.Add(value.commit.author.name);
                         JsonMapValues.Add(value.commit.message);
+                        MapGitHubCommitJson? jsonFile = null;
 
-                        //client.testClient.BaseAddress = new Uri(_pathCombiner.CombinePath(CombinationType.URL, testAdd, "azure", organization, project, "_apis/git/repositories", repositoryName, "commits"));
+                        if (_config.testURL != null)
+                        {
+                            if (_config.testClient.BaseAddress.ToString().Contains(_config.testURL))
+                            {
+                                jsonFile = await client.Get<MapGitHubCommitJson>(value.sha);
+                            }
+                            else
+                            {
+                                jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
+                            }
+                        }
+                        else if (_config.testURL == null && _config.testClient != null)
+                        {
+                            jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
+                        }
 
-                        //if (client.testClient == true)
-                        //{
-                        //    client.APIURL = value.sha;
-                        //}
-                        //if (client.testClient != true)
-                        //{
-                        //    //client.testClient.BaseAddress = new Uri(value.url);
+                        if (_config.testClient == null)
+                        {
+                            jsonFile = await client.Get<MapGitHubCommitJson>(value.sha);
+                        }
 
-                        //    //HttpClient testClient = client.testClient;
-                        //    //client.testClient = testClient;
-                        //}
-                        //else
-                        //{
-                        //    client.APIURL = value.url;
-                        //}
+                        //jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
 
-                        var jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
-
-                        JsonMapValues.Add(jsonFile.stats);
+                        JsonMapValues.Add(jsonFile.files);
+                        //JsonMapValues.Add(jsonFile.files);
                         JsonMapValues.Add(value.DateChecker);
                         JsonMap.Add(DateTimeOffset.Parse(value.commit.author.date.ToString()).ToUnixTimeSeconds(), JsonMapValues);
+                        prevAuthor = value.commit.author.name;
                     }
 
                     Dictionary<long, List<object>> prevAscOrderedJsonMap = JsonMap.OrderBy(pair => pair.Key).ToDictionary(pair => pair.Key, pair => pair.Value);
@@ -271,81 +422,207 @@ namespace ChangeLogCoreLibrary.Classes
                                 {
                                     if (listOfLists2[printcount - 1] is IList<object> list && list.Count >= 5)
                                     {
+                                        //var Datetime = list[0].ToString();
+                                        //var CommitID = list[1].ToString();
+                                        //var AuthorName = list[2].ToString();
+                                        //var CommitterName = list[3].ToString();
+                                        //var CommitMessage = list[4].ToString();
+                                        //var ChangeCounts = list[5];
+
+                                        //DateTime dt = DateTime.Parse(Datetime);
+                                        //string date = dt.ToString("dddd, yyyy-MM-dd", CultureInfo.InvariantCulture);
+                                        //string datecheck = dt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                                        //string time = dt.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+
+                                        //if (ChangeCounts is ChangeCounts) // Check if the object is of type dataclass1
+                                        //{
+                                        //    ChangeCounts cc = (ChangeCounts)ChangeCounts;
+                                        //    addition = cc.Add;
+                                        //    alteration = cc.Edit;
+                                        //    deletion = cc.Delete;
+                                        //}
+                                        //else
+                                        //{
+                                        //    throw new Exception("Cannot find the ChangeCounts in the List.");
+                                        //}
+
+                                        //if (datecheck.Equals(prevdatetime))
+                                        //{
+                                        //    //firstentry = 0;
+                                        //}
+                                        //else
+                                        //{
+                                        //    if (firstentry == 0)
+                                        //    {
+                                        //        sw.WriteLine();
+                                        //        sw.WriteLine();
+                                        //    }
+
+                                        //    firstentry++;
+                                        //    sw.WriteLine($"Date: {date}");
+                                        //}
+
+                                        //values = new List<object> { time, CommitID, AuthorName, CommitterName, CommitMessage };
+
+                                        //if (addition > 0 && deletion == 0)
+                                        //{
+                                        //    Switch = 0;
+                                        //    line = GetLine(Switch, values);
+                                        //    sw.WriteLine(line);
+                                        //}
+                                        //else if (addition == 0 && deletion > 0)
+                                        //{
+                                        //    Switch = 1;
+                                        //    line = GetLine(Switch, values);
+                                        //    sw.WriteLine(line);
+                                        //}
+                                        //else if (addition > 0 && deletion > 0)
+                                        //{
+                                        //    Switch = 2;
+                                        //    line = GetLine(Switch, values);
+                                        //    sw.WriteLine(line);
+                                        //}
+                                        //else
+                                        //{
+                                        //    Switch = default;
+                                        //    line = GetLine(Switch, values);
+                                        //    sw.WriteLine(line);
+                                        //}
+
+                                        //prevdatetime = datecheck;
+
                                         var Datetime = list[0].ToString();
                                         var CommitID = list[1].ToString();
                                         var AuthorName = list[2].ToString();
                                         var CommitterName = list[3].ToString();
                                         var CommitMessage = list[4].ToString();
-                                        var ChangeCounts = list[5];
+                                        //var ChangeCounts = list[5];
+                                        var ChangeCounts = list.OfType<GitFile[]>().FirstOrDefault();
 
                                         DateTime dt = DateTime.Parse(Datetime);
                                         string date = dt.ToString("dddd, yyyy-MM-dd", CultureInfo.InvariantCulture);
                                         string datecheck = dt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
                                         string time = dt.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
 
-                                        if (ChangeCounts is ChangeCounts) // Check if the object is of type dataclass1
+                                        if (ChangeCounts.Length > 0)
                                         {
-                                            ChangeCounts cc = (ChangeCounts)ChangeCounts;
-                                            addition = cc.Add;
-                                            alteration = cc.Edit;
-                                            deletion = cc.Delete;
-                                        }
-                                        else
-                                        {
-                                            throw new Exception("Cannot find the ChangeCounts in the List.");
-                                        }
-
-                                        if (datecheck.Equals(prevdatetime))
-                                        {
-                                            //firstentry = 0;
-                                        }
-                                        else
-                                        {
-                                            if (firstentry == 0)
+                                            foreach (var ChangeCount in ChangeCounts)
                                             {
-                                                sw.WriteLine();
-                                                sw.WriteLine();
+                                                GitFile cc = ChangeCount;
+
+                                                addition = cc.additions;
+                                                alteration = cc.changes;
+                                                deletion = cc.deletions;
+
+                                                if (datecheck == prevdatetime)
+                                                {
+                                                    //firstentry = 0;
+                                                }
+                                                else
+                                                {
+                                                    if (firstentry > 0)
+                                                    {
+                                                        sw.WriteLine();
+                                                        sw.WriteLine();
+                                                    }
+                                                    firstentry++;
+                                                    sw.WriteLine($"Date: {date}");
+                                                }
+
+                                                values = new List<object> { time, CommitID, AuthorName, CommitterName, CommitMessage };
+
+                                                if (addition > 0 && alteration == 0 && deletion == 0)
+                                                {
+                                                    Switch = 0;
+                                                    line = GetLine(Switch, values);
+                                                    //writer.WriteLine(line);
+                                                }
+                                                else if (addition == 0 && alteration > 0 && deletion == 0)
+                                                {
+                                                    Switch = 1;
+                                                    line = GetLine(Switch, values);
+                                                    //writer.WriteLine(line);
+                                                }
+                                                else if (addition == 0 && alteration == 0 && deletion > 0)
+                                                {
+                                                    Switch = 2;
+                                                    line = GetLine(Switch, values);
+                                                    //writer.WriteLine(line);
+                                                }
+                                                else if (addition > 0 && alteration > 0 && deletion == 0)
+                                                {
+                                                    Switch = 3;
+                                                    line = GetLine(Switch, values);
+                                                    //writer.WriteLine(line);
+                                                }
+                                                else if (addition > 0 && alteration == 0 && deletion > 0)
+                                                {
+                                                    Switch = 4;
+                                                    line = GetLine(Switch, values);
+                                                    //writer.WriteLine(line);
+                                                }
+                                                else if (addition == 0 && alteration > 0 && deletion > 0)
+                                                {
+                                                    Switch = 5;
+                                                    line = GetLine(Switch, values);
+                                                    //writer.WriteLine(line);
+                                                }
+                                                else if (addition > 0 && alteration > 0 && deletion > 0)
+                                                {
+                                                    Switch = 6;
+                                                    line = GetLine(Switch, values);
+                                                    //writer.WriteLine(line);
+                                                }
+                                                else
+                                                {
+                                                    Switch = default;
+                                                    line = GetLine(Switch, values);
+                                                    //writer.WriteLine(line);
+                                                }
+
+                                                if (!line.Equals(prevline))
+                                                {
+                                                    sw.WriteLine(line);
+                                                }
+
+                                                prevdatetime = datecheck;
+                                                prevline = line;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (datecheck == prevdatetime)
+                                            {
+                                                //firstentry = 0;
+                                            }
+                                            else
+                                            {
+                                                if (firstentry > 0)
+                                                {
+                                                    sw.WriteLine();
+                                                    sw.WriteLine();
+                                                }
+                                                firstentry++;
+                                                sw.WriteLine($"Date: {date}");
                                             }
 
-                                            firstentry++;
-                                            sw.WriteLine($"Date: {date}");
-                                        }
+                                            values = new List<object> { time, CommitID, AuthorName, CommitterName, CommitMessage };
 
-                                        values = new List<object> { time, CommitID, AuthorName, CommitterName, CommitMessage };
-
-                                        if (addition > 0 && deletion == 0)
-                                        {
-                                            Switch = 0;
-                                            line = GetLine(Switch, values);
-                                            sw.WriteLine(line);
-                                        }
-                                        else if (addition == 0 && deletion > 0)
-                                        {
-                                            Switch = 1;
-                                            line = GetLine(Switch, values);
-                                            sw.WriteLine(line);
-                                        }
-                                        else if (addition > 0 && deletion > 0)
-                                        {
-                                            Switch = 2;
-                                            line = GetLine(Switch, values);
-                                            sw.WriteLine(line);
-                                        }
-                                        else
-                                        {
                                             Switch = default;
                                             line = GetLine(Switch, values);
                                             sw.WriteLine(line);
                                         }
 
                                         prevdatetime = datecheck;
+                                        //cnt++;
                                     }
                                 }
 
                                 _fileHandler.SaveJson(mapJson, Path.Combine(_config.jsonpath, _config.jsonfilename).ToString());
                                 //_fileHandler.SaveJson(mapJson, Path.Combine(_config.backupjsonpath, _config.jsonfilename).ToString());
-                                prevMapJsonHS = Crc32.CalculateHash(mapJson);
+                                //prevMapJsonHS = Crc32.CalculateHash(mapJson);
                                 //_reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
+                                prevMapJsonHS = mapJsonHS;
 
                                 if (_config.testClient != null)
                                 {
@@ -387,8 +664,6 @@ namespace ChangeLogCoreLibrary.Classes
 
                                 if (ChangeCounts.Length > 0)
                                 {
-                                    string? prevChangeCountHS = null;
-
                                     foreach (var ChangeCount in ChangeCounts)
                                     {
                                         GitFile cc = ChangeCount;
@@ -502,10 +777,8 @@ namespace ChangeLogCoreLibrary.Classes
                         }
 
                         _fileHandler.SaveJson(mapJson, Path.Combine(_config.jsonpath, _config.jsonfilename).ToString());
-                        //_fileHandler.SaveJson(mapJson, Path.Combine(_config.backupjsonpath, _config.jsonfilename).ToString());
-                        prevMapJsonHS = Crc32.CalculateHash(mapJson);
-                        //_reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
-                        //writer.Close();
+                        //prevMapJsonHS = Crc32.CalculateHash(mapJson);
+                        prevMapJsonHS = mapJsonHS;
 
                         if (_config.testClient != null)
                         {
