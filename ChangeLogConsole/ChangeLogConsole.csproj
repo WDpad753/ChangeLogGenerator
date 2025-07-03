@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BaseClassLibrary\BaseClass\BaseClass.csproj" />
-    <ProjectReference Include="..\BaseClassLibrary\BaseLogger\BaseLogger.csproj" />
+    <ProjectReference Include="..\..\BaseClassLibrary\BaseClass\BaseClass.csproj" />
+    <ProjectReference Include="..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj" />
     <ProjectReference Include="..\ChangeLogCoreLibrary\ChangeLogCoreLibrary.csproj" />
   </ItemGroup>
 
