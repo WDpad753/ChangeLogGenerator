@@ -41,7 +41,7 @@
 
   <ItemGroup>
     <None Update="Config\App.config">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

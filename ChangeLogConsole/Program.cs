@@ -1,5 +1,6 @@
 ﻿using BaseClass.API;
 using BaseClass.Config;
+using BaseClass.Helper;
 using BaseClass.JSON;
 using BaseClass.Model;
 using BaseLogger;
@@ -25,6 +26,7 @@ namespace ChangeLogConsole
         private static ChangeLogWrite<DBNull> clg;
         private static JSONFileHandler jsonHandler;
         private static IAPIRepo<DBNull> _repo;
+        private static PathCombine pathHandler;
         public static CLGConfig _config { get; set; }
 
         static void Main(string[] args)
@@ -51,6 +53,7 @@ namespace ChangeLogConsole
             logwriter = new(configFile, logFilePath);
             reader = new(configFile, logwriter);
             jsonHandler = new(logwriter);
+            pathHandler = new(logwriter);
             _config.ConfigFilePath = configFile;
 
             // Setting up and running ChangeLogConsole for Creating/Appending ChangeLog:
@@ -66,8 +69,8 @@ namespace ChangeLogConsole
             string targetcommitjsonfile = "PrevMap.json";
             string backuptargetcommitjsonpath = $@"{Directory.GetParent(currentDirectory2).Parent.Parent.Parent.FullName}\JsonFiles\";
 
-            _config.logfilepath = Directory.GetParent(currentDirectory2).Parent.Parent.Parent.FullName;
-            _config.runType = "GitHub";
+            string? repoProject = reader.ReadInfo("Project", "changelogSettings");
+            _config.logfilepath = pathHandler.CombinePath(CombinationType.Folder, Directory.GetParent(currentDirectory2).Parent.Parent.Parent.Parent.Parent.FullName, repoProject);
             _config.jsonpath = targetcommitjsonpath;
             _config.jsonfilename = targetcommitjsonfile;
             _config.backupjsonpath = backuptargetcommitjsonpath;
@@ -86,10 +89,12 @@ namespace ChangeLogConsole
                 if(tarRepo.ToLower().Equals("GitHub".ToLower()))
                 {
                     mode = RepoMode.GitHub;
+                    _config.runType = "GitHub";
                 }
                 else if (tarRepo.ToLower().Equals("AzureDevOps".ToLower()))
                 {
                     mode = RepoMode.AzureDevOps;
+                    _config.runType = "AzureDevOps";
                 }
                 else
                 {
