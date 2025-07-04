@@ -207,13 +207,15 @@ namespace ChangeLogCoreLibrary.Classes
 
                                         }
 
-                                        if (!line.Equals(prevline))
-                                        {
-                                            sw.WriteLine(line);
-                                        }
+                                        //if (!line.Equals(prevline))
+                                        //{
+                                        //    sw.WriteLine(line);
+                                        //}
+
+                                        sw.WriteLine(line);
 
                                         prevdatetime = datecheck;
-                                        prevline = line;
+                                        //prevline = line;
                                     }
                                 }
                                 else
@@ -503,13 +505,15 @@ namespace ChangeLogCoreLibrary.Classes
         
                                                 }
 
-                                                if (!line.Equals(prevline))
-                                                {
-                                                    sw.WriteLine(line);
-                                                }
+                                                //if (!line.Equals(prevline))
+                                                //{
+                                                //    sw.WriteLine(line);
+                                                //}
+
+                                                sw.WriteLine(line);
 
                                                 prevdatetime = datecheck;
-                                                prevline = line;
+                                                //prevline = line;
                                             }
                                         }
                                         else
@@ -652,13 +656,15 @@ namespace ChangeLogCoreLibrary.Classes
                                             line = GetLine(Switch, value);
                                         }
 
-                                        if(!line.Equals(prevline))
-                                        {
-                                            writer.WriteLine(line);
-                                        }
+                                        //if(!line.Equals(prevline))
+                                        //{
+                                        //    writer.WriteLine(line);
+                                        //}
+
+                                        writer.WriteLine(line);
 
                                         prevdatetime = datecheck;
-                                        prevline = line;
+                                        //prevline = line;
                                     }
                                 }
                                 else
