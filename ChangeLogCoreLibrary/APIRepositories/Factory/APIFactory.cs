@@ -1,6 +1,5 @@
 ﻿using BaseClass.Config;
 using BaseClass.JSON;
-using BaseClass.Model;
 using BaseLogger;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
 using ChangeLogCoreLibrary.Classes;
