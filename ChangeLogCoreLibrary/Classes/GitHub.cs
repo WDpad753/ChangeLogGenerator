@@ -1,20 +1,12 @@
-﻿using BaseClass.API;
+﻿using ChangeLogCoreLibrary.APIRepositories.Client;
 using BaseClass.Config;
 using BaseClass.Helper;
 using BaseClass.JSON;
 using BaseClass.Model;
 using BaseLogger;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
-using ChangeLogCoreLibrary.Helper;
 using ChangeLogCoreLibrary.Model;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Crc32 = BaseClass.Helper.Crc32;
 
 namespace ChangeLogCoreLibrary.Classes
@@ -25,7 +17,6 @@ namespace ChangeLogCoreLibrary.Classes
         private LogWriter _logger;
         private JSONFileHandler _fileHandler;
         private ConfigHandler _reader;
-        private PathCombine _pathCombiner;
         private string commiterID;
 
         public GitHub(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler Reader, LogWriter Logger)
@@ -34,7 +25,6 @@ namespace ChangeLogCoreLibrary.Classes
             _logger = Logger;
             _fileHandler = JsonReader;
             _reader = Reader;
-            _pathCombiner = new(Logger);
         }
 
         public async void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient<TEntryPoint>? client = null, string? EnvVar = null)
@@ -79,26 +69,28 @@ namespace ChangeLogCoreLibrary.Classes
                     JsonMapValues.Add(value.commit.message);
                     MapGitHubCommitJson? jsonFile = null;
 
-                    if (_config.testURL != null)
-                    {
-                        if (_config.testClient.BaseAddress.ToString().Contains(_config.testURL))
-                        {
-                            jsonFile = await client.Get<MapGitHubCommitJson>(value.sha);
-                        }
-                        else
-                        {
-                            jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
-                        }
-                    }
-                    else if(_config.testURL == null && _config.testClient != null)
-                    {
-                        jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
-                    }
+                    jsonFile = await client.Get<MapGitHubCommitJson>(value.sha);
 
-                    if (_config.testClient == null)
-                    {
-                        jsonFile = await client.Get<MapGitHubCommitJson>(value.sha);
-                    }
+                    //if (_config.testURL != null)
+                    //{
+                    //    if (_config.testClient.BaseAddress.ToString().Contains(_config.testURL))
+                    //    {
+                    //        jsonFile = await client.Get<MapGitHubCommitJson>(value.sha);
+                    //    }
+                    //    else
+                    //    {
+                    //        jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
+                    //    }
+                    //}
+                    //else if(_config.testURL == null && _config.testClient != null)
+                    //{
+                    //    jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
+                    //}
+
+                    //if (_config.testClient == null)
+                    //{
+                    //    jsonFile = await client.Get<MapGitHubCommitJson>(value.sha);
+                    //}
 
                     JsonMapValues.Add(jsonFile.files);
                     JsonMapValues.Add(value.DateChecker);
@@ -251,14 +243,8 @@ namespace ChangeLogCoreLibrary.Classes
                     _fileHandler.SaveJson(mapJson, Path.Combine(_config.jsonpath, _config.jsonfilename).ToString());
                     prevMapJsonHS = mapJsonHS;
 
-                    if (_config.testClient != null)
-                    {
-                        _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS");
-                    }
-                    else
-                    {
-                        _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
-                    }
+                    _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
+
                 }
                 else if (File.Exists(filepath) && fileInfo.Length > 0 && !mapJsonHS.Equals(prevMapJsonHS))
                 {
@@ -294,26 +280,28 @@ namespace ChangeLogCoreLibrary.Classes
                         JsonMapValues.Add(value.commit.message);
                         MapGitHubCommitJson? jsonFile = null;
 
-                        if (_config.testURL != null)
-                        {
-                            if (_config.testClient.BaseAddress.ToString().Contains(_config.testURL))
-                            {
-                                jsonFile = await client.Get<MapGitHubCommitJson>(value.sha);
-                            }
-                            else
-                            {
-                                jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
-                            }
-                        }
-                        else if (_config.testURL == null && _config.testClient != null)
-                        {
-                            jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
-                        }
+                        jsonFile = await client.Get<MapGitHubCommitJson>(value.sha);
 
-                        if (_config.testClient == null)
-                        {
-                            jsonFile = await client.Get<MapGitHubCommitJson>(value.sha);
-                        }
+                        //if (_config.testURL != null)
+                        //{
+                        //    if (_config.testClient.BaseAddress.ToString().Contains(_config.testURL))
+                        //    {
+                        //        jsonFile = await client.Get<MapGitHubCommitJson>(value.sha);
+                        //    }
+                        //    else
+                        //    {
+                        //        jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
+                        //    }
+                        //}
+                        //else if (_config.testURL == null && _config.testClient != null)
+                        //{
+                        //    jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
+                        //}
+
+                        //if (_config.testClient == null)
+                        //{
+                        //    jsonFile = await client.Get<MapGitHubCommitJson>(value.sha);
+                        //}
 
                         //jsonFile = await client.Get<MapGitHubCommitJson>(value.url);
 
@@ -551,14 +539,7 @@ namespace ChangeLogCoreLibrary.Classes
                                 //_reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
                                 prevMapJsonHS = mapJsonHS;
 
-                                if (_config.testClient != null)
-                                {
-                                    _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS");
-                                }
-                                else
-                                {
-                                    _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
-                                }
+                                _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
 
                                 sw.Close();
                             }
@@ -568,7 +549,7 @@ namespace ChangeLogCoreLibrary.Classes
                 }
                 else
                 {
-                    using (StreamWriter writer = new StreamWriter(_pathCombiner.CombinePath(CombinationType.Folder, filepath, _config.logfilename)))
+                    using (StreamWriter writer = new StreamWriter(PathCombine.CombinePath(CombinationType.Folder, filepath, _config.logfilename)))
                     {
                         int cnt = 0;
 
@@ -699,14 +680,7 @@ namespace ChangeLogCoreLibrary.Classes
                         _fileHandler.SaveJson(mapJson, Path.Combine(_config.jsonpath, _config.jsonfilename).ToString());
                         prevMapJsonHS = mapJsonHS;
 
-                        if (_config.testClient != null)
-                        {
-                            _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS");
-                        }
-                        else
-                        {
-                            _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
-                        }
+                        _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
 
                     }
                 }

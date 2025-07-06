@@ -1,4 +1,4 @@
-﻿using BaseClass.API;
+﻿using ChangeLogCoreLibrary.APIRepositories.Client;
 using ChangeLogCoreLibrary.Model;
 using System;
 using System.Collections.Generic;

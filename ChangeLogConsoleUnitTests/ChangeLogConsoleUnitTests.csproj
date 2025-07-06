@@ -58,6 +58,9 @@
     <None Update="Config\AppTest.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Config\AppTest3.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Config\EnvFileTest.env">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

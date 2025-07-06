@@ -1,11 +1,11 @@
-﻿using BaseClass.API;
-using BaseClass.Config;
+﻿using BaseClass.Config;
 using BaseClass.Helper;
 using BaseClass.JSON;
 using BaseClass.Model;
 using BaseLogger;
 using BaseLogger.Models;
 using ChangeLogCoreLibrary.APIRepositories.Factory;
+using ChangeLogCoreLibrary.APIRepositories.Client;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
 using ChangeLogCoreLibrary.Model;
 using ChangeLogCoreLibrary.Writer;
@@ -26,7 +26,6 @@ namespace ChangeLogConsole
         private static ChangeLogWrite<DBNull> clg;
         private static JSONFileHandler jsonHandler;
         private static IAPIRepo<DBNull> _repo;
-        private static PathCombine pathHandler;
         public static CLGConfig _config { get; set; }
 
         static void Main(string[] args)
@@ -53,7 +52,6 @@ namespace ChangeLogConsole
             logwriter = new(configFile, logFilePath);
             reader = new(configFile, logwriter);
             jsonHandler = new(logwriter);
-            pathHandler = new(logwriter);
             _config.ConfigFilePath = configFile;
 
             // Setting up and running ChangeLogConsole for Creating/Appending ChangeLog:
@@ -70,7 +68,8 @@ namespace ChangeLogConsole
             string backuptargetcommitjsonpath = $@"{Directory.GetParent(currentDirectory2).Parent.Parent.Parent.FullName}\JsonFiles\";
 
             string? repoProject = reader.ReadInfo("Project", "changelogSettings");
-            _config.logfilepath = pathHandler.CombinePath(CombinationType.Folder, Directory.GetParent(currentDirectory2).Parent.Parent.Parent.Parent.Parent.FullName, repoProject);
+            string? repoName = reader.ReadInfo("RepositoryName", "changelogSettings");
+            _config.logfilepath = PathCombine.CombinePath(CombinationType.Folder, Directory.GetParent(currentDirectory2).Parent.Parent.Parent.Parent.Parent.FullName, repoName, repoProject);
             _config.jsonpath = targetcommitjsonpath;
             _config.jsonfilename = targetcommitjsonfile;
             _config.backupjsonpath = backuptargetcommitjsonpath;
@@ -104,7 +103,7 @@ namespace ChangeLogConsole
             }
 
             _repo = APIFactory<DBNull>.GetAPIRepo(mode, _config, jsonHandler, reader, logwriter);
-            var clientProvider = new ClientProvider<DBNull>(logwriter);
+            var clientProvider = new ClientProvider<DBNull>(logwriter, _config);
             clientProvider.clientBase = _config.runType;
             clientProvider.appName = reader.ReadInfo("RepositoryName", "changelogSettings");
             clg = new(_repo, _config, logwriter, _config.logfilepath, clientProvider);

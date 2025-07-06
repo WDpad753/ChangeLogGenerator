@@ -1,11 +1,12 @@
-﻿using BaseClass.API;
-using BaseClass.API.Interface;
+﻿using BaseClass.API.Interface;
 using BaseClass.Config;
 using BaseClass.Helper;
 using BaseClass.JSON;
 using BaseClass.Model;
 using BaseLogger;
 using BaseLogger.Models;
+using ChangeLogCoreLibrary.APIRepositories.Client;
+
 //using ChangeLogConsole.Writer;
 using ChangeLogCoreLibrary.APIRepositories.Factory;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
@@ -20,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using UtilityClass = BaseClass.MethodNameExtractor.FuncNameExtractor;
@@ -60,10 +62,10 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         private HttpClient _client = null;
         private CLGConfig _config;
         private JSONFileHandler _jsonFileHandler;
-        private PathCombine _pathHandler;
         private string logFilePath;
         private string azureJsonfile = "AppAzureJson.json";
         private string githubJsonfile = "AppGithubJson.json";
+        private string finalconfigpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest3.config";
 
         [SetUp]
         public void Setup()
@@ -108,13 +110,12 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             _config = new CLGConfig();
             _jsonFileHandler = new JSONFileHandler(logwriter);
-            _pathHandler = new PathCombine(logwriter);
 
             _config.ConfigFilePath = configpath;
             _config.logfilepath = logfilepath;
             _config.runType = "AzureDevOps";
             _config.jsonpath = jsonpath;
-            _config.testClient = _client;
+            //_config.testClient = _client;
             _config.backupjsonpath = jsonpath;
 
             logFilePath = Path.GetFileName(Path.GetDirectoryName(logfilepath));
@@ -159,9 +160,21 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         [Test, Order(2)]
         public async Task AzureEndpoint()
         {
+            _config.ConfigFilePath = finalconfigpath;
+            logwriter = new LogWriter(finalconfigpath, logpath);
+            configReader = new(finalconfigpath, logwriter);
+
+            //string organization = configReader.ReadInfo("Organisation", "changelogSettings");
+            //string project = configReader.ReadInfo("Project", "changelogSettings");
+            //string repositoryName = configReader.ReadInfo("RepositoryName", "changelogSettings");
+
+            //_config.Organisation = organization;
+            //_config.Project = project;
+            //_config.RepositoryName = repositoryName;
+
             string baseUrl = _client.BaseAddress!.ToString();
-            var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, TestEnvironment.Factory);
-            clientProvider.testClient = true;
+            var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, _config, TestEnvironment.Factory);
+            //clientProvider.testClient = true;
 
             if (baseUrl == null || baseUrl == string.Empty)
             {
@@ -174,8 +187,9 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             _config.jsonfilename = azureJsonfile;
             _config.logfilename = "ChangeLog.txt";
+            _config.runType = "AzureDevOps";
 
-            _repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.APITest,
+            _repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.AzureDevOps,
                     _config,
                     _jsonFileHandler,
                     configReader,
@@ -199,7 +213,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             bool ChangeLogExists = File.Exists(Path.Combine(_config.logfilepath, _config.logfilename));
             bool PrevJsonExists = File.Exists(Path.Combine(_config.jsonpath, _config.jsonfilename));
-            string? PrevJsonHS = configReader.ReadInfo("PrevMapJSONHS");
+            string? PrevJsonHS = configReader.ReadInfo("PrevMapJSONHS", "changelogSettings");
             bool PrevJsonHSExists = PrevJsonHS != null ? true : false;
 
             if (ChangeLogExists == true && PrevJsonExists == true && PrevJsonHSExists == true)
@@ -216,8 +230,21 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         public async Task GitHubEndpoint()
         {
             string baseUrl = _client.BaseAddress!.ToString();
-            var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, TestEnvironment.Factory);
-            clientProvider.testClient = true;
+
+            _config.ConfigFilePath = finalconfigpath;
+            logwriter = new LogWriter(finalconfigpath, logpath);
+            configReader = new(finalconfigpath, logwriter);
+
+            //string organization = configReader.ReadInfo("Organisation", "changelogSettings");
+            //string project = configReader.ReadInfo("Project", "changelogSettings");
+            //string repositoryName = configReader.ReadInfo("RepositoryName", "changelogSettings");
+
+            //_config.Organisation = organization;
+            //_config.Project = project;
+            //_config.RepositoryName = repositoryName;
+
+            var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, _config, TestEnvironment.Factory);
+            //clientProvider.testClient = true;
 
             _config.runType = "GitHub";
 
@@ -233,7 +260,12 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             _config.jsonfilename = githubJsonfile;
             _config.logfilename = "ChangeLog.txt";
 
-            _repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.APITest,
+            //_repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.APITest,
+            //    _config,
+            //    _jsonFileHandler,
+            //    configReader,
+            //    logwriter);
+            _repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.GitHub,
                 _config,
                 _jsonFileHandler,
                 configReader,
@@ -257,81 +289,8 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             bool ChangeLogExists = File.Exists(Path.Combine(_config.logfilepath,_config.logfilename));
             bool PrevJsonExists = File.Exists(Path.Combine(_config.jsonpath, _config.jsonfilename));
-            string? PrevJsonHS = configReader.ReadInfo("PrevMapJSONHS");
+            string? PrevJsonHS = configReader.ReadInfo("PrevMapJSONHS", "changelogSettings");
             bool PrevJsonHSExists = PrevJsonHS != null && PrevJsonHS != "" ? true : false;
-
-            if (ChangeLogExists == true && PrevJsonExists == true && PrevJsonHSExists == true)
-            {
-                Assert.Pass();
-            }
-            else
-            {
-                Assert.Fail();
-            }
-        }
-
-        [Test]
-        [Explicit("Only run locally or manually; Testing Passed")]
-        public void ChangeLogWriteFinalTest()
-        {
-            Dictionary<string, string> runType1 = new Dictionary<string, string>() {
-                { "Type", "AzureDevOps" },
-                { "JSONPath", azureJsonfile },
-                { "ChangeLogFileName", "AzureChangeLog.txt" }
-            };
-            Dictionary<string,string> runType2 = new Dictionary<string, string>() {
-                { "Type", "GitHub" },
-                { "JSONPath", githubJsonfile },
-                { "ChangeLogFileName", "GitHubChangeLog.txt" }
-            };
-
-            List<Dictionary<string, string>> runType = new List<Dictionary<string, string>>() { runType1, runType2};
-            int runTypeCNT = 0;
-
-            foreach (var type in runType)
-            {
-                _config.runType = type["Type"];
-                _config.testClient = new HttpClient();
-                _config.testClient.BaseAddress = new Uri(_pathHandler.CombinePath(CombinationType.URL, APIRepoPath.APITest.ToString(), configReader.EnvRead("TestAPI", EnvAccessMode.User)));
-                _config.jsonfilename = type["JSONPath"];
-                _config.logfilepath = @$"{AppDomain.CurrentDomain.BaseDirectory}TempLogs";
-                _config.logfilename = @$"{type["ChangeLogFileName"]}";
-                _config.testURL = configReader.EnvRead("TestAPI", EnvAccessMode.User);
-
-                var clientProvider = new ClientProvider<DBNull>(logwriter);
-
-                _repoFinal = APIFactory<DBNull>.GetAPIRepo(RepoMode.APITest, _config, _jsonFileHandler, configReader, logwriter);
-
-                if (_repoFinal == null)
-                {
-                    Assert.Fail("Unable to obtain a valid API Repository Mode");
-                }
-
-                ChangeLogWrite<DBNull> clg = new ChangeLogWrite<DBNull>(_repoFinal, _config, logwriter, _config.logfilepath, clientProvider);
-
-                try
-                {
-                    clg.ChangeLogReaderWriter().Wait();
-                    runTypeCNT++;
-                }
-                catch (Exception ex)
-                {
-                    logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram", UtilityClass.GetMethodName(), MessageLevels.Fatal);
-                }
-
-                if (runTypeCNT == 1)
-                {
-                    configReader.SaveInfo("", "PrevMapJSONHS");
-                }
-            }
-
-            string[] files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "TempLogs\\", "*ChangeLog.txt");
-            string[] jsonfiles = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "JsonFiles\\", "*Json.json");
-
-            bool ChangeLogExists = files.Length > 0 ? true : false;
-            bool PrevJsonExists = jsonfiles.Length > 0 ? true : false;
-            string? PrevJsonHS = configReader.ReadInfo("PrevMapJSONHS");
-            bool PrevJsonHSExists = PrevJsonHS != null ? true : false;
 
             if (ChangeLogExists == true && PrevJsonExists == true && PrevJsonHSExists == true)
             {

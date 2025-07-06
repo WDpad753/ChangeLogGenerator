@@ -20,7 +20,6 @@ namespace ChangeLogCoreLibrary.APIRepositories.Factory
             {
                 RepoMode.AzureDevOps => new AzureDevOps<TEntryPoint>(settings, JsonReader, configReader, logger),
                 RepoMode.GitHub => new GitHub<TEntryPoint>(settings, JsonReader, configReader, logger),
-                RepoMode.APITest => new APITest<TEntryPoint>(settings, JsonReader, configReader, logger),
                 _ => throw new ArgumentException("Invalid mode", nameof(mode))
             };
         }

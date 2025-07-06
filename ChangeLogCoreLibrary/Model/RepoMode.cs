@@ -10,6 +10,5 @@ namespace ChangeLogCoreLibrary.Model
     {
         AzureDevOps,
         GitHub,
-        APITest
     }
 }

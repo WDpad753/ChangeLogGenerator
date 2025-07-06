@@ -1,10 +1,10 @@
-﻿using BaseClass.API;
-using BaseClass.Config;
+﻿using BaseClass.Config;
 using BaseClass.Helper;
 using BaseClass.JSON;
 using BaseClass.Model;
 using BaseLogger;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
+using ChangeLogCoreLibrary.APIRepositories.Client;
 using ChangeLogCoreLibrary.Model;
 using Newtonsoft.Json.Linq;
 using System;
@@ -24,7 +24,6 @@ namespace ChangeLogCoreLibrary.Classes
         private JSONFileHandler _fileHandler;
         private ConfigHandler _reader;
         private static MapAzureJson prevMapJson = new MapAzureJson();
-        private readonly PathCombine _pathHandler;
 
         public AzureDevOps(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler configReader,  LogWriter Logger)
         {
@@ -32,7 +31,6 @@ namespace ChangeLogCoreLibrary.Classes
             _logger = Logger;
             _fileHandler = JsonReader;
             _reader = configReader;
-            _pathHandler = new(Logger);
         }
 
         public void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient<TEntryPoint>? client = null, string? EnvVar = null)
@@ -183,7 +181,7 @@ namespace ChangeLogCoreLibrary.Classes
 
                     _fileHandler.SaveJson(mapJson, Path.Combine(_config.jsonpath, _config.jsonfilename).ToString());
                     prevMapJsonHS = Crc32.CalculateHash(mapJson);
-                    _reader.SaveInfo(prevMapJsonHS,"PrevMapJSONHS");
+                    _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
                 }
                 else if (File.Exists(filepath) && fileInfo.Length > 0 && !mapJsonHS.Equals(prevMapJsonHS))
                 {
@@ -322,7 +320,7 @@ namespace ChangeLogCoreLibrary.Classes
 
                                 _fileHandler.SaveJson(mapJson, Path.Combine(_config.jsonpath, _config.jsonfilename).ToString());
                                 prevMapJsonHS = Crc32.CalculateHash(mapJson);
-                                _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS");
+                                _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
                                 sw.Close();
                             }
                             Console.WriteLine("Done");
@@ -331,7 +329,7 @@ namespace ChangeLogCoreLibrary.Classes
                 }
                 else
                 {
-                    using (StreamWriter writer = new StreamWriter(_pathHandler.CombinePath(CombinationType.Folder, filepath, _config.logfilename)))
+                    using (StreamWriter writer = new StreamWriter(PathCombine.CombinePath(CombinationType.Folder, filepath, _config.logfilename)))
                     {
                         foreach (object valueItem in listOfLists)
                         {
@@ -433,7 +431,7 @@ namespace ChangeLogCoreLibrary.Classes
 
                         _fileHandler.SaveJson(mapJson, Path.Combine(_config.jsonpath, _config.jsonfilename).ToString());
                         prevMapJsonHS = Crc32.CalculateHash(mapJson);
-                        _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS");
+                        _reader.SaveInfo(prevMapJsonHS, "PrevMapJSONHS", "changelogSettings");
                         writer.Close();
                     }
                 }

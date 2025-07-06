@@ -23,6 +23,8 @@ namespace ChangeLogCoreLibrary.Model
 
         public string? runType { get; set; }
 
-        public HttpClient? testClient { get; set; }
+        public string? Organisation {  get; set; }
+        public string? Project {  get; set; }
+        public string? RepositoryName {  get; set; }
     }
 }

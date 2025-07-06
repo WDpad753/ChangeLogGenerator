@@ -13,8 +13,7 @@ namespace TestAPI.Controllers
         public IActionResult GetAzureCommits(
             string organization,
             string project,
-            string repositoryId,
-            [FromQuery(Name = "api-version")] string apiVersion = "7.1")
+            string repositoryId)
         {
 
             string fileDirectory = AppDomain.CurrentDomain.BaseDirectory;
