@@ -69,7 +69,8 @@ namespace ChangeLogConsole
 
             string? repoProject = reader.ReadInfo("Project", "changelogSettings");
             string? repoName = reader.ReadInfo("RepositoryName", "changelogSettings");
-            _config.logfilepath = PathCombine.CombinePath(CombinationType.Folder, Directory.GetParent(currentDirectory2).Parent.Parent.Parent.Parent.FullName, repoProject);
+            //_config.logfilepath = PathCombine.CombinePath(CombinationType.Folder, Directory.GetParent(currentDirectory2).Parent.Parent.Parent.FullName);
+            _config.logfilepath = Directory.GetParent(currentDirectory2).Parent.Parent.Parent.FullName;
             _config.jsonpath = targetcommitjsonpath;
             _config.jsonfilename = targetcommitjsonfile;
             _config.backupjsonpath = backuptargetcommitjsonpath;
