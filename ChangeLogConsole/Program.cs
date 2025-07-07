@@ -13,7 +13,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection.Metadata;
 using static System.Net.Mime.MediaTypeNames;
-using UtilityClass = BaseClass.MethodNameExtractor.FuncNameExtractor;
+using FuncName = BaseClass.MethodNameExtractor.FuncNameExtractor;
 
 namespace ChangeLogConsole
 {
@@ -57,7 +57,7 @@ namespace ChangeLogConsole
             // Setting up and running ChangeLogConsole for Creating/Appending ChangeLog:
             if (_config == null)
             {
-                logwriter.LogWrite($@"Error Message: Unable to find the path to save Commit File.", "MainProgram", UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                logwriter.LogWrite($@"Error Message: Unable to find the path to save Commit File.", "MainProgram", FuncName.GetMethodName(), MessageLevels.Fatal);
                 return;
             }
 
@@ -81,7 +81,7 @@ namespace ChangeLogConsole
 
             if(tarRepo == null)
             {
-                logwriter.LogWrite($@"Error Message: Value for the Target Repo is empty.", NameSpace, UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                logwriter.LogWrite($@"Error Message: Value for the Target Repo is empty.", NameSpace, FuncName.GetMethodName(), MessageLevels.Fatal);
                 return;
             }
             else
@@ -98,7 +98,7 @@ namespace ChangeLogConsole
                 }
                 else
                 {
-                    logwriter.LogWrite($@"Error Message: Selected Repo Mode can not be found.", NameSpace, UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                    logwriter.LogWrite($@"Error Message: Selected Repo Mode can not be found.", NameSpace, FuncName.GetMethodName(), MessageLevels.Fatal);
                     return;
                 }
             }
@@ -115,7 +115,7 @@ namespace ChangeLogConsole
             }
             catch (Exception ex)
             {
-                logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",FuncName.GetMethodName(), MessageLevels.Fatal);
             }
         }
     }

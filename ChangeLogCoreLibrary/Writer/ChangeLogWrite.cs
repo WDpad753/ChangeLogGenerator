@@ -9,7 +9,7 @@ using ChangeLogCoreLibrary.APIRepositories.Interface;
 using ChangeLogCoreLibrary.Classes;
 using ChangeLogCoreLibrary.Model;
 using System.Reflection.Metadata;
-using UtilityClass = BaseClass.MethodNameExtractor.FuncNameExtractor;
+using FuncName = BaseClass.MethodNameExtractor.FuncNameExtractor;
 
 namespace ChangeLogCoreLibrary.Writer
 {
@@ -140,7 +140,7 @@ namespace ChangeLogCoreLibrary.Writer
             }
             catch(Exception ex)
             {
-                _logger.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram", UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                _logger.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram", FuncName.GetMethodName(), MessageLevels.Fatal);
                 return null;
             }
         }

@@ -12,7 +12,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
-using UtilityClass = BaseClass.MethodNameExtractor.FuncNameExtractor;
+using FuncName = BaseClass.MethodNameExtractor.FuncNameExtractor;
 
 namespace ChangeLogCoreLibrary.APIRepositories.Client
 {
@@ -98,7 +98,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
             }
             catch (Exception ex)
             {
-                _logWriter.LogWrite($"Unable to create client. Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", this.GetType().Name, UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                _logWriter.LogWrite($"Unable to create client. Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", this.GetType().Name, FuncName.GetMethodName(), MessageLevels.Fatal);
                 return null;
             }
         }
