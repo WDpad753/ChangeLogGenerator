@@ -151,7 +151,29 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                 Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
             }
         }
-        
+
+        [Test]
+        //[NonParallelizable]
+        public void JsonConfigEnvSaveTest()
+        {
+            string val = "Hello_Test";
+
+            configReader.EnvSave("Test", "Hello_Test", EnvAccessMode.File, LaunchJsonConfigFilePath, "environmentVariables");
+
+            string? res = configReader.EnvRead("Test", EnvAccessMode.File, LaunchJsonConfigFilePath, "environmentVariables");
+
+            if (res != null)
+            {
+                Assert.That(val == res, "Value is not equal after modification");
+
+                configReader.EnvSave("Test", "Hello_Unit_Test", EnvAccessMode.File, LaunchJsonConfigFilePath, "environmentVariables");
+            }
+            else
+            {
+                Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
+            }
+        }
+
         [Test]
         //[NonParallelizable]
         public void envConfigEnvReadTest()
@@ -169,7 +191,29 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                 Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
             }
         }
-        
+
+        [Test]
+        //[NonParallelizable]
+        public void envConfigEnvSaveTest()
+        {
+            string val = "Hello_Test";
+
+            configReader.EnvSave("Test", "Hello_Test", EnvAccessMode.File, envConfigFilePath);
+
+            string? res = configReader.EnvRead("Test", EnvAccessMode.File, envConfigFilePath);
+
+            if (res != null)
+            {
+                Assert.That(val == res, "Value is not equal after modification");
+
+                configReader.EnvSave("Test", "Hello_Unit_Test", EnvAccessMode.File, envConfigFilePath);
+            }
+            else
+            {
+                Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
+            }
+        }
+
         [Test]
         //[NonParallelizable]
         public void XmlConfigEnvReadTest1()
