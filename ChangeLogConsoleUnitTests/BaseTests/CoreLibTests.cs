@@ -187,7 +187,49 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                 Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
             }
         }
-        
+
+        [Test]
+        public void XmlConfigEnvSaveTest1()
+        {
+            string val = "Hello_Test";
+
+            configReader.EnvSave("Test", "Hello_Test", EnvAccessMode.File, xmlConfigFilePath1, "EnvironmentVariables");
+
+            string? res = configReader.EnvRead("Test", EnvAccessMode.File, xmlConfigFilePath1, "EnvironmentVariables");
+
+            if (res != null)
+            {
+                Assert.That(val == res, "Value is not equal after modification");
+
+                configReader.EnvSave("Test", "Hello_Unit_Test", EnvAccessMode.File, xmlConfigFilePath1, "EnvironmentVariables");
+            }
+            else
+            {
+                Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
+            }
+        }
+
+        [Test]
+        public void XmlConfigEnvSaveTest2()
+        {
+            string val = "Hello_Test";
+
+            configReader.EnvSave("Test", "Hello_Test", EnvAccessMode.File, xmlConfigFilePath2, "EnvironmentVariables");
+
+            string? res = configReader.EnvRead("Test", EnvAccessMode.File, xmlConfigFilePath2, "EnvironmentVariables");
+
+            if (res != null)
+            {
+                Assert.That(val == res, "Value is not equal after modification");
+
+                configReader.EnvSave("Test", "Hello_Unit_Test", EnvAccessMode.File, xmlConfigFilePath2, "EnvironmentVariables");
+            }
+            else
+            {
+                Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
+            }
+        }
+
         [Test]
         //[NonParallelizable]
         public void XmlConfigEnvReadTest2()
