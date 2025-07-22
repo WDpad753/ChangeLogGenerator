@@ -31,6 +31,7 @@
   <ItemGroup>
     <!--<ProjectReference Include="..\..\BaseClassLibrary\BaseClass\BaseClass.csproj" />
     <ProjectReference Include="..\..\BaseClassLibrary\BaseLogger\BaseLogger.csproj" />-->
+    <ProjectReference Include="..\..\UIBaseClass\UIBaseClass\UIBaseClass.csproj" />
     <ProjectReference Include="..\ChangeLogConsole\ChangeLogConsole.csproj" />
     <ProjectReference Include="..\ChangeLogCoreLibrary\ChangeLogCoreLibrary.csproj" />
     <ProjectReference Include="..\TestAPI\TestAPI.csproj" />
