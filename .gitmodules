@@ -1,3 +1,7 @@
 [submodule "BaseClassLibrary"]
 	path = BaseClassLibrary
 	url = https://github.com/WDpad753/BaseClassLibrary.git
+
+[submodule "Custom-Message-Box"]
+	path = Custom-Message-Box
+	url = https://github.com/WDpad753/Custom-Message-Box.git
