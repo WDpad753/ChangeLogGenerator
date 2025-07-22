@@ -34,6 +34,7 @@
     <ProjectReference Include="..\..\UIBaseClass\UIBaseClass\UIBaseClass.csproj" />
     <ProjectReference Include="..\ChangeLogConsole\ChangeLogConsole.csproj" />
     <ProjectReference Include="..\ChangeLogCoreLibrary\ChangeLogCoreLibrary.csproj" />
+    <ProjectReference Include="..\Custom-Message-Box\CustomMessageBox\CustomMessageBox.csproj" />
     <ProjectReference Include="..\TestAPI\TestAPI.csproj" />
   </ItemGroup>
 
