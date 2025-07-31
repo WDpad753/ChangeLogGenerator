@@ -6,6 +6,6 @@
 	path = Custom-Message-Box
 	url = https://github.com/WDpad753/Custom-Message-Box.git
 
-[submodule "UIBaseClass"]
-	path = UIBaseClass
-	url = https://github.com/WDpad753/UIBaseClass.git
+[submodule "Custom-Error-Message-Box"]
+	path = Custom-Error-Message-Box
+	url = https://github.com/WDpad753/Custom-Error-Message-Box.git
