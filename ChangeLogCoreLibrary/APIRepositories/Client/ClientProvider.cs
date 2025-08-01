@@ -1,4 +1,5 @@
 ﻿using BaseClass.API.Interface;
+using BaseClass.Base.Interface;
 using BaseClass.Helper;
 using BaseClass.Model;
 using BaseLogger;
@@ -18,6 +19,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
 {
     public class ClientProvider<T> : IWebFactoryProvider where T : class
     {
+        private readonly IBase? baseConfig;
         private readonly WebApplicationFactory<T>? _factory;
         private readonly LogWriter _logWriter;
         private readonly CLGConfig _config;
@@ -26,9 +28,16 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
         public string? appName { get; set; }
 
 
-        public ClientProvider(LogWriter Logger, CLGConfig config, WebApplicationFactory<T>? factory = null)
+        //public ClientProvider(LogWriter Logger, CLGConfig config, WebApplicationFactory<T>? factory = null)
+        //{
+        //    _logWriter = Logger;
+        //    _config = config;
+        //    _factory = factory;
+        //}
+        public ClientProvider(IBase? BaseConfig, CLGConfig config, WebApplicationFactory<T>? factory = null)
         {
-            _logWriter = Logger;
+            baseConfig = BaseConfig;
+            _logWriter = BaseConfig.Logger;
             _config = config;
             _factory = factory;
         }
@@ -93,6 +102,8 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
                 {
                     throw new InvalidOperationException("Utilising this class requires to know if it is used for testing or for live project");
                 }
+
+                baseConfig.BaseUrlAddress = client.BaseAddress;
 
                 return client;
             }

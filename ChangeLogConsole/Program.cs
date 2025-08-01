@@ -14,12 +14,15 @@ using System.Diagnostics;
 using System.Reflection.Metadata;
 using static System.Net.Mime.MediaTypeNames;
 using FuncName = BaseClass.MethodNameExtractor.FuncNameExtractor;
+using BaseClass.Base.Interface;
+using BaseClass.Base;
 
 namespace ChangeLogConsole
 {
 
     public class Program
     {
+        private static IBase? baseConfig;
         private static LogWriter? logwriter;
         private static ConfigHandler? reader;
         private static string? NameSpace = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
@@ -38,6 +41,7 @@ namespace ChangeLogConsole
 
             string configFilePath = Path.Combine(currentDirectory2, "Config");
             string[] files = (string[])Directory.GetFiles(configFilePath, "*.config");
+            //string[] files = (string[])Directory.GetFiles(configFilePath);
             bool val = Directory.Exists(configFilePath);
 
             // Double check
@@ -50,8 +54,21 @@ namespace ChangeLogConsole
             string logFilePath = Path.Combine(Path.GetPathRoot(Environment.SystemDirectory), "tmp");
 
             logwriter = new(configFile, logFilePath);
-            reader = new(configFile, logwriter);
-            jsonHandler = new(logwriter);
+            //reader = new(configFile, logwriter);
+
+            baseConfig = new BaseSettings()
+            {
+                Logger = logwriter,
+                ConfigPath = configFile,
+            };
+
+            reader = new(baseConfig);
+            //jsonHandler = new(logwriter);
+            jsonHandler = new(baseConfig);
+
+            baseConfig.ConfigHandler = reader;
+            baseConfig.JSONFileHandler = jsonHandler;
+
             _config.ConfigFilePath = configFile;
 
             // Setting up and running ChangeLogConsole for Creating/Appending ChangeLog:
@@ -75,6 +92,7 @@ namespace ChangeLogConsole
             _config.jsonfilename = targetcommitjsonfile;
             _config.backupjsonpath = backuptargetcommitjsonpath;
             _config.logfilename = commitmessagesfilename;
+            baseConfig.FilePath = _config.logfilepath;
 
             string? tarRepo = reader.ReadInfo("Repo", "changelogSettings");
             RepoMode mode;
@@ -103,11 +121,14 @@ namespace ChangeLogConsole
                 }
             }
 
-            _repo = APIFactory<DBNull>.GetAPIRepo(mode, _config, jsonHandler, reader, logwriter);
-            var clientProvider = new ClientProvider<DBNull>(logwriter, _config);
+            //_repo = APIFactory<DBNull>.GetAPIRepo(mode, _config, jsonHandler, reader, logwriter);
+            _repo = APIFactory<DBNull>.GetAPIRepo(mode,_config,baseConfig);
+            //var clientProvider = new ClientProvider<DBNull>(logwriter, _config);
+            var clientProvider = new ClientProvider<DBNull>(baseConfig, _config);
             clientProvider.clientBase = _config.runType;
             clientProvider.appName = reader.ReadInfo("RepositoryName", "changelogSettings");
-            clg = new(_repo, _config, logwriter, _config.logfilepath, clientProvider);
+            //clg = new(_repo, _config, logwriter, _config.logfilepath, clientProvider);
+            clg = new(_repo, _config, baseConfig, clientProvider);
 
             try
             {

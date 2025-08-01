@@ -1,5 +1,6 @@
 ﻿using BaseClass.API;
 using BaseClass.API.Interface;
+using BaseClass.Base.Interface;
 using BaseClass.Helper;
 using BaseClass.Model;
 using BaseLogger;
@@ -20,6 +21,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
 {
     public class APIClient<TEntryPoint> : IDisposable where TEntryPoint : class
     {
+        private readonly IBase? baseConfig;
         public int? timeOut {  get; set; }
         public string? PerAccTok { get; set; }
 
@@ -31,9 +33,15 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
         private readonly LogWriter _logWriter;
         private readonly ClientProvider<TEntryPoint>? _clientProvider;
 
-        public APIClient(LogWriter Logger, ClientProvider<TEntryPoint>? clientProvider = null)
+        //public APIClient(LogWriter Logger, ClientProvider<TEntryPoint>? clientProvider = null)
+        //{
+        //    _logWriter = Logger;
+        //    //_strHandler = new(Logger);
+        //    _clientProvider = clientProvider;
+        //}
+        public APIClient(IBase? BaseConfig, ClientProvider<TEntryPoint>? clientProvider = null)
         {
-            _logWriter = Logger;
+            _logWriter = BaseConfig.Logger;
             //_strHandler = new(Logger);
             _clientProvider = clientProvider;
         }

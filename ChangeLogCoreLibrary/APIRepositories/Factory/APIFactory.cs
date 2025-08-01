@@ -1,4 +1,5 @@
-﻿using BaseClass.Config;
+﻿using BaseClass.Base.Interface;
+using BaseClass.Config;
 using BaseClass.JSON;
 using BaseLogger;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
@@ -14,12 +15,21 @@ namespace ChangeLogCoreLibrary.APIRepositories.Factory
 {
     public class APIFactory<TEntryPoint> where TEntryPoint : class
     {
-        public static IAPIRepo<TEntryPoint> GetAPIRepo(RepoMode mode, CLGConfig settings, JSONFileHandler JsonReader, ConfigHandler configReader, LogWriter logger)
+        //public static IAPIRepo<TEntryPoint> GetAPIRepo(RepoMode mode, CLGConfig settings, JSONFileHandler JsonReader, ConfigHandler configReader, LogWriter logger)
+        //{
+        //    return mode switch
+        //    {
+        //        RepoMode.AzureDevOps => new AzureDevOps<TEntryPoint>(settings, JsonReader, configReader, logger),
+        //        RepoMode.GitHub => new GitHub<TEntryPoint>(settings, JsonReader, configReader, logger),
+        //        _ => throw new ArgumentException("Invalid mode", nameof(mode))
+        //    };
+        //}
+        public static IAPIRepo<TEntryPoint> GetAPIRepo(RepoMode mode, CLGConfig settings, IBase? BaseConfig)
         {
             return mode switch
             {
-                RepoMode.AzureDevOps => new AzureDevOps<TEntryPoint>(settings, JsonReader, configReader, logger),
-                RepoMode.GitHub => new GitHub<TEntryPoint>(settings, JsonReader, configReader, logger),
+                RepoMode.AzureDevOps => new AzureDevOps<TEntryPoint>(settings, BaseConfig),
+                RepoMode.GitHub => new GitHub<TEntryPoint>(settings, BaseConfig),
                 _ => throw new ArgumentException("Invalid mode", nameof(mode))
             };
         }

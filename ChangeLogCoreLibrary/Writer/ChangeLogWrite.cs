@@ -1,4 +1,5 @@
-﻿using BaseClass.Config;
+﻿using BaseClass.Base.Interface;
+using BaseClass.Config;
 using BaseClass.Helper;
 using BaseClass.JSON;
 using BaseClass.Model;
@@ -15,26 +16,40 @@ namespace ChangeLogCoreLibrary.Writer
 {
     public class ChangeLogWrite<T> where T : class
     {
+        private readonly IBase? baseConfig;
         private CLGConfig _config;
         private JSONFileHandler _fileHandler;
         private APIClient<T> _client;
         private ConfigHandler _reader;
-        private LogWriter _logger;
+        private LogWriter? _logger;
         private static MapAzureJson prevMapAzureJson = new MapAzureJson();
         private static List<MapGitHubJson> prevMapGithubJson = new List<MapGitHubJson>();
         private readonly IAPIRepo<T> _repo;
-        private string _logFilePath;
+        private string? _logFilePath;
         private readonly ClientProvider<T>? _factoryProvider;
 
-        public ChangeLogWrite(IAPIRepo<T> repo, CLGConfig config, LogWriter Logger, string logFilePath, ClientProvider<T>? clientFactory = null)
+        //public ChangeLogWrite(IAPIRepo<T> repo, CLGConfig config, LogWriter Logger, string logFilePath, ClientProvider<T>? clientFactory = null)
+        //{
+        //    _config = config;
+        //    _logger = Logger;
+        //    _fileHandler = new(Logger);
+        //    _reader = new(config.ConfigFilePath, Logger);
+        //    _repo = repo;
+        //    _logFilePath = logFilePath;
+        //    _client = new(Logger, clientFactory);
+        //    _factoryProvider = clientFactory;
+        //}
+        public ChangeLogWrite(IAPIRepo<T> repo, CLGConfig config, IBase BaseConfig, ClientProvider<T>? clientFactory = null)
         {
             _config = config;
-            _logger = Logger;
-            _fileHandler = new(Logger);
-            _reader = new(config.ConfigFilePath, Logger);
+            baseConfig = BaseConfig;
+            _logger = BaseConfig.Logger;
+            _fileHandler = new(BaseConfig);
+            BaseConfig.ConfigPath = config.ConfigFilePath;
+            _reader = new(BaseConfig);
             _repo = repo;
-            _logFilePath = logFilePath;
-            _client = new(Logger, clientFactory);
+            _logFilePath = BaseConfig.FilePath;
+            _client = new(BaseConfig, clientFactory);
             _factoryProvider = clientFactory;
         }
 

@@ -1,3 +1,5 @@
+using BaseClass.Base;
+using BaseClass.Base.Interface;
 using BaseClass.Config;
 using BaseClass.Model;
 using BaseLogger;
@@ -9,6 +11,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
 {
     public class CoreLibTests
     {
+        private IBase? baseConfig;
         private LogWriter logwriter;
         //private LogWriter logwriter2;
         private ConfigHandler configReader;
@@ -36,8 +39,16 @@ namespace ChangeLogConsoleUnitTests.BaseTests
             logwriter = new LogWriter(configpath, logpath);
             //logwriter2 = new LogWriter(configpath2, logpath);
 
-            configReader = new(configpath, logwriter);
+            baseConfig = new BaseSettings()
+            {
+                Logger = logwriter,
+                ConfigPath = configpath,
+            };
+
+            //configReader = new(configpath, logwriter);
+            configReader = new(baseConfig);
             //configReader2 = new(configpath2, logwriter2);
+            baseConfig.ConfigHandler = configReader;
             Environment.SetEnvironmentVariable("Test", "Hello_Unit_Test", EnvironmentVariableTarget.Process);
         }
 
@@ -341,7 +352,9 @@ namespace ChangeLogConsoleUnitTests.BaseTests
 
             string configpath2 = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest2.config";
 
-            configReader = new(configpath2, logwriter);
+            baseConfig.ConfigPath = configpath2;
+
+            configReader = new(baseConfig);
 
             configReader.SaveInfo("NewConsoleTest", "AppName", "loggerSettings");
 

@@ -1,4 +1,6 @@
 ﻿using BaseClass.API.Interface;
+using BaseClass.Base;
+using BaseClass.Base.Interface;
 using BaseClass.Config;
 using BaseClass.Helper;
 using BaseClass.JSON;
@@ -54,6 +56,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
     [TestFixture]
     public class ChangeLogTests
     {
+        private IBase? baseConfig;
         private LogWriter logwriter;
         private ConfigHandler configReader;
         private string logpath;
@@ -72,7 +75,8 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         {
             _client = TestEnvironment.Factory.CreateClient();
 
-            string configpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest.config";
+            //string configpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest.config";
+            string configpath = finalconfigpath;
             logpath = @$"{AppDomain.CurrentDomain.BaseDirectory}TempLogs\";
             string jsonpath = @$"{AppDomain.CurrentDomain.BaseDirectory}JsonFiles\";
             string logfilepath = @$"{AppDomain.CurrentDomain.BaseDirectory}TempLogs\";
@@ -103,13 +107,24 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             logwriter = new LogWriter(configpath, logpath);
 
-            configReader = new(configpath, logwriter);
+            baseConfig = new BaseSettings()
+            {
+                Logger = logwriter,
+                ConfigPath = configpath,
+            };
+
+            //configReader = new(configpath, logwriter);
+            configReader = new(baseConfig);
+            baseConfig.ConfigHandler = configReader;
             Environment.SetEnvironmentVariable("Test", "Hello_Unit_Test", EnvironmentVariableTarget.Process);
 
-            configReader.SaveInfo("", "PrevMapJSONHS");
+            //configReader.SaveInfo("", "PrevMapJSONHS");
+            configReader.SaveInfo("", "PrevMapJSONHS", "changelogSettings");
 
             _config = new CLGConfig();
-            _jsonFileHandler = new JSONFileHandler(logwriter);
+            //_jsonFileHandler = new JSONFileHandler(logwriter);
+            _jsonFileHandler = new JSONFileHandler(baseConfig);
+            baseConfig.JSONFileHandler = _jsonFileHandler;
 
             _config.ConfigFilePath = configpath;
             _config.logfilepath = logfilepath;
@@ -129,9 +144,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         {
             var mode = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.AzureDevOps,
                 new CLGConfig(),
-                new JSONFileHandler(logwriter),
-                configReader,
-                logwriter);
+                    baseConfig);
 
             if (mode != null)
             {
@@ -162,7 +175,9 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         {
             _config.ConfigFilePath = finalconfigpath;
             logwriter = new LogWriter(finalconfigpath, logpath);
-            configReader = new(finalconfigpath, logwriter);
+            baseConfig.ConfigPath = finalconfigpath;    
+            //configReader = new(finalconfigpath, logwriter);
+            configReader = new(baseConfig);
 
             //string organization = configReader.ReadInfo("Organisation", "changelogSettings");
             //string project = configReader.ReadInfo("Project", "changelogSettings");
@@ -173,7 +188,8 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             //_config.RepositoryName = repositoryName;
 
             string baseUrl = _client.BaseAddress!.ToString();
-            var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, _config, TestEnvironment.Factory);
+            //var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, _config, TestEnvironment.Factory);
+            var clientProvider = new ClientProvider<TestAPI.Program>(baseConfig, _config, TestEnvironment.Factory);
             //clientProvider.testClient = true;
 
             if (baseUrl == null || baseUrl == string.Empty)
@@ -188,19 +204,24 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             _config.jsonfilename = azureJsonfile;
             _config.logfilename = "ChangeLog.txt";
             _config.runType = "AzureDevOps";
+            baseConfig.FilePath = _config.logfilepath;
 
+            //_repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.AzureDevOps,
+            //        _config,
+            //        _jsonFileHandler,
+            //        configReader,
+            //        logwriter);
             _repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.AzureDevOps,
                     _config,
-                    _jsonFileHandler,
-                    configReader,
-                    logwriter);
+                    baseConfig);
 
             if (_repo == null)
             {
                 Assert.Fail("Unable to obtain a valid API Repository Mode");
             }
 
-            ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, logwriter, logFilePath, clientProvider);
+            //ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, logwriter, logFilePath, clientProvider);
+            ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, baseConfig, clientProvider);
 
             try
             {
@@ -233,7 +254,14 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             _config.ConfigFilePath = finalconfigpath;
             logwriter = new LogWriter(finalconfigpath, logpath);
-            configReader = new(finalconfigpath, logwriter);
+            //configReader = new(finalconfigpath, logwriter);
+            baseConfig.ConfigPath = finalconfigpath;
+            //configReader = new(finalconfigpath, logwriter);
+            configReader = new(baseConfig);
+
+            //baseConfig.ConfigHandler = configReader;
+            //baseConfig.Logger = logwriter;
+            //baseConfig.JSONFileHandler = new(baseConfig);
 
             //string organization = configReader.ReadInfo("Organisation", "changelogSettings");
             //string project = configReader.ReadInfo("Project", "changelogSettings");
@@ -243,7 +271,8 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             //_config.Project = project;
             //_config.RepositoryName = repositoryName;
 
-            var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, _config, TestEnvironment.Factory);
+            //var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, _config, TestEnvironment.Factory);
+            var clientProvider = new ClientProvider<TestAPI.Program>(baseConfig, _config, TestEnvironment.Factory);
             //clientProvider.testClient = true;
 
             _config.runType = "GitHub";
@@ -259,24 +288,24 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             _config.jsonfilename = githubJsonfile;
             _config.logfilename = "ChangeLog.txt";
-
+            baseConfig.FilePath = _config.logfilepath;
+            
             //_repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.APITest,
             //    _config,
             //    _jsonFileHandler,
             //    configReader,
             //    logwriter);
             _repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.GitHub,
-                _config,
-                _jsonFileHandler,
-                configReader,
-                logwriter);
+                    _config,
+                    baseConfig);
 
             if (_repo == null)
             {
                 Assert.Fail("Unable to obtain a valid API Repository Mode");
             }
 
-            ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, logwriter, logFilePath, clientProvider);
+            //ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, logwriter, logFilePath, clientProvider);
+            ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, baseConfig, clientProvider);
 
             try
             {

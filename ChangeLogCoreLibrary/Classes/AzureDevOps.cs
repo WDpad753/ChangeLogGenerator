@@ -14,23 +14,32 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BaseClass.Base.Interface;
 
 namespace ChangeLogCoreLibrary.Classes
 {
     public class AzureDevOps<TEntryPoint> : IAPIRepo<TEntryPoint> where TEntryPoint : class
     {
+        private readonly IBase? baseConfig;
         private CLGConfig _config;
         private LogWriter _logger;
         private JSONFileHandler _fileHandler;
         private ConfigHandler _reader;
         private static MapAzureJson prevMapJson = new MapAzureJson();
 
-        public AzureDevOps(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler configReader,  LogWriter Logger)
+        //public AzureDevOps(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler configReader,  LogWriter Logger)
+        //{
+        //    _config = config;
+        //    _logger = Logger;
+        //    _fileHandler = JsonReader;
+        //    _reader = configReader;
+        //}
+        public AzureDevOps(CLGConfig config, IBase? BaseConfig)
         {
             _config = config;
-            _logger = Logger;
-            _fileHandler = JsonReader;
-            _reader = configReader;
+            _logger = BaseConfig.Logger;
+            _fileHandler = BaseConfig.JSONFileHandler;
+            _reader = BaseConfig.ConfigHandler;
         }
 
         public void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient<TEntryPoint>? client = null, string? EnvVar = null)
