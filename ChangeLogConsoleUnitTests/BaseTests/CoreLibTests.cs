@@ -13,9 +13,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
     {
         private IBase? baseConfig;
         private LogWriter logwriter;
-        //private LogWriter logwriter2;
         private ConfigHandler configReader;
-        //private ConfigHandler configReader2;
         private string logpath;
         private string configPath;
         private static string LaunchJsonConfigFilePath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\launchsettings.json";
@@ -53,7 +51,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        //[NonParallelizable]
+        
         public void ConfigReaderAssertTest()
         {
             string appName = "ConsoleTest";
@@ -70,7 +68,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        //[NonParallelizable]
+        
         public void ConfigReaderModificationTest()
         {
             string? val = configReader.ReadInfo("AppName");
@@ -90,7 +88,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        //[NonParallelizable]
+        
         public void ConfigUserMachineMimicEnvReadTest()
         {
             string val = "Hello_Unit_Test";
@@ -108,7 +106,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        //[NonParallelizable]
+        
         [Explicit("Only run locally or manually")]
         public void ConfigUserEnvReadTest()
         {
@@ -127,7 +125,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        //[NonParallelizable]
+        
         [Explicit("Only run locally or manually")]
         public void ConfigMachineEnvReadTest()
         {
@@ -146,7 +144,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        //[NonParallelizable]
+        
         public void JsonConfigEnvReadTest()
         {
             string val = "Hello_Unit_Test";
@@ -164,7 +162,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        //[NonParallelizable]
+        
         public void JsonConfigEnvSaveTest()
         {
             string val = "Hello_Test";
@@ -186,7 +184,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        //[NonParallelizable]
+        
         public void envConfigEnvReadTest()
         {
             string val = "Hello_Unit_Test";
@@ -204,7 +202,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        //[NonParallelizable]
+        
         public void envConfigEnvSaveTest()
         {
             string val = "Hello_Test";
@@ -226,7 +224,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        //[NonParallelizable]
+        
         public void XmlConfigEnvReadTest1()
         {
             string val = "Hello_Unit_Test";
@@ -286,7 +284,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        //[NonParallelizable]
+        
         public void XmlConfigEnvReadTest2()
         {
             string val = "Hello_Unit_Test";
@@ -305,7 +303,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         
         
         [Test, Order(1)]
-        //[NonParallelizable]
+        
         public void CustomConfigReadTest()
         {
             string val = "ConsoleTest";
@@ -323,7 +321,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
         
         [Test, Order(2)]
-        //[NonParallelizable]
+        
         public void CustomConfigWriteTest()
         {
             string val = "NewConsoleTest";
@@ -343,7 +341,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
         
         [Test, Order(50)]
-        //[NonParallelizable]
+        
         public void CustomConfigWrite2Test()
         {
             DeleteAdd("loggerSettings", "AppName");
@@ -385,7 +383,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
 
                 XDocument xdoc = XDocument.Load(configPath);
 
-                // Find the element named mainKey (e.g. "loggerSettings")
+                
                 XElement targetNode = xdoc.Descendants(mainKey).FirstOrDefault();
                 if (targetNode == null)
                 {
@@ -394,19 +392,19 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                     return;
                 }
 
-                // Determine container: if <settings> child exists, use it; otherwise use targetNode
+               
                 XElement container = targetNode.Element("settings") ?? targetNode;
 
-                // Find <add> elements to remove:
+                
                 IEnumerable<XElement> adds;
                 if (string.IsNullOrEmpty(keyToDelete))
                 {
-                    // remove all <add> under container (direct children)
+                    
                     adds = container.Elements("add").ToList();
                 }
                 else
                 {
-                    // remove only those whose key attribute matches
+                    
                     adds = container.Elements("add")
                         .Where(el => string.Equals(el.Attribute("key")?.Value, keyToDelete, StringComparison.OrdinalIgnoreCase))
                         .ToList();
@@ -421,7 +419,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                     return;
                 }
 
-                // Remove them
+                
                 foreach (var add in adds)
                     add.Remove();
 
