@@ -14,18 +14,23 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         private IBase? baseConfig;
         private LogWriter logwriter;
         private ConfigHandler configReader;
+        private JSONFileHandler jsonFileHandler;
+        private EnvFileHandler envFileHandler;
+        private EnvHandler envHandler;
         private string logpath;
         private string configPath;
         private static string LaunchJsonConfigFilePath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\launchsettings.json";
         private static string envConfigFilePath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\EnvFileTest.env";
         private static string xmlConfigFilePath1 = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\XMLFileTest1.xml";
         private static string xmlConfigFilePath2 = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\XMLFileTest2.xml";
+        private static string jsonTestFilesPath = @$"{AppDomain.CurrentDomain.BaseDirectory}TestFiles\JSON";
 
         [SetUp]
         public void Setup()
         {
             string configpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest.config";
-            //string configpath2 = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest2.config";
+            string Mainconfigpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\MainAppTest.config";
+
             logpath = @$"{AppDomain.CurrentDomain.BaseDirectory}TempLogs\";
             configPath = configpath;
 
@@ -34,8 +39,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                 Directory.Delete(logpath, true); // Ensure the log directory is clean before starting the test
             }
 
-            logwriter = new LogWriter(configpath, logpath);
-            //logwriter2 = new LogWriter(configpath2, logpath);
+            logwriter = new LogWriter(Mainconfigpath, logpath);
 
             baseConfig = new BaseSettings()
             {
@@ -43,15 +47,19 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                 ConfigPath = configpath,
             };
 
-            //configReader = new(configpath, logwriter);
             configReader = new(baseConfig);
-            //configReader2 = new(configpath2, logwriter2);
+            jsonFileHandler = new(baseConfig);
+            envFileHandler = new(baseConfig);
+            envHandler = new(baseConfig);
             baseConfig.ConfigHandler = configReader;
+            baseConfig.JSONFileHandler = jsonFileHandler;
+            baseConfig.EnvFileHandler =  envFileHandler;
+            baseConfig.EnvHandler = envHandler;
+
             Environment.SetEnvironmentVariable("Test", "Hello_Unit_Test", EnvironmentVariableTarget.Process);
         }
 
         [Test]
-        
         public void ConfigReaderAssertTest()
         {
             string appName = "ConsoleTest";
@@ -68,7 +76,6 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        
         public void ConfigReaderModificationTest()
         {
             string? val = configReader.ReadInfo("AppName");
@@ -88,12 +95,11 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        
         public void ConfigUserMachineMimicEnvReadTest()
         {
             string val = "Hello_Unit_Test";
 
-            string? res = configReader.EnvRead("Test", EnvAccessMode.Project);
+            string? res = envHandler.EnvRead("Test", EnvAccessMode.Project);
 
             if (res != null)
             {
@@ -106,13 +112,12 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        
         [Explicit("Only run locally or manually")]
         public void ConfigUserEnvReadTest()
         {
             string val = "Hello_Unit_Test";
 
-            string? res = configReader.EnvRead("Test", EnvAccessMode.User);
+            string? res = envHandler.EnvRead("Test", EnvAccessMode.User);
 
             if (res != null)
             {
@@ -125,13 +130,12 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        
         [Explicit("Only run locally or manually")]
         public void ConfigMachineEnvReadTest()
         {
             string val = "Hello_Unit_Test";
 
-            string? res = configReader.EnvRead("Test", EnvAccessMode.System);
+            string? res = envHandler.EnvRead("Test", EnvAccessMode.System);
 
             if (res != null)
             {
@@ -144,12 +148,11 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        
         public void JsonConfigEnvReadTest()
         {
             string val = "Hello_Unit_Test";
 
-            string? res = configReader.EnvRead("Test", EnvAccessMode.File, LaunchJsonConfigFilePath, "environmentVariables");
+            string? res = envHandler.EnvRead("Test", EnvAccessMode.File, LaunchJsonConfigFilePath, "environmentVariables");
 
             if (res != null)
             {
@@ -162,20 +165,19 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        
         public void JsonConfigEnvSaveTest()
         {
             string val = "Hello_Test";
 
-            configReader.EnvSave("Test", "Hello_Test", EnvAccessMode.File, LaunchJsonConfigFilePath, "environmentVariables");
+            envHandler.EnvSave("Test", "Hello_Test", EnvAccessMode.File, LaunchJsonConfigFilePath, "environmentVariables");
 
-            string? res = configReader.EnvRead("Test", EnvAccessMode.File, LaunchJsonConfigFilePath, "environmentVariables");
+            string? res = envHandler.EnvRead("Test", EnvAccessMode.File, LaunchJsonConfigFilePath, "environmentVariables");
 
             if (res != null)
             {
                 Assert.That(val == res, "Value is not equal after modification");
 
-                configReader.EnvSave("Test", "Hello_Unit_Test", EnvAccessMode.File, LaunchJsonConfigFilePath, "environmentVariables");
+                envHandler.EnvSave("Test", "Hello_Unit_Test", EnvAccessMode.File, LaunchJsonConfigFilePath, "environmentVariables");
             }
             else
             {
@@ -184,12 +186,39 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        
+        public void JsonSearchTest()
+        {
+            string val = "Alice Smith";
+
+            string filepath = PathCombine.CombinePath(CombinationType.Folder, jsonTestFilesPath, "JsonFile1.json");
+
+            var JsonOutput = baseConfig.JSONFileHandler.GetJson<object>(filepath);
+
+            if(JsonOutput == null)
+            {
+                Assert.Fail("Output is null.");
+            }
+
+            string json = JsonConvert.SerializeObject(JsonOutput);
+
+            var jsonRes = baseConfig.JSONFileHandler.ValueSearch(json, "manager");
+
+            if (jsonRes != null || jsonRes != default)
+            {
+                Assert.That(jsonRes.Any(res => res.Value.ToString().Equals(val)));
+            }
+            else
+            {
+                Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
+            }
+        }
+
+        [Test]
         public void envConfigEnvReadTest()
         {
             string val = "Hello_Unit_Test";
 
-            string? res = configReader.EnvRead("Test", EnvAccessMode.File, envConfigFilePath);
+            string? res = envHandler.EnvRead("Test", EnvAccessMode.File, envConfigFilePath);
 
             if (res != null)
             {
@@ -202,20 +231,19 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        
         public void envConfigEnvSaveTest()
         {
             string val = "Hello_Test";
 
-            configReader.EnvSave("Test", "Hello_Test", EnvAccessMode.File, envConfigFilePath);
+            envHandler.EnvSave("Test", "Hello_Test", EnvAccessMode.File, envConfigFilePath);
 
-            string? res = configReader.EnvRead("Test", EnvAccessMode.File, envConfigFilePath);
+            string? res = envHandler.EnvRead("Test", EnvAccessMode.File, envConfigFilePath);
 
             if (res != null)
             {
                 Assert.That(val == res, "Value is not equal after modification");
 
-                configReader.EnvSave("Test", "Hello_Unit_Test", EnvAccessMode.File, envConfigFilePath);
+                envHandler.EnvSave("Test", "Hello_Unit_Test", EnvAccessMode.File, envConfigFilePath);
             }
             else
             {
@@ -224,12 +252,11 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        
         public void XmlConfigEnvReadTest1()
         {
             string val = "Hello_Unit_Test";
 
-            string? res = configReader.EnvRead("Test", EnvAccessMode.File, xmlConfigFilePath1, "EnvironmentVariables");
+            string? res = envHandler.EnvRead("Test", EnvAccessMode.File, xmlConfigFilePath1, "EnvironmentVariables");
 
             if (res != null)
             {
@@ -246,15 +273,15 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         {
             string val = "Hello_Test";
 
-            configReader.EnvSave("Test", "Hello_Test", EnvAccessMode.File, xmlConfigFilePath1, "EnvironmentVariables");
+            envHandler.EnvSave("Test", "Hello_Test", EnvAccessMode.File, xmlConfigFilePath1, "EnvironmentVariables");
 
-            string? res = configReader.EnvRead("Test", EnvAccessMode.File, xmlConfigFilePath1, "EnvironmentVariables");
+            string? res = envHandler.EnvRead("Test", EnvAccessMode.File, xmlConfigFilePath1, "EnvironmentVariables");
 
             if (res != null)
             {
                 Assert.That(val == res, "Value is not equal after modification");
 
-                configReader.EnvSave("Test", "Hello_Unit_Test", EnvAccessMode.File, xmlConfigFilePath1, "EnvironmentVariables");
+                envHandler.EnvSave("Test", "Hello_Unit_Test", EnvAccessMode.File, xmlConfigFilePath1, "EnvironmentVariables");
             }
             else
             {
@@ -267,15 +294,15 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         {
             string val = "Hello_Test";
 
-            configReader.EnvSave("Test", "Hello_Test", EnvAccessMode.File, xmlConfigFilePath2, "EnvironmentVariables");
+            envHandler.EnvSave("Test", "Hello_Test", EnvAccessMode.File, xmlConfigFilePath2, "EnvironmentVariables");
 
-            string? res = configReader.EnvRead("Test", EnvAccessMode.File, xmlConfigFilePath2, "EnvironmentVariables");
+            string? res = envHandler.EnvRead("Test", EnvAccessMode.File, xmlConfigFilePath2, "EnvironmentVariables");
 
             if (res != null)
             {
                 Assert.That(val == res, "Value is not equal after modification");
 
-                configReader.EnvSave("Test", "Hello_Unit_Test", EnvAccessMode.File, xmlConfigFilePath2, "EnvironmentVariables");
+                envHandler.EnvSave("Test", "Hello_Unit_Test", EnvAccessMode.File, xmlConfigFilePath2, "EnvironmentVariables");
             }
             else
             {
@@ -284,12 +311,11 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
 
         [Test]
-        
         public void XmlConfigEnvReadTest2()
         {
             string val = "Hello_Unit_Test";
 
-            string? res = configReader.EnvRead("Test", EnvAccessMode.File, xmlConfigFilePath2, "EnvironmentVariables");
+            string? res = envHandler.EnvRead("Test", EnvAccessMode.File, xmlConfigFilePath2, "EnvironmentVariables");
 
             if (res != null)
             {
@@ -301,9 +327,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
             }
         } 
         
-        
         [Test, Order(1)]
-        
         public void CustomConfigReadTest()
         {
             string val = "ConsoleTest";
@@ -321,7 +345,6 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
         
         [Test, Order(2)]
-        
         public void CustomConfigWriteTest()
         {
             string val = "NewConsoleTest";
@@ -341,7 +364,6 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         }
         
         [Test, Order(50)]
-        
         public void CustomConfigWrite2Test()
         {
             DeleteAdd("loggerSettings", "AppName");
@@ -383,7 +405,6 @@ namespace ChangeLogConsoleUnitTests.BaseTests
 
                 XDocument xdoc = XDocument.Load(configPath);
 
-                
                 XElement targetNode = xdoc.Descendants(mainKey).FirstOrDefault();
                 if (targetNode == null)
                 {
@@ -392,19 +413,15 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                     return;
                 }
 
-               
                 XElement container = targetNode.Element("settings") ?? targetNode;
 
-                
                 IEnumerable<XElement> adds;
                 if (string.IsNullOrEmpty(keyToDelete))
                 {
-                    
                     adds = container.Elements("add").ToList();
                 }
                 else
                 {
-                    
                     adds = container.Elements("add")
                         .Where(el => string.Equals(el.Attribute("key")?.Value, keyToDelete, StringComparison.OrdinalIgnoreCase))
                         .ToList();
@@ -419,7 +436,6 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                     return;
                 }
 
-                
                 foreach (var add in adds)
                     add.Remove();
 
