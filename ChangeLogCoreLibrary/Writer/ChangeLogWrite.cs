@@ -21,6 +21,7 @@ namespace ChangeLogCoreLibrary.Writer
         private JSONFileHandler _fileHandler;
         private APIClient<T> _client;
         private ConfigHandler _reader;
+        private EnvHandler _envreader;
         private LogWriter? _logger;
         private static MapAzureJson prevMapAzureJson = new MapAzureJson();
         private static List<MapGitHubJson> prevMapGithubJson = new List<MapGitHubJson>();
@@ -114,7 +115,7 @@ namespace ChangeLogCoreLibrary.Writer
                 }
                 else if (_repo.GetType() == typeof(GitHub<T>))
                 {
-                    EnvVar = Envvar == "" ? null : _reader.EnvRead(Envvar,EnvAccessMode.User);
+                    EnvVar = Envvar == "" ? null : _envreader.EnvRead(Envvar,EnvAccessMode.User);
                     //var val = Environment.GetEnvironmentVariable(Envvar);
                     //_client.APIURL = PathCombine.CombinePath(CombinationType.URL, APIRepoPath.Github, "repos", organization, repositoryName, "commits").TrimEnd('/');
                     _client.PerAccTok = EnvVar;

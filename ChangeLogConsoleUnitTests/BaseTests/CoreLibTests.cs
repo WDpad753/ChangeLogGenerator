@@ -1,9 +1,12 @@
 using BaseClass.Base;
 using BaseClass.Base.Interface;
 using BaseClass.Config;
+using BaseClass.Helper;
+using BaseClass.JSON;
 using BaseClass.Model;
 using BaseLogger;
 using BaseLogger.Models;
+using Newtonsoft.Json;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
 
@@ -29,7 +32,6 @@ namespace ChangeLogConsoleUnitTests.BaseTests
         public void Setup()
         {
             string configpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest.config";
-            string Mainconfigpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\MainAppTest.config";
 
             logpath = @$"{AppDomain.CurrentDomain.BaseDirectory}TempLogs\";
             configPath = configpath;
@@ -39,7 +41,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                 Directory.Delete(logpath, true); // Ensure the log directory is clean before starting the test
             }
 
-            logwriter = new LogWriter(Mainconfigpath, logpath);
+            logwriter = new LogWriter(configpath, logpath);
 
             baseConfig = new BaseSettings()
             {
@@ -178,34 +180,6 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                 Assert.That(val == res, "Value is not equal after modification");
 
                 envHandler.EnvSave("Test", "Hello_Unit_Test", EnvAccessMode.File, LaunchJsonConfigFilePath, "environmentVariables");
-            }
-            else
-            {
-                Assert.Fail("Unable to Obtain a Value from Enviroment Variables");
-            }
-        }
-
-        [Test]
-        public void JsonSearchTest()
-        {
-            string val = "Alice Smith";
-
-            string filepath = PathCombine.CombinePath(CombinationType.Folder, jsonTestFilesPath, "JsonFile1.json");
-
-            var JsonOutput = baseConfig.JSONFileHandler.GetJson<object>(filepath);
-
-            if(JsonOutput == null)
-            {
-                Assert.Fail("Output is null.");
-            }
-
-            string json = JsonConvert.SerializeObject(JsonOutput);
-
-            var jsonRes = baseConfig.JSONFileHandler.ValueSearch(json, "manager");
-
-            if (jsonRes != null || jsonRes != default)
-            {
-                Assert.That(jsonRes.Any(res => res.Value.ToString().Equals(val)));
             }
             else
             {

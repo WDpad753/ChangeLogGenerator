@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAPI", "..\TestAPI\TestA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomMessageBox", "..\Custom-Message-Box\CustomMessageBox\CustomMessageBox.csproj", "{BE582C1D-EA1D-04D3-6909-09D3B7E365B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomErrorMessageBox", "..\..\Custom-Error-Message-Box\CustomErrorMessageBox\CustomErrorMessageBox.csproj", "{CFB2698A-E104-0562-D996-ED6ACA4035F7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,10 +51,6 @@ Global
 		{BE582C1D-EA1D-04D3-6909-09D3B7E365B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE582C1D-EA1D-04D3-6909-09D3B7E365B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE582C1D-EA1D-04D3-6909-09D3B7E365B0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CFB2698A-E104-0562-D996-ED6ACA4035F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CFB2698A-E104-0562-D996-ED6ACA4035F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CFB2698A-E104-0562-D996-ED6ACA4035F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CFB2698A-E104-0562-D996-ED6ACA4035F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
