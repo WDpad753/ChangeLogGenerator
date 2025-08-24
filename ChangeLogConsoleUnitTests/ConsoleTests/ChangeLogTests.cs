@@ -8,8 +8,6 @@ using BaseClass.Model;
 using BaseLogger;
 using BaseLogger.Models;
 using ChangeLogCoreLibrary.APIRepositories.Client;
-
-//using ChangeLogConsole.Writer;
 using ChangeLogCoreLibrary.APIRepositories.Factory;
 using ChangeLogCoreLibrary.APIRepositories.Interface;
 using ChangeLogCoreLibrary.Classes;
@@ -26,7 +24,7 @@ using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
-using UtilityClass = BaseClass.MethodNameExtractor.FuncNameExtractor;
+
 
 
 namespace ChangeLogConsoleUnitTests.ConsoleTests
@@ -57,7 +55,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
     public class ChangeLogTests
     {
         private IBase? baseConfig;
-        private LogWriter logwriter;
+        private ILogger? logwriter;
         private ConfigHandler configReader;
         private string logpath;
         private IAPIRepo<TestAPI.Program> _repo;
@@ -105,7 +103,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
                 File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GitHubChangeLog.txt"));
             }
 
-            logwriter = new LogWriter(configpath, logpath);
+            logwriter = new Logger(configpath, logpath);
 
             baseConfig = new BaseSettings()
             {
@@ -165,7 +163,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             var content = await response.Content.ReadAsStringAsync();
 
-            logwriter.LogWrite(content.ToString(), this.GetType().Name, UtilityClass.GetMethodName(), MessageLevels.Log);
+            logwriter.LogBase(content.ToString());
 
             Assert.That(content, Is.Not.Null.And.Not.Empty, "Health endpoint returned empty content");
         }
@@ -174,7 +172,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         public async Task AzureEndpoint()
         {
             _config.ConfigFilePath = finalconfigpath;
-            logwriter = new LogWriter(finalconfigpath, logpath);
+            logwriter = new Logger(finalconfigpath, logpath);
             baseConfig.ConfigPath = finalconfigpath;    
             //configReader = new(finalconfigpath, logwriter);
             configReader = new(baseConfig);
@@ -198,7 +196,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             }
             else
             {
-                logwriter.LogWrite(baseUrl, this.GetType().Name, UtilityClass.GetMethodName(), MessageLevels.Log);
+                logwriter.LogBase(baseUrl);
             }
 
             _config.jsonfilename = azureJsonfile;
@@ -229,7 +227,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             }
             catch (Exception ex)
             {
-                logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram", UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                logwriter.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
             }
 
             bool ChangeLogExists = File.Exists(Path.Combine(_config.logfilepath, _config.logfilename));
@@ -253,7 +251,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             string baseUrl = _client.BaseAddress!.ToString();
 
             _config.ConfigFilePath = finalconfigpath;
-            logwriter = new LogWriter(finalconfigpath, logpath);
+            logwriter = new Logger(finalconfigpath, logpath);
             //configReader = new(finalconfigpath, logwriter);
             baseConfig.ConfigPath = finalconfigpath;
             //configReader = new(finalconfigpath, logwriter);
@@ -283,7 +281,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             }
             else
             {
-                logwriter.LogWrite(baseUrl, this.GetType().Name, UtilityClass.GetMethodName(), MessageLevels.Log);
+                logwriter.LogBase(baseUrl);
             }
 
             _config.jsonfilename = githubJsonfile;
@@ -313,7 +311,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             }
             catch (Exception ex)
             {
-                logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram", UtilityClass.GetMethodName(), MessageLevels.Fatal);
+                logwriter.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
             }
 
             bool ChangeLogExists = File.Exists(Path.Combine(_config.logfilepath,_config.logfilename));

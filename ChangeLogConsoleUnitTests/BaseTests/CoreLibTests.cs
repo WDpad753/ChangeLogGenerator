@@ -15,7 +15,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
     public class CoreLibTests
     {
         private IBase? baseConfig;
-        private LogWriter logwriter;
+        private ILogger? logwriter;
         private ConfigHandler configReader;
         private JSONFileHandler jsonFileHandler;
         private EnvFileHandler envFileHandler;
@@ -41,7 +41,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                 Directory.Delete(logpath, true); // Ensure the log directory is clean before starting the test
             }
 
-            logwriter = new LogWriter(configpath, logpath);
+            logwriter = new Logger(configpath, logpath);
 
             baseConfig = new BaseSettings()
             {
@@ -372,8 +372,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
             {
                 if (!File.Exists(configPath))
                 {
-                    logwriter.LogWrite($"XML File does not exist in the given path. Path => {configPath}",
-                        GetType().Name, nameof(DeleteAdd), MessageLevels.Fatal);
+                    logwriter.LogError($"XML File does not exist in the given path. Path => {configPath}");
                     return;
                 }
 
@@ -382,8 +381,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                 XElement targetNode = xdoc.Descendants(mainKey).FirstOrDefault();
                 if (targetNode == null)
                 {
-                    logwriter.LogWrite($"No element named '{mainKey}' found.",
-                        GetType().Name, nameof(DeleteAdd), MessageLevels.Fatal);
+                    logwriter.LogError($"No element named '{mainKey}' found.");
                     return;
                 }
 
@@ -403,10 +401,9 @@ namespace ChangeLogConsoleUnitTests.BaseTests
 
                 if (!adds.Any())
                 {
-                    logwriter.LogWrite(keyToDelete == null
+                    logwriter.LogBase(keyToDelete == null
                         ? $"No <add> elements found under <{container.Name}>."
-                        : $"No <add key=\"{keyToDelete}\"/> found under <{container.Name}>.",
-                        GetType().Name, nameof(DeleteAdd), MessageLevels.Log);
+                        : $"No <add key=\"{keyToDelete}\"/> found under <{container.Name}>.");
                     return;
                 }
 
@@ -414,11 +411,11 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                     add.Remove();
 
                 xdoc.Save(configPath);
-                logwriter.LogWrite($"Removed {adds.Count()} <add> element(s) under <{container.Name}>.", GetType().Name, nameof(DeleteAdd), MessageLevels.Log);
+                logwriter.LogBase($"Removed {adds.Count()} <add> element(s) under <{container.Name}>.");
             }
             catch (Exception ex)
             {
-                logwriter.LogWrite($"Exception in DeleteAdd: {ex.Message}", GetType().Name, nameof(DeleteAdd), MessageLevels.Fatal);
+                logwriter.LogError($"Exception in DeleteAdd: {ex.Message}");
             }
         }
     }
