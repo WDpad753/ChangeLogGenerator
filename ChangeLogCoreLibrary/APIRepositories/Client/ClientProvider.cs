@@ -13,7 +13,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
-using FuncName = BaseClass.MethodNameExtractor.FuncNameExtractor;
+
 
 namespace ChangeLogCoreLibrary.APIRepositories.Client
 {
@@ -21,7 +21,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
     {
         private readonly IBase? baseConfig;
         private readonly WebApplicationFactory<T>? _factory;
-        private readonly LogWriter _logWriter;
+        private readonly ILogger? _logWriter;
         private readonly CLGConfig _config;
         private string? BaseAddress;
         public string? clientBase { get; set; }
@@ -109,7 +109,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
             }
             catch (Exception ex)
             {
-                _logWriter.LogWrite($"Unable to create client. Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", this.GetType().Name, FuncName.GetMethodName(), MessageLevels.Fatal);
+                _logWriter.LogError($"Unable to create client. Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
                 return null;
             }
         }

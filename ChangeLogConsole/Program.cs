@@ -13,7 +13,6 @@ using System;
 using System.Diagnostics;
 using System.Reflection.Metadata;
 using static System.Net.Mime.MediaTypeNames;
-using FuncName = BaseClass.MethodNameExtractor.FuncNameExtractor;
 using BaseClass.Base.Interface;
 using BaseClass.Base;
 
@@ -23,7 +22,7 @@ namespace ChangeLogConsole
     public class Program
     {
         private static IBase? baseConfig;
-        private static LogWriter? logwriter;
+        private static ILogger? logwriter;
         private static ConfigHandler? reader;
         private static string? NameSpace = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
         private static ChangeLogWrite<DBNull> clg;
@@ -53,7 +52,7 @@ namespace ChangeLogConsole
             string configFile = files[0];
             string logFilePath = Path.Combine(Path.GetPathRoot(Environment.SystemDirectory), "tmp");
 
-            logwriter = new(configFile, logFilePath);
+            logwriter = new Logger(configFile, logFilePath);
             //reader = new(configFile, logwriter);
 
             baseConfig = new BaseSettings()
@@ -74,7 +73,7 @@ namespace ChangeLogConsole
             // Setting up and running ChangeLogConsole for Creating/Appending ChangeLog:
             if (_config == null)
             {
-                logwriter.LogWrite($@"Error Message: Unable to find the path to save Commit File.", "MainProgram", FuncName.GetMethodName(), MessageLevels.Fatal);
+                logwriter.LogError($@"Error Message: Unable to find the path to save Commit File.");
                 return;
             }
 
@@ -99,7 +98,7 @@ namespace ChangeLogConsole
 
             if(tarRepo == null)
             {
-                logwriter.LogWrite($@"Error Message: Value for the Target Repo is empty.", NameSpace, FuncName.GetMethodName(), MessageLevels.Fatal);
+                logwriter.LogError($@"Error Message: Value for the Target Repo is empty.");
                 return;
             }
             else
@@ -116,7 +115,7 @@ namespace ChangeLogConsole
                 }
                 else
                 {
-                    logwriter.LogWrite($@"Error Message: Selected Repo Mode can not be found.", NameSpace, FuncName.GetMethodName(), MessageLevels.Fatal);
+                    logwriter.LogError($@"Error Message: Selected Repo Mode can not be found.");
                     return;
                 }
             }
@@ -136,7 +135,7 @@ namespace ChangeLogConsole
             }
             catch (Exception ex)
             {
-                logwriter.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram",FuncName.GetMethodName(), MessageLevels.Fatal);
+                logwriter.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
             }
         }
     }

@@ -15,7 +15,7 @@ using System.Net.Http.Headers;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
-using FuncName = BaseClass.MethodNameExtractor.FuncNameExtractor;
+
 
 namespace ChangeLogCoreLibrary.APIRepositories.Client
 {
@@ -30,7 +30,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
         public static bool? clientCreated = false;
         private bool disposedValue;
         //private readonly StringHandler _strHandler;
-        private readonly LogWriter _logWriter;
+        private readonly ILogger? _logWriter;
         private readonly ClientProvider<TEntryPoint>? _clientProvider;
 
         //public APIClient(LogWriter Logger, ClientProvider<TEntryPoint>? clientProvider = null)
@@ -96,7 +96,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
                     {
                         Console.WriteLine(taskcol.Exception.ToString());
                         System.Diagnostics.Debug.WriteLine($@"Here is the Content of the Error Message: {taskcol.Exception.ToString()}");
-                        _logWriter.LogWrite($"Error in acquiring response from url {client.BaseAddress}: {taskcol.Exception.ToString()}", GetType().Name, FuncName.GetMethodName(), MessageLevels.Fatal);
+                        _logWriter.LogError($"Error in acquiring response from url {client.BaseAddress}: {taskcol.Exception.ToString()}");
                     }
                     else
                     {
@@ -121,14 +121,14 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
                 {
                     //Console.WriteLine(ex.ToString());
                     System.Diagnostics.Debug.WriteLine($@"Here is the Content of the Error Message: {ex.ToString()}");
-                    _logWriter.LogWrite("Error in De-Serializing the JSON Object: " + ex, GetType().Name, FuncName.GetMethodName(), MessageLevels.Fatal);
+                    _logWriter.LogError("Error in De-Serializing the JSON Object: " + ex);
                     return null;
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($@"Here is the Content of the Error Message: {ex.ToString()}");
-                _logWriter.LogWrite("Error in De-Serializing the JSON Object: " + ex, GetType().Name, FuncName.GetMethodName(), MessageLevels.Fatal);
+                _logWriter.LogError("Error in De-Serializing the JSON Object: " + ex);
                 return null;
             }
         }
@@ -234,7 +234,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
         //    }
         //    catch (Exception ex)
         //    {
-        //        _logWriter.LogWrite("Error saving data to file: " + ex, GetType().Name, FuncName.GetMethodName(), MessageLevels.Fatal);
+        //        _logWriter.LogWrite("Error saving data to file: " + ex, MessageLevels.Fatal);
         //        return null;
         //    }
         //}

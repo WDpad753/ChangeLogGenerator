@@ -10,7 +10,7 @@ using ChangeLogCoreLibrary.APIRepositories.Interface;
 using ChangeLogCoreLibrary.Classes;
 using ChangeLogCoreLibrary.Model;
 using System.Reflection.Metadata;
-using FuncName = BaseClass.MethodNameExtractor.FuncNameExtractor;
+
 
 namespace ChangeLogCoreLibrary.Writer
 {
@@ -22,7 +22,7 @@ namespace ChangeLogCoreLibrary.Writer
         private APIClient<T> _client;
         private ConfigHandler _reader;
         private EnvHandler _envreader;
-        private LogWriter? _logger;
+        private ILogger? _logger;
         private static MapAzureJson prevMapAzureJson = new MapAzureJson();
         private static List<MapGitHubJson> prevMapGithubJson = new List<MapGitHubJson>();
         private readonly IAPIRepo<T> _repo;
@@ -156,7 +156,7 @@ namespace ChangeLogCoreLibrary.Writer
             }
             catch(Exception ex)
             {
-                _logger.LogWrite($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}", "MainProgram", FuncName.GetMethodName(), MessageLevels.Fatal);
+                _logger.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
                 return null;
             }
         }

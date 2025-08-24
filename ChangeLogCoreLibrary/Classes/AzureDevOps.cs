@@ -22,7 +22,7 @@ namespace ChangeLogCoreLibrary.Classes
     {
         private readonly IBase? baseConfig;
         private CLGConfig _config;
-        private LogWriter _logger;
+        private ILogger _logger;
         private JSONFileHandler _fileHandler;
         private ConfigHandler _reader;
         private static MapAzureJson prevMapJson = new MapAzureJson();
