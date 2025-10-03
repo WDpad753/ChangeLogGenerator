@@ -16,7 +16,7 @@ namespace ChangeLogCoreLibrary.Writer
 {
     public class ChangeLogWrite<T> where T : class
     {
-        private readonly IBase? baseConfig;
+        private readonly IBaseProvider? baseConfig;
         private CLGConfig _config;
         private JSONFileHandler _fileHandler;
         private APIClient<T> _client;
@@ -40,16 +40,17 @@ namespace ChangeLogCoreLibrary.Writer
         //    _client = new(Logger, clientFactory);
         //    _factoryProvider = clientFactory;
         //}
-        public ChangeLogWrite(IAPIRepo<T> repo, CLGConfig config, IBase BaseConfig, ClientProvider<T>? clientFactory = null)
+        public ChangeLogWrite(IAPIRepo<T> repo, CLGConfig config, IBaseProvider BaseConfig, ClientProvider<T>? clientFactory = null)
         {
             _config = config;
             baseConfig = BaseConfig;
-            _logger = BaseConfig.Logger;
-            _fileHandler = new(BaseConfig);
-            BaseConfig.ConfigPath = config.ConfigFilePath;
-            _reader = new(BaseConfig);
+            _logger = BaseConfig.GetItem<ILogger>();
+            //_fileHandler = new(BaseConfig);
+            BaseConfig.GetItem<IBaseSettings>().ConfigPath = config.ConfigFilePath;
+            //_reader = new(BaseConfig);
+            //_reader = new();
             _repo = repo;
-            _logFilePath = BaseConfig.FilePath;
+            _logFilePath = BaseConfig.GetItem<IBaseSettings>().FilePath;
             _client = new(BaseConfig, clientFactory);
             _factoryProvider = clientFactory;
         }

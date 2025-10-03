@@ -14,26 +14,19 @@ namespace ChangeLogCoreLibrary.Classes
 {
     public class GitHub<TEntryPoint> : IAPIRepo<TEntryPoint> where TEntryPoint : class
     {
-        private readonly IBase? baseConfig;
+        private readonly IBaseProvider? baseConfig;
         private CLGConfig _config;
         private ILogger? _logger;
         private JSONFileHandler _fileHandler;
         private ConfigHandler _reader;
         private string commiterID;
 
-        //public GitHub(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler Reader, LogWriter Logger)
-        //{
-        //    _config = config;
-        //    _logger = Logger;
-        //    _fileHandler = JsonReader;
-        //    _reader = Reader;
-        //}
-        public GitHub(CLGConfig config, IBase? BaseConfig)
+        public GitHub(CLGConfig config, JSONFileHandler JsonReader, ConfigHandler Reader, ILogger Logger)
         {
             _config = config;
-            _logger = BaseConfig.Logger;
-            _fileHandler = BaseConfig.JSONFileHandler;
-            _reader = BaseConfig.ConfigHandler;
+            _logger = Logger;
+            _fileHandler = JsonReader;
+            _reader = Reader;
         }
 
         public async void MapJsonReader<T>(T mapJson, T prevMapJson, string mapJsonHS, string filepath, APIClient<TEntryPoint>? client = null, string? EnvVar = null)

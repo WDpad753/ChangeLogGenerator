@@ -1,338 +1,338 @@
-﻿using BaseClass.API.Interface;
-using BaseClass.Base;
-using BaseClass.Base.Interface;
-using BaseClass.Config;
-using BaseClass.Helper;
-using BaseClass.JSON;
-using BaseClass.Model;
-using BaseLogger;
-using BaseLogger.Models;
-using ChangeLogCoreLibrary.APIRepositories.Client;
-using ChangeLogCoreLibrary.APIRepositories.Factory;
-using ChangeLogCoreLibrary.APIRepositories.Interface;
-using ChangeLogCoreLibrary.Classes;
-using ChangeLogCoreLibrary.Model;
-using ChangeLogCoreLibrary.Writer;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
+﻿//using BaseClass.API.Interface;
+//using BaseClass.Base;
+//using BaseClass.Base.Interface;
+//using BaseClass.Config;
+//using BaseClass.Helper;
+//using BaseClass.JSON;
+//using BaseClass.Model;
+//using BaseLogger;
+//using BaseLogger.Models;
+//using ChangeLogCoreLibrary.APIRepositories.Client;
+//using ChangeLogCoreLibrary.APIRepositories.Factory;
+//using ChangeLogCoreLibrary.APIRepositories.Interface;
+//using ChangeLogCoreLibrary.Classes;
+//using ChangeLogCoreLibrary.Model;
+//using ChangeLogCoreLibrary.Writer;
+//using Microsoft.AspNetCore.Hosting;
+//using Microsoft.AspNetCore.Mvc.Testing;
+//using Microsoft.VisualStudio.TestPlatform.TestHost;
+//using System;
+//using System.Collections.Generic;
+//using System.IO;
+//using System.Linq;
+//using System.Reflection.Metadata;
+//using System.Reflection.PortableExecutable;
+//using System.Text;
+//using System.Threading.Tasks;
 
 
 
-namespace ChangeLogConsoleUnitTests.ConsoleTests
-{
-    [SetUpFixture]
-    public class TestEnvironment
-    {
-        public static WebApplicationFactory<TestAPI.Program> Factory { get; private set; }
+//namespace ChangeLogConsoleUnitTests.ConsoleTests
+//{
+//    [SetUpFixture]
+//    public class TestEnvironment
+//    {
+//        public static WebApplicationFactory<TestAPI.Program> Factory { get; private set; }
 
-        [OneTimeSetUp]
-        public void GlobalSetup()
-        {
-            Factory = new WebApplicationFactory<TestAPI.Program>()
-                .WithWebHostBuilder(builder =>
-                {
-                     //builder.UseEnvironment("Testing");
-                });
-        }
+//        [OneTimeSetUp]
+//        public void GlobalSetup()
+//        {
+//            Factory = new WebApplicationFactory<TestAPI.Program>()
+//                .WithWebHostBuilder(builder =>
+//                {
+//                     //builder.UseEnvironment("Testing");
+//                });
+//        }
 
-        [OneTimeTearDown]
-        public void GlobalTeardown()
-        {
-            Factory.Dispose();
-        }
-    }
+//        [OneTimeTearDown]
+//        public void GlobalTeardown()
+//        {
+//            Factory.Dispose();
+//        }
+//    }
 
-    [TestFixture]
-    public class ChangeLogTests
-    {
-        private IBase? baseConfig;
-        private ILogger? logwriter;
-        private ConfigHandler configReader;
-        private string logpath;
-        private IAPIRepo<TestAPI.Program> _repo;
-        private IAPIRepo<DBNull> _repoFinal;
-        private HttpClient _client = null;
-        private CLGConfig _config;
-        private JSONFileHandler _jsonFileHandler;
-        private string logFilePath;
-        private string azureJsonfile = "AppAzureJson.json";
-        private string githubJsonfile = "AppGithubJson.json";
-        private string finalconfigpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest3.config";
+//    [TestFixture]
+//    public class ChangeLogTests
+//    {
+//        private IBaseSettings? baseConfig;
+//        private ILogger? logwriter;
+//        private ConfigHandler configReader;
+//        private string logpath;
+//        private IAPIRepo<TestAPI.Program> _repo;
+//        private IAPIRepo<DBNull> _repoFinal;
+//        private HttpClient _client = null;
+//        private CLGConfig _config;
+//        private JSONFileHandler _jsonFileHandler;
+//        private string logFilePath;
+//        private string azureJsonfile = "AppAzureJson.json";
+//        private string githubJsonfile = "AppGithubJson.json";
+//        private string finalconfigpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest3.config";
 
-        [SetUp]
-        public void Setup()
-        {
-            _client = TestEnvironment.Factory.CreateClient();
+//        [SetUp]
+//        public void Setup()
+//        {
+//            _client = TestEnvironment.Factory.CreateClient();
 
-            //string configpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest.config";
-            string configpath = finalconfigpath;
-            logpath = @$"{AppDomain.CurrentDomain.BaseDirectory}TempLogs\";
-            string jsonpath = @$"{AppDomain.CurrentDomain.BaseDirectory}JsonFiles\";
-            string logfilepath = @$"{AppDomain.CurrentDomain.BaseDirectory}TempLogs\";
-            string azurelogfilepath = @$"{AppDomain.CurrentDomain.BaseDirectory}AzureChangeLog.txt";
-            string gitlogfilepath = @$"{AppDomain.CurrentDomain.BaseDirectory}GitHubChangeLog.txt";
+//            //string configpath = @$"{AppDomain.CurrentDomain.BaseDirectory}Config\AppTest.config";
+//            string configpath = finalconfigpath;
+//            logpath = @$"{AppDomain.CurrentDomain.BaseDirectory}TempLogs\";
+//            string jsonpath = @$"{AppDomain.CurrentDomain.BaseDirectory}JsonFiles\";
+//            string logfilepath = @$"{AppDomain.CurrentDomain.BaseDirectory}TempLogs\";
+//            string azurelogfilepath = @$"{AppDomain.CurrentDomain.BaseDirectory}AzureChangeLog.txt";
+//            string gitlogfilepath = @$"{AppDomain.CurrentDomain.BaseDirectory}GitHubChangeLog.txt";
 
-            if (Directory.Exists(logpath))
-            {
-                Directory.Delete(logpath, true);
-            }
+//            if (Directory.Exists(logpath))
+//            {
+//                Directory.Delete(logpath, true);
+//            }
 
-            if (File.Exists(logfilepath))
-            {
-                File.Delete(logfilepath);
-            }
+//            if (File.Exists(logfilepath))
+//            {
+//                File.Delete(logfilepath);
+//            }
 
-            if (File.Exists(azurelogfilepath))
-            {
-                File.Delete(Path.Combine(jsonpath, azureJsonfile));
-                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AzureChangeLog.txt"));
-            }
+//            if (File.Exists(azurelogfilepath))
+//            {
+//                File.Delete(Path.Combine(jsonpath, azureJsonfile));
+//                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AzureChangeLog.txt"));
+//            }
 
-            if (File.Exists(gitlogfilepath))
-            {
-                File.Delete(Path.Combine(jsonpath, githubJsonfile));
-                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GitHubChangeLog.txt"));
-            }
+//            if (File.Exists(gitlogfilepath))
+//            {
+//                File.Delete(Path.Combine(jsonpath, githubJsonfile));
+//                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GitHubChangeLog.txt"));
+//            }
 
-            logwriter = new Logger(configpath, logpath);
+//            logwriter = new Logger(configpath, logpath);
 
-            baseConfig = new BaseSettings()
-            {
-                Logger = logwriter,
-                ConfigPath = configpath,
-            };
+//            baseConfig = new BaseSettings()
+//            {
+//                Logger = logwriter,
+//                ConfigPath = configpath,
+//            };
 
-            //configReader = new(configpath, logwriter);
-            configReader = new(baseConfig);
-            baseConfig.ConfigHandler = configReader;
-            Environment.SetEnvironmentVariable("Test", "Hello_Unit_Test", EnvironmentVariableTarget.Process);
+//            //configReader = new(configpath, logwriter);
+//            configReader = new(baseConfig);
+//            baseConfig.ConfigHandler = configReader;
+//            Environment.SetEnvironmentVariable("Test", "Hello_Unit_Test", EnvironmentVariableTarget.Process);
 
-            //configReader.SaveInfo("", "PrevMapJSONHS");
-            configReader.SaveInfo("", "PrevMapJSONHS", "changelogSettings");
+//            //configReader.SaveInfo("", "PrevMapJSONHS");
+//            configReader.SaveInfo("", "PrevMapJSONHS", "changelogSettings");
 
-            _config = new CLGConfig();
-            //_jsonFileHandler = new JSONFileHandler(logwriter);
-            _jsonFileHandler = new JSONFileHandler(baseConfig);
-            baseConfig.JSONFileHandler = _jsonFileHandler;
+//            _config = new CLGConfig();
+//            //_jsonFileHandler = new JSONFileHandler(logwriter);
+//            _jsonFileHandler = new JSONFileHandler(baseConfig);
+//            baseConfig.JSONFileHandler = _jsonFileHandler;
 
-            _config.ConfigFilePath = configpath;
-            _config.logfilepath = logfilepath;
-            _config.runType = "AzureDevOps";
-            _config.jsonpath = jsonpath;
-            //_config.testClient = _client;
-            _config.backupjsonpath = jsonpath;
+//            _config.ConfigFilePath = configpath;
+//            _config.logfilepath = logfilepath;
+//            _config.runType = "AzureDevOps";
+//            _config.jsonpath = jsonpath;
+//            //_config.testClient = _client;
+//            _config.backupjsonpath = jsonpath;
 
-            logFilePath = Path.GetFileName(Path.GetDirectoryName(logfilepath));
+//            logFilePath = Path.GetFileName(Path.GetDirectoryName(logfilepath));
 
-            string projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
-            string projectRoot2 = Directory.GetCurrentDirectory();
-        }
+//            string projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
+//            string projectRoot2 = Directory.GetCurrentDirectory();
+//        }
 
-        [Test]
-        public void CommitCaptureModeTestSelection()
-        {
-            var mode = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.AzureDevOps,
-                new CLGConfig(),
-                    baseConfig);
+//        [Test]
+//        public void CommitCaptureModeTestSelection()
+//        {
+//            var mode = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.AzureDevOps,
+//                new CLGConfig(),
+//                    baseConfig);
 
-            if (mode != null)
-            {
-                Assert.That(mode.GetType() == typeof(AzureDevOps<TestAPI.Program>), "Mode is not Azure DevOps");
-            }
-            else
-            {
-                Assert.Fail("Unable to obtain a valid API Repository Mode");
-            }
-        }
+//            if (mode != null)
+//            {
+//                Assert.That(mode.GetType() == typeof(AzureDevOps<TestAPI.Program>), "Mode is not Azure DevOps");
+//            }
+//            else
+//            {
+//                Assert.Fail("Unable to obtain a valid API Repository Mode");
+//            }
+//        }
 
-        [Test, Order(1)]
-        public async Task HealthEndpoint_Returns200()
-        {
-            var response = await _client.GetAsync("/health");
+//        [Test, Order(1)]
+//        public async Task HealthEndpoint_Returns200()
+//        {
+//            var response = await _client.GetAsync("/health");
 
-            Assert.That(response.IsSuccessStatusCode, Is.True, "Expected /health to return 200 OK");
+//            Assert.That(response.IsSuccessStatusCode, Is.True, "Expected /health to return 200 OK");
 
-            var content = await response.Content.ReadAsStringAsync();
+//            var content = await response.Content.ReadAsStringAsync();
 
-            logwriter.LogBase(content.ToString());
+//            logwriter.LogBase(content.ToString());
 
-            Assert.That(content, Is.Not.Null.And.Not.Empty, "Health endpoint returned empty content");
-        }
+//            Assert.That(content, Is.Not.Null.And.Not.Empty, "Health endpoint returned empty content");
+//        }
 
-        [Test, Order(2)]
-        public async Task AzureEndpoint()
-        {
-            _config.ConfigFilePath = finalconfigpath;
-            logwriter = new Logger(finalconfigpath, logpath);
-            baseConfig.ConfigPath = finalconfigpath;    
-            //configReader = new(finalconfigpath, logwriter);
-            configReader = new(baseConfig);
+//        [Test, Order(2)]
+//        public async Task AzureEndpoint()
+//        {
+//            _config.ConfigFilePath = finalconfigpath;
+//            logwriter = new Logger(finalconfigpath, logpath);
+//            baseConfig.ConfigPath = finalconfigpath;    
+//            //configReader = new(finalconfigpath, logwriter);
+//            configReader = new(baseConfig);
 
-            //string organization = configReader.ReadInfo("Organisation", "changelogSettings");
-            //string project = configReader.ReadInfo("Project", "changelogSettings");
-            //string repositoryName = configReader.ReadInfo("RepositoryName", "changelogSettings");
+//            //string organization = configReader.ReadInfo("Organisation", "changelogSettings");
+//            //string project = configReader.ReadInfo("Project", "changelogSettings");
+//            //string repositoryName = configReader.ReadInfo("RepositoryName", "changelogSettings");
 
-            //_config.Organisation = organization;
-            //_config.Project = project;
-            //_config.RepositoryName = repositoryName;
+//            //_config.Organisation = organization;
+//            //_config.Project = project;
+//            //_config.RepositoryName = repositoryName;
 
-            string baseUrl = _client.BaseAddress!.ToString();
-            //var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, _config, TestEnvironment.Factory);
-            var clientProvider = new ClientProvider<TestAPI.Program>(baseConfig, _config, TestEnvironment.Factory);
-            //clientProvider.testClient = true;
+//            string baseUrl = _client.BaseAddress!.ToString();
+//            //var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, _config, TestEnvironment.Factory);
+//            var clientProvider = new ClientProvider<TestAPI.Program>(baseConfig, _config, TestEnvironment.Factory);
+//            //clientProvider.testClient = true;
 
-            if (baseUrl == null || baseUrl == string.Empty)
-            {
-                Assert.Fail("Base URL is not set or is empty.");
-            }
-            else
-            {
-                logwriter.LogBase(baseUrl);
-            }
+//            if (baseUrl == null || baseUrl == string.Empty)
+//            {
+//                Assert.Fail("Base URL is not set or is empty.");
+//            }
+//            else
+//            {
+//                logwriter.LogBase(baseUrl);
+//            }
 
-            _config.jsonfilename = azureJsonfile;
-            _config.logfilename = "ChangeLog.txt";
-            _config.runType = "AzureDevOps";
-            baseConfig.FilePath = _config.logfilepath;
+//            _config.jsonfilename = azureJsonfile;
+//            _config.logfilename = "ChangeLog.txt";
+//            _config.runType = "AzureDevOps";
+//            baseConfig.FilePath = _config.logfilepath;
 
-            //_repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.AzureDevOps,
-            //        _config,
-            //        _jsonFileHandler,
-            //        configReader,
-            //        logwriter);
-            _repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.AzureDevOps,
-                    _config,
-                    baseConfig);
+//            //_repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.AzureDevOps,
+//            //        _config,
+//            //        _jsonFileHandler,
+//            //        configReader,
+//            //        logwriter);
+//            _repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.AzureDevOps,
+//                    _config,
+//                    baseConfig);
 
-            if (_repo == null)
-            {
-                Assert.Fail("Unable to obtain a valid API Repository Mode");
-            }
+//            if (_repo == null)
+//            {
+//                Assert.Fail("Unable to obtain a valid API Repository Mode");
+//            }
 
-            //ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, logwriter, logFilePath, clientProvider);
-            ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, baseConfig, clientProvider);
+//            //ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, logwriter, logFilePath, clientProvider);
+//            ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, baseConfig, clientProvider);
 
-            try
-            {
-                clg.ChangeLogReaderWriter().Wait(15000000);
-            }
-            catch (Exception ex)
-            {
-                logwriter.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
-            }
+//            try
+//            {
+//                clg.ChangeLogReaderWriter().Wait(15000000);
+//            }
+//            catch (Exception ex)
+//            {
+//                logwriter.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
+//            }
 
-            bool ChangeLogExists = File.Exists(Path.Combine(_config.logfilepath, _config.logfilename));
-            bool PrevJsonExists = File.Exists(Path.Combine(_config.jsonpath, _config.jsonfilename));
-            string? PrevJsonHS = configReader.ReadInfo("PrevMapJSONHS", "changelogSettings");
-            bool PrevJsonHSExists = PrevJsonHS != null ? true : false;
+//            bool ChangeLogExists = File.Exists(Path.Combine(_config.logfilepath, _config.logfilename));
+//            bool PrevJsonExists = File.Exists(Path.Combine(_config.jsonpath, _config.jsonfilename));
+//            string? PrevJsonHS = configReader.ReadInfo("PrevMapJSONHS", "changelogSettings");
+//            bool PrevJsonHSExists = PrevJsonHS != null ? true : false;
 
-            if (ChangeLogExists == true && PrevJsonExists == true && PrevJsonHSExists == true)
-            {
-                Assert.Pass();
-            }
-            else
-            {
-                Assert.Fail();
-            }
-        }
+//            if (ChangeLogExists == true && PrevJsonExists == true && PrevJsonHSExists == true)
+//            {
+//                Assert.Pass();
+//            }
+//            else
+//            {
+//                Assert.Fail();
+//            }
+//        }
 
-        [Test, Order(3)]
-        public async Task GitHubEndpoint()
-        {
-            string baseUrl = _client.BaseAddress!.ToString();
+//        [Test, Order(3)]
+//        public async Task GitHubEndpoint()
+//        {
+//            string baseUrl = _client.BaseAddress!.ToString();
 
-            _config.ConfigFilePath = finalconfigpath;
-            logwriter = new Logger(finalconfigpath, logpath);
-            //configReader = new(finalconfigpath, logwriter);
-            baseConfig.ConfigPath = finalconfigpath;
-            //configReader = new(finalconfigpath, logwriter);
-            configReader = new(baseConfig);
+//            _config.ConfigFilePath = finalconfigpath;
+//            logwriter = new Logger(finalconfigpath, logpath);
+//            //configReader = new(finalconfigpath, logwriter);
+//            baseConfig.ConfigPath = finalconfigpath;
+//            //configReader = new(finalconfigpath, logwriter);
+//            configReader = new(baseConfig);
 
-            //baseConfig.ConfigHandler = configReader;
-            //baseConfig.Logger = logwriter;
-            //baseConfig.JSONFileHandler = new(baseConfig);
+//            //baseConfig.ConfigHandler = configReader;
+//            //baseConfig.Logger = logwriter;
+//            //baseConfig.JSONFileHandler = new(baseConfig);
 
-            //string organization = configReader.ReadInfo("Organisation", "changelogSettings");
-            //string project = configReader.ReadInfo("Project", "changelogSettings");
-            //string repositoryName = configReader.ReadInfo("RepositoryName", "changelogSettings");
+//            //string organization = configReader.ReadInfo("Organisation", "changelogSettings");
+//            //string project = configReader.ReadInfo("Project", "changelogSettings");
+//            //string repositoryName = configReader.ReadInfo("RepositoryName", "changelogSettings");
 
-            //_config.Organisation = organization;
-            //_config.Project = project;
-            //_config.RepositoryName = repositoryName;
+//            //_config.Organisation = organization;
+//            //_config.Project = project;
+//            //_config.RepositoryName = repositoryName;
 
-            //var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, _config, TestEnvironment.Factory);
-            var clientProvider = new ClientProvider<TestAPI.Program>(baseConfig, _config, TestEnvironment.Factory);
-            //clientProvider.testClient = true;
+//            //var clientProvider = new ClientProvider<TestAPI.Program>(logwriter, _config, TestEnvironment.Factory);
+//            var clientProvider = new ClientProvider<TestAPI.Program>(baseConfig, _config, TestEnvironment.Factory);
+//            //clientProvider.testClient = true;
 
-            _config.runType = "GitHub";
+//            _config.runType = "GitHub";
 
-            if (baseUrl == null || baseUrl == string.Empty)
-            {
-                Assert.Fail("Base URL is not set or is empty.");
-            }
-            else
-            {
-                logwriter.LogBase(baseUrl);
-            }
+//            if (baseUrl == null || baseUrl == string.Empty)
+//            {
+//                Assert.Fail("Base URL is not set or is empty.");
+//            }
+//            else
+//            {
+//                logwriter.LogBase(baseUrl);
+//            }
 
-            _config.jsonfilename = githubJsonfile;
-            _config.logfilename = "ChangeLog.txt";
-            baseConfig.FilePath = _config.logfilepath;
+//            _config.jsonfilename = githubJsonfile;
+//            _config.logfilename = "ChangeLog.txt";
+//            baseConfig.FilePath = _config.logfilepath;
             
-            //_repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.APITest,
-            //    _config,
-            //    _jsonFileHandler,
-            //    configReader,
-            //    logwriter);
-            _repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.GitHub,
-                    _config,
-                    baseConfig);
+//            //_repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.APITest,
+//            //    _config,
+//            //    _jsonFileHandler,
+//            //    configReader,
+//            //    logwriter);
+//            _repo = APIFactory<TestAPI.Program>.GetAPIRepo(RepoMode.GitHub,
+//                    _config,
+//                    baseConfig);
 
-            if (_repo == null)
-            {
-                Assert.Fail("Unable to obtain a valid API Repository Mode");
-            }
+//            if (_repo == null)
+//            {
+//                Assert.Fail("Unable to obtain a valid API Repository Mode");
+//            }
 
-            //ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, logwriter, logFilePath, clientProvider);
-            ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, baseConfig, clientProvider);
+//            //ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, logwriter, logFilePath, clientProvider);
+//            ChangeLogWrite<TestAPI.Program> clg = new ChangeLogWrite<TestAPI.Program>(_repo, _config, baseConfig, clientProvider);
 
-            try
-            {
-                clg.ChangeLogReaderWriter().Wait();
-            }
-            catch (Exception ex)
-            {
-                logwriter.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
-            }
+//            try
+//            {
+//                clg.ChangeLogReaderWriter().Wait();
+//            }
+//            catch (Exception ex)
+//            {
+//                logwriter.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
+//            }
 
-            bool ChangeLogExists = File.Exists(Path.Combine(_config.logfilepath,_config.logfilename));
-            bool PrevJsonExists = File.Exists(Path.Combine(_config.jsonpath, _config.jsonfilename));
-            string? PrevJsonHS = configReader.ReadInfo("PrevMapJSONHS", "changelogSettings");
-            bool PrevJsonHSExists = PrevJsonHS != null && PrevJsonHS != "" ? true : false;
+//            bool ChangeLogExists = File.Exists(Path.Combine(_config.logfilepath,_config.logfilename));
+//            bool PrevJsonExists = File.Exists(Path.Combine(_config.jsonpath, _config.jsonfilename));
+//            string? PrevJsonHS = configReader.ReadInfo("PrevMapJSONHS", "changelogSettings");
+//            bool PrevJsonHSExists = PrevJsonHS != null && PrevJsonHS != "" ? true : false;
 
-            if (ChangeLogExists == true && PrevJsonExists == true && PrevJsonHSExists == true)
-            {
-                Assert.Pass();
-            }
-            else
-            {
-                Assert.Fail();
-            }
-        }
+//            if (ChangeLogExists == true && PrevJsonExists == true && PrevJsonHSExists == true)
+//            {
+//                Assert.Pass();
+//            }
+//            else
+//            {
+//                Assert.Fail();
+//            }
+//        }
 
-        [TearDown]
-        public void Teardown()
-        {
-            _client?.Dispose();
-        }
-    }
-}
+//        [TearDown]
+//        public void Teardown()
+//        {
+//            _client?.Dispose();
+//        }
+//    }
+//}

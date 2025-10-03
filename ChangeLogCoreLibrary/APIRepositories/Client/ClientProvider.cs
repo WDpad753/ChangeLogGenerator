@@ -19,7 +19,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
 {
     public class ClientProvider<T> : IWebFactoryProvider where T : class
     {
-        private readonly IBase? baseConfig;
+        private readonly IBaseProvider? baseConfig;
         private readonly WebApplicationFactory<T>? _factory;
         private readonly ILogger? _logWriter;
         private readonly CLGConfig _config;
@@ -34,10 +34,9 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
         //    _config = config;
         //    _factory = factory;
         //}
-        public ClientProvider(IBase? BaseConfig, CLGConfig config, WebApplicationFactory<T>? factory = null)
+        public ClientProvider(ILogger? Logger, CLGConfig config, WebApplicationFactory<T>? factory = null)
         {
-            baseConfig = BaseConfig;
-            _logWriter = BaseConfig.Logger;
+            _logWriter = Logger;
             _config = config;
             _factory = factory;
         }
@@ -103,7 +102,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
                     throw new InvalidOperationException("Utilising this class requires to know if it is used for testing or for live project");
                 }
 
-                baseConfig.BaseUrlAddress = client.BaseAddress;
+                baseConfig.GetItem<IBaseSettings>().BaseUrlAddress = client.BaseAddress;
 
                 return client;
             }

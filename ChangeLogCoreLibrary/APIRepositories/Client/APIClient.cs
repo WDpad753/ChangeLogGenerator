@@ -21,7 +21,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
 {
     public class APIClient<TEntryPoint> : IDisposable where TEntryPoint : class
     {
-        private readonly IBase? baseConfig;
+        private readonly IBaseSettings? baseConfig;
         public int? timeOut {  get; set; }
         public string? PerAccTok { get; set; }
 
@@ -39,9 +39,9 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
         //    //_strHandler = new(Logger);
         //    _clientProvider = clientProvider;
         //}
-        public APIClient(IBase? BaseConfig, ClientProvider<TEntryPoint>? clientProvider = null)
+        public APIClient(IBaseProvider? provider, ClientProvider<TEntryPoint>? clientProvider = null)
         {
-            _logWriter = BaseConfig.Logger;
+            _logWriter = provider.GetItem<ILogger>();
             //_strHandler = new(Logger);
             _clientProvider = clientProvider;
         }
