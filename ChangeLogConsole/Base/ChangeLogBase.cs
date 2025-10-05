@@ -93,7 +93,7 @@ namespace ChangeLogConsole.Base
                             }
                         }
 
-                        if (!mapJsonHS.Equals(prevMapJsonHS))
+                        if (!mapJsonHS.Equals(prevMapJsonHS) || !File.Exists(PathCombine.CombinePath(CombinationType.Folder, _logFilePath, _config.logfilename)))
                         {
                             _repo.MapJsonReader(mapJson, prevMapAzureJson, mapJsonHS, _logFilePath);
                         }
@@ -129,7 +129,7 @@ namespace ChangeLogConsole.Base
                             }
                         }
 
-                        if (!mapJsonHS.Equals(prevMapJsonHS))
+                        if (!mapJsonHS.Equals(prevMapJsonHS) || !File.Exists(PathCombine.CombinePath(CombinationType.Folder, _logFilePath, _config.logfilename)))
                         {
                             _repo.MapJsonReader(mapJson, prevMapGithubJson, mapJsonHS, _logFilePath, _client, EnvVar);
                         }
