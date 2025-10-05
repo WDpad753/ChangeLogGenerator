@@ -148,6 +148,7 @@ namespace ChangeLogCoreLibrary.Classes
                                             }
                                             firstentry++;
                                             sw.WriteLine($"Date: {date}");
+                                            _logger?.LogBase($"Date: {date}");
                                         }
 
                                         values = new List<object> { time, CommitID, AuthorName, CommitterName, CommitMessage };
@@ -207,6 +208,7 @@ namespace ChangeLogCoreLibrary.Classes
                                         //}
 
                                         sw.WriteLine(line);
+                                        _logger?.LogBase(line);
 
                                         prevdatetime = datecheck;
                                         //prevline = line;
@@ -227,6 +229,7 @@ namespace ChangeLogCoreLibrary.Classes
                                         }
                                         firstentry++;
                                         sw.WriteLine($"Date: {date}");
+                                        _logger?.LogBase($"Date: {date}");
                                     }
 
                                     values = new List<object> { time, CommitID, AuthorName, CommitterName, CommitMessage };
@@ -234,6 +237,7 @@ namespace ChangeLogCoreLibrary.Classes
                                     Switch = default;
                                     line = GetLine(Switch, values);
                                     sw.WriteLine(line);
+                                    _logger?.LogBase(line);
                                 }
 
                                 prevdatetime = datecheck;
@@ -442,6 +446,7 @@ namespace ChangeLogCoreLibrary.Classes
                                                     }
                                                     firstentry++;
                                                     sw.WriteLine($"Date: {date}");
+                                                    _logger?.LogBase($"Date: {date}");
                                                 }
 
                                                 values = new List<object> { time, CommitID, AuthorName, CommitterName, CommitMessage };
@@ -501,6 +506,7 @@ namespace ChangeLogCoreLibrary.Classes
                                                 //}
 
                                                 sw.WriteLine(line);
+                                                _logger?.LogBase(line);
 
                                                 prevdatetime = datecheck;
                                                 //prevline = line;
@@ -521,6 +527,7 @@ namespace ChangeLogCoreLibrary.Classes
                                                 }
                                                 firstentry++;
                                                 sw.WriteLine($"Date: {date}");
+                                                _logger?.LogBase($"Date: {date}");
                                             }
 
                                             values = new List<object> { time, CommitID, AuthorName, CommitterName, CommitMessage };
@@ -528,6 +535,7 @@ namespace ChangeLogCoreLibrary.Classes
                                             Switch = default;
                                             line = GetLine(Switch, values);
                                             sw.WriteLine(line);
+                                            _logger?.LogBase(line);
                                         }
 
                                         prevdatetime = datecheck;
@@ -594,6 +602,7 @@ namespace ChangeLogCoreLibrary.Classes
                                             }
                                             firstentry++;
                                             writer.WriteLine($"Date: {date}");
+                                            _logger?.LogBase($"Date: {date}");
                                         }
 
                                         List<object> value = new List<object> { time, CommitID, AuthorName, CommitterName, CommitMessage };
@@ -645,6 +654,7 @@ namespace ChangeLogCoreLibrary.Classes
                                         //}
 
                                         writer.WriteLine(line);
+                                        _logger?.LogBase(line);
 
                                         prevdatetime = datecheck;
                                         //prevline = line;
@@ -665,6 +675,7 @@ namespace ChangeLogCoreLibrary.Classes
                                         }
                                         firstentry++;
                                         writer.WriteLine($"Date: {date}");
+                                        _logger?.LogBase($"Date: {date}");
                                     }
 
                                     List<object> value = new List<object> { time, CommitID, AuthorName, CommitterName, CommitMessage };
@@ -672,6 +683,7 @@ namespace ChangeLogCoreLibrary.Classes
                                     Switch = default;
                                     line = GetLine(Switch, value);
                                     writer.WriteLine(line);
+                                    _logger?.LogBase(line);
                                 }
 
                                 prevdatetime = datecheck;
