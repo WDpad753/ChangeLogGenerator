@@ -26,7 +26,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
         public string? PerAccTok { get; set; }
 
         //private static HttpClient? _client = null;
-        private HttpClient? _client = null;
+        private static HttpClient? _client = null;
         public static bool? clientCreated = false;
         private bool disposedValue;
         //private readonly StringHandler _strHandler;
@@ -39,9 +39,9 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
         //    //_strHandler = new(Logger);
         //    _clientProvider = clientProvider;
         //}
-        public APIClient(IBaseProvider? provider, ClientProvider<TEntryPoint>? clientProvider = null)
+        public APIClient(ILogger? Logger, ClientProvider<TEntryPoint>? clientProvider = null)
         {
-            _logWriter = provider.GetItem<ILogger>();
+            _logWriter = Logger;
             //_strHandler = new(Logger);
             _clientProvider = clientProvider;
         }
@@ -133,112 +133,6 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
             }
         }
 
-        //public async Task<T?> GetAsync<T>(string? url = null) where T : class
-        //{
-        //    try
-        //    {
-        //        string? apiURL = url == null ? APIURL : url;
-
-        //        if (_client == null)
-        //        {
-        //            _client = _clientProvider.CreateClient(new Uri(apiURL));
-        //        }
-
-        //        // Create HttpClient instance
-        //        if (_clientProvider.testClient == null || _clientProvider.testClient == false)
-        //        {
-        //            var client = _client;
-
-        //            if (clientCreated == false)
-        //            {
-        //                // Set personal access token in request headers of the baseurl:
-        //                if (PerAccTok != null)
-        //                {
-        //                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($":{PerAccTok}")));
-        //                    client.Timeout = TimeSpan.FromSeconds((double)timeOut);
-        //                    clientCreated = true;
-        //                }
-        //                else
-        //                {
-        //                    client.Timeout = TimeSpan.FromSeconds((double)timeOut);
-        //                    clientCreated = true;
-        //                }
-        //            }
-
-        //            try
-        //            {
-        //                // Initiate Get request for the API url:
-        //                HttpResponseMessage response = await client.GetAsync(apiURL);
-
-        //                // Check if the request was successful:
-        //                response.EnsureSuccessStatusCode();
-
-        //                // Get the response content from the request:
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-
-        //                // Deserialize the JSON response:
-        //                T? responseObject = JsonConvert.DeserializeObject<T>(responseBody);
-
-        //                return responseObject;
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                Console.WriteLine(ex.ToString());
-        //                System.Diagnostics.Debug.WriteLine($@"Here is the Content of the Error Message: {ex.ToString()}");
-        //                return null;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            var client = _client;
-
-        //            if (clientCreated == false)
-        //            {
-        //                // Set personal access token in request headers of the baseurl:
-        //                if (PerAccTok != null)
-        //                {
-        //                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($":{PerAccTok}")));
-        //                    client.Timeout = TimeSpan.FromSeconds((double)timeOut);
-        //                    clientCreated = true;
-        //                }
-        //                else
-        //                {
-        //                    client.Timeout = TimeSpan.FromSeconds((double)timeOut);
-        //                    clientCreated = true;
-        //                }
-        //            }
-
-        //            try
-        //            {
-        //                // Initiate Get request for the API url:
-        //                HttpResponseMessage response = await client.GetAsync(apiURL);
-
-        //                // Check if the request was successful:
-        //                response.EnsureSuccessStatusCode();
-
-        //                // Get the response content from the request:
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-
-        //                // Deserialize the JSON response:
-        //                T? responseObject = JsonConvert.DeserializeObject<T>(responseBody);
-
-        //                return responseObject;
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                Console.WriteLine(ex.ToString());
-        //                System.Diagnostics.Debug.WriteLine($@"Here is the Content of the Error Message: {ex.ToString()}");
-        //                return null;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logWriter.LogWrite("Error saving data to file: " + ex, MessageLevels.Fatal);
-        //        return null;
-        //    }
-        //}
-
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -246,7 +140,11 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects)
-                    _client.Dispose();
+                    if (_client != null && (bool)clientCreated)
+                    {
+                        _client.Dispose();
+                        _client = null;
+                    }
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

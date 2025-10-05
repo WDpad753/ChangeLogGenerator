@@ -41,6 +41,8 @@ namespace ChangeLogConsole
             logger = provider.GetItem<ILogger>();
             _config = provider.GetItem<CLGConfig>();
             jsonHandler = provider.GetItem<JSONFileHandler>();
+
+            _runTimer = new Timer();
         }
 
         async void Run(object? sender, EventArgs e)
@@ -51,7 +53,14 @@ namespace ChangeLogConsole
 
                 if (Volatile.Read(ref mainRun) == 0)
                 {
-                    logger.LogBase($"Service tasks completed. Waiting for {_delay} seconds or less before the next cycle...");
+                    if(_delay != null || _delay > 0)
+                    {
+                        logger.LogBase($"Console tasks completed. Waiting for {_delay} seconds or less before the next cycle...");
+                    }
+                    else
+                    {
+                        logger.LogBase($"Console tasks completed....");
+                    }
                 }
             }
             catch (Exception ex)
@@ -64,7 +73,7 @@ namespace ChangeLogConsole
         {
             if (Interlocked.CompareExchange(ref mainRun, 1, 0) != 0)
             {
-                logger.LogDebug($"Maintenance Poll is already running. Will not create a new thread.");
+                logger.LogDebug($"Run Poll for Commit Change Log is already running. Will not create a new thread.");
                 return;
             }
 
@@ -120,11 +129,17 @@ namespace ChangeLogConsole
                 }
             }
 
-            _repo = APIFactory<DBNull>.GetAPIRepo(mode, _config, jsonHandler, _configHandler, logger);
+            _provider.RegisterInstance<IAPIRepo<DBNull>>(APIFactory<DBNull>.GetAPIRepo(mode, _config, jsonHandler, _configHandler, logger));
+            _provider.RegisterInstance<ClientProvider<DBNull>>(new ClientProvider<DBNull>(logger, _settings, _config));
 
-            var clientProvider = new ClientProvider<DBNull>(logger, _config);
-            clientProvider.clientBase = _config.runType;
-            clientProvider.appName = _configHandler.ReadInfo("RepositoryName", "changelogSettings");
+            var clientProvider = _provider.GetItem<ClientProvider<DBNull>>();
+
+            _provider.RegisterInstance<APIClient<DBNull>>(new(logger, clientProvider));
+
+            //_repo = APIFactory<DBNull>.GetAPIRepo(mode, _config, jsonHandler, _configHandler, logger);
+            //var clientProvider = new ClientProvider<DBNull>(logger, _config);
+            //clientProvider.clientBase = _config.runType;
+            //clientProvider.appName = _configHandler.ReadInfo("RepositoryName", "changelogSettings");
 
             _clb = new(_provider);
 
@@ -134,7 +149,12 @@ namespace ChangeLogConsole
             }
             catch (Exception ex)
             {
+                mainRun = 0;
                 logger.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
+            }
+            finally
+            {
+                Interlocked.Exchange(ref mainRun, 0);
             }
         }
 
@@ -148,6 +168,11 @@ namespace ChangeLogConsole
                 {
                     int DelayInt = _delay.Value;
                     _runTimer = CreateTimer(DelayInt * 1000, Run);
+                    IsOneTimeRun = false;
+                }
+                else
+                {
+                    IsOneTimeRun = true;
                 }
 
                 return true;

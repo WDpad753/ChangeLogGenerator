@@ -20,24 +20,38 @@ namespace ChangeLogConsole.Base
     public class ChangeLogBase<T> where T : class
     {
         private readonly IBaseProvider? _provider;
-        private CLGConfig _config;
-        private JSONFileHandler _fileHandler;
-        private APIClient<T> _client;
-        private ConfigHandler _reader;
-        private EnvHandler _envreader;
+        private CLGConfig? _config;
+        private JSONFileHandler? _fileHandler;
+        private APIClient<T>? _client;
+        private ConfigHandler? _reader;
+        private EnvHandler? _envreader;
         private ILogger? _logger;
         private static MapAzureJson prevMapAzureJson = new MapAzureJson();
         private static List<MapGitHubJson> prevMapGithubJson = new List<MapGitHubJson>();
-        private readonly IAPIRepo<T> _repo;
+        private readonly IAPIRepo<T>? _repo;
         private string? _logFilePath;
-        private readonly ClientProvider<T>? _factoryProvider;
+        private ClientProvider<T>? _factoryProvider;
 
         public ChangeLogBase(IBaseProvider provider)
         {
             _provider = provider;
+
+            _logger = provider.GetItem<ILogger>();
+            _reader = provider.GetItem<ConfigHandler>();
+            _config = provider.GetItem<CLGConfig>();
+            _factoryProvider = provider.GetItem<ClientProvider<T>>();
+            _client = provider.GetItem<APIClient<T>>();
+            _fileHandler = provider.GetItem<JSONFileHandler>();
+            _repo = provider.GetItem<IAPIRepo<T>>();
+            _envreader = provider.GetItem<EnvHandler>();
+            var baseSettings = provider.GetItem<IBaseSettings>();
+
+            _factoryProvider.clientBase = _config.runType;
+            _factoryProvider.appName = _reader?.ReadInfo("RepositoryName", "changelogSettings");
+            _logFilePath = baseSettings.FilePath;
         }
 
-        public async Task<string?> ChangeLogReaderWriter()
+        public async Task ChangeLogReaderWriter()
         {
             string? EnvVar = null;
             string? Envvar = null;
@@ -46,11 +60,11 @@ namespace ChangeLogConsole.Base
             string? project = null;
             string? repositoryName = null;
 
-            prevMapJsonHS = _reader.ReadInfo("PrevMapJSONHS", "changelogSettings");
-            organization = _reader.ReadInfo("Organisation", "changelogSettings");
-            project = _reader.ReadInfo("Project", "changelogSettings");
-            repositoryName = _reader.ReadInfo("RepositoryName", "changelogSettings");
-            Envvar = _reader.ReadInfo("PAT", "changelogSettings");
+            prevMapJsonHS = _reader?.ReadInfo("PrevMapJSONHS", "changelogSettings");
+            organization = _reader?.ReadInfo("Organisation", "changelogSettings");
+            project = _reader?.ReadInfo("Project", "changelogSettings");
+            repositoryName = _reader?.ReadInfo("RepositoryName", "changelogSettings");
+            Envvar = _reader?.ReadInfo("PAT", "changelogSettings");
 
             _config.Organisation = organization;
             _config.Project = project;
@@ -61,8 +75,6 @@ namespace ChangeLogConsole.Base
                 if (_repo.GetType() == typeof(AzureDevOps<T>))
                 {
                     EnvVar = Envvar == "" ? null : Environment.GetEnvironmentVariable(Envvar);
-
-                    //_client.APIURL = PathCombine.CombinePath(CombinationType.URL, APIRepoPath.AzureDevOps, organization, project, "_apis/git/repositories", repositoryName, "commits");
                     _client.PerAccTok = EnvVar;
                     _client.timeOut = 60;
                     _factoryProvider.clientBase = "AzureDevOps";
@@ -88,7 +100,7 @@ namespace ChangeLogConsole.Base
                         else
                         {
                             Console.WriteLine("No Changes in the Commit history data");
-                            return null;
+                            return;
                         }
                     }
                     else
@@ -99,8 +111,6 @@ namespace ChangeLogConsole.Base
                 else if (_repo.GetType() == typeof(GitHub<T>))
                 {
                     EnvVar = Envvar == "" ? null : _envreader.EnvRead(Envvar, EnvAccessMode.User);
-                    //var val = Environment.GetEnvironmentVariable(Envvar);
-                    //_client.APIURL = PathCombine.CombinePath(CombinationType.URL, APIRepoPath.Github, "repos", organization, repositoryName, "commits").TrimEnd('/');
                     _client.PerAccTok = EnvVar;
                     _client.timeOut = 60;
                     _factoryProvider.clientBase = "GitHub";
@@ -126,7 +136,7 @@ namespace ChangeLogConsole.Base
                         else
                         {
                             Console.WriteLine("No Changes in the Commit history data");
-                            return null;
+                            return;
                         }
                     }
                     else
@@ -135,12 +145,12 @@ namespace ChangeLogConsole.Base
                     }
                 }
 
-                return null;
+                return;
             }
             catch (Exception ex)
             {
                 _logger.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
-                return null;
+                return;
             }
         }
     }

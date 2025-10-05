@@ -29,9 +29,16 @@ namespace ChangeLogConsole
             if(_consoleBase.CanStart())
             {
                 await _consoleBase.Start(stoppingToken);
+
+                if (_consoleBase.IsOneTimeRun)
+                {
+                    _logger.LogBase("All console tasks completed. Stopping host...");
+                    _lifeTime.StopApplication();
+                }
             }
             else
             {
+                _logger.LogError("Console cannot start. Stopping host...");
                 _lifeTime.StopApplication();
             }
         }
