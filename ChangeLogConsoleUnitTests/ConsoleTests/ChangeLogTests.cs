@@ -184,13 +184,14 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
                 return;
             }
         }
+
+
     }
 
     [TestFixture]
     public class ChangeLogTests
     {
         public IBaseProvider provider { get; private set; }
-
 
         private IBaseSettings? baseConfig;
         private ILogger? logwriter;
@@ -211,6 +212,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
         public void GlobalTestsSetup()
         {
             provider = new BaseProvider();
+            _client = TestEnvironment.Factory.CreateClient();
         }
 
         [SetUp]
@@ -316,6 +318,8 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             logwriter.LogBase(content.ToString());
 
             Assert.That(content, Is.Not.Null.And.Not.Empty, "Health endpoint returned empty content");
+
+            _client.Dispose();
         }
 
         [Test, Order(2)]
@@ -376,22 +380,27 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             {
                 Assert.Fail();
             }
+
+            _client.Dispose();
         }
 
         [Test, Order(3)]
         public async Task GitHubEndpoint()
         {
-            string baseUrl = _client.BaseAddress!.ToString();
+            APIClient<TestAPI.Program>.ResetClient();
 
             _config.ConfigFilePath = finalconfigpath;
+            _config.runType = "GitHub";
             baseConfig.ConfigPath = finalconfigpath;
+
+            string baseUrl = _client.BaseAddress!.ToString();
 
             provider.RegisterInstance<ClientProvider<TestAPI.Program>>(new ClientProvider<TestAPI.Program>(logwriter, baseConfig, _config, TestEnvironment.Factory));
 
             var clientProvider = provider.GetItem<ClientProvider<TestAPI.Program>>();
             provider.RegisterInstance<APIClient<TestAPI.Program>>(new(logwriter, clientProvider));
 
-            _config.runType = "GitHub";
+
 
             if (baseUrl == null || baseUrl == string.Empty)
             {
@@ -419,7 +428,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             try
             {
-                clg.ChangeLogReaderWriter().Wait();
+                clg.ChangeLogReaderWriter().Wait(15000000);
             }
             catch (Exception ex)
             {
@@ -448,10 +457,10 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             provider?.Dispose();
         }
 
-        //[TearDown]
-        //public void Teardown()
-        //{
-        //    _client?.Dispose();
-        //}
+        [TearDown]
+        public void Teardown()
+        {
+            _client?.Dispose();
+        }
     }
 }

@@ -25,24 +25,15 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
         public int? timeOut {  get; set; }
         public string? PerAccTok { get; set; }
 
-        //private static HttpClient? _client = null;
         private static HttpClient? _client = null;
         public static bool? clientCreated = false;
         private bool disposedValue;
-        //private readonly StringHandler _strHandler;
         private readonly ILogger? _logWriter;
         private readonly ClientProvider<TEntryPoint>? _clientProvider;
 
-        //public APIClient(LogWriter Logger, ClientProvider<TEntryPoint>? clientProvider = null)
-        //{
-        //    _logWriter = Logger;
-        //    //_strHandler = new(Logger);
-        //    _clientProvider = clientProvider;
-        //}
         public APIClient(ILogger? Logger, ClientProvider<TEntryPoint>? clientProvider = null)
         {
             _logWriter = Logger;
-            //_strHandler = new(Logger);
             _clientProvider = clientProvider;
         }
 
@@ -52,7 +43,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
             {
                 if (_client == null)
                 {
-                    _client = _clientProvider.CreateClient(null);
+                    _client = _clientProvider?.CreateClient(null);
                 }
 
                 var client = _client;
@@ -133,6 +124,17 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
             }
         }
 
+        public static void ResetClient()
+        {
+            if (_client != null)
+            {
+                _client.Dispose();
+                _client = null;
+            }
+
+            clientCreated = false;
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -144,6 +146,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
                     {
                         _client.Dispose();
                         _client = null;
+                        clientCreated = false;
                     }
                 }
 

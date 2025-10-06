@@ -26,7 +26,7 @@ namespace ChangeLogConsole
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            if(_consoleBase.CanStart())
+            if (_consoleBase.CanStart())
             {
                 await _consoleBase.Start(stoppingToken);
 

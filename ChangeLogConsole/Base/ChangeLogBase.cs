@@ -99,12 +99,14 @@ namespace ChangeLogConsole.Base
                         }
                         else
                         {
+                            _logger.LogBase("No Changes in the Commit history data");
                             Console.WriteLine("No Changes in the Commit history data");
                             return;
                         }
                     }
                     else
                     {
+                        _logger.LogError("MapJson is empty");
                         throw new Exception("MapJson is empty");
                     }
                 }
@@ -135,12 +137,14 @@ namespace ChangeLogConsole.Base
                         }
                         else
                         {
+                            _logger.LogBase("No Changes in the Commit history data");
                             Console.WriteLine("No Changes in the Commit history data");
                             return;
                         }
                     }
                     else
                     {
+                        _logger.LogError("MapJson is empty");
                         throw new Exception("MapJson is empty");
                     }
                 }

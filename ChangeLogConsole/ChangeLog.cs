@@ -136,11 +136,6 @@ namespace ChangeLogConsole
 
             _provider.RegisterInstance<APIClient<DBNull>>(new(logger, clientProvider));
 
-            //_repo = APIFactory<DBNull>.GetAPIRepo(mode, _config, jsonHandler, _configHandler, logger);
-            //var clientProvider = new ClientProvider<DBNull>(logger, _config);
-            //clientProvider.clientBase = _config.runType;
-            //clientProvider.appName = _configHandler.ReadInfo("RepositoryName", "changelogSettings");
-
             _clb = new(_provider);
 
             try
@@ -179,6 +174,7 @@ namespace ChangeLogConsole
             }
             catch (Exception ex)
             {
+                logger.LogError($"Failed to start {ex}");
                 return false;
             }
         }
