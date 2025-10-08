@@ -44,7 +44,8 @@ namespace ChangeLogConsole
             }
 
             string configFile = files[0];
-            string logFilePath = Path.Combine(Path.GetPathRoot(Environment.SystemDirectory), "tmp");
+            //string logFilePath = Path.Combine(Path.GetPathRoot(Environment.SystemDirectory), "tmp");
+            string logFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "tmp");
 
             //
             IHost host = Host.CreateDefaultBuilder(args).ConfigureLogging(logging =>
