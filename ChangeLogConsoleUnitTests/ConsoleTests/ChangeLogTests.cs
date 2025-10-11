@@ -400,8 +400,6 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             var clientProvider = provider.GetItem<ClientProvider<TestAPI.Program>>();
             provider.RegisterInstance<APIClient<TestAPI.Program>>(new(logwriter, clientProvider));
 
-
-
             if (baseUrl == null || baseUrl == string.Empty)
             {
                 Assert.Fail("Base URL is not set or is empty.");
