@@ -55,17 +55,17 @@ namespace ChangeLogConsole
                 {
                     if(_delay != null || _delay > 0)
                     {
-                        logger.LogBase($"Console tasks completed. Waiting for {_delay} seconds or less before the next cycle...");
+                        logger.Base($"Console tasks completed. Waiting for {_delay} seconds or less before the next cycle...");
                     }
                     else
                     {
-                        logger.LogBase($"Console tasks completed....");
+                        logger.Base($"Console tasks completed....");
                     }
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
+                logger.Error($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
             }
         }
 
@@ -73,7 +73,7 @@ namespace ChangeLogConsole
         {
             if (Interlocked.CompareExchange(ref mainRun, 1, 0) != 0)
             {
-                logger.LogDebug($"Run Poll for Commit Change Log is already running. Will not create a new thread.");
+                logger.Debug($"Run Poll for Commit Change Log is already running. Will not create a new thread.");
                 return;
             }
 
@@ -83,7 +83,7 @@ namespace ChangeLogConsole
             // Setting up and running ChangeLogConsole for Creating/Appending ChangeLog:
             if (_config == null)
             {
-                logger.LogError($@"Error Message: Unable to find the path to save Commit File.");
+                logger.Error($@"Error Message: Unable to find the path to save Commit File.");
                 return;
             }
 
@@ -107,7 +107,7 @@ namespace ChangeLogConsole
 
             if (tarRepo == null)
             {
-                logger.LogError($@"Error Message: Value for the Target Repo is empty.");
+                logger.Error($@"Error Message: Value for the Target Repo is empty.");
                 return;
             }
             else
@@ -124,7 +124,7 @@ namespace ChangeLogConsole
                 }
                 else
                 {
-                    logger.LogError($@"Error Message: Selected Repo Mode can not be found.");
+                    logger.Error($@"Error Message: Selected Repo Mode can not be found.");
                     return;
                 }
             }
@@ -145,7 +145,7 @@ namespace ChangeLogConsole
             catch (Exception ex)
             {
                 mainRun = 0;
-                logger.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
+                logger.Error($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
             }
             finally
             {
@@ -174,7 +174,7 @@ namespace ChangeLogConsole
             }
             catch (Exception ex)
             {
-                logger.LogError($"Failed to start {ex}");
+                logger.Error($"Failed to start {ex}");
                 return false;
             }
         }

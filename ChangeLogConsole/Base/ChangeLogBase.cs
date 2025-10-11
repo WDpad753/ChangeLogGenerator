@@ -99,14 +99,14 @@ namespace ChangeLogConsole.Base
                         }
                         else
                         {
-                            _logger.LogBase("No Changes in the Commit history data");
+                            _logger.Base("No Changes in the Commit history data");
                             Console.WriteLine("No Changes in the Commit history data");
                             return;
                         }
                     }
                     else
                     {
-                        _logger.LogError("MapJson is empty");
+                        _logger.Error("MapJson is empty");
                         throw new Exception("MapJson is empty");
                     }
                 }
@@ -137,14 +137,14 @@ namespace ChangeLogConsole.Base
                         }
                         else
                         {
-                            _logger.LogBase("No Changes in the Commit history data");
+                            _logger.Base("No Changes in the Commit history data");
                             Console.WriteLine("No Changes in the Commit history data");
                             return;
                         }
                     }
                     else
                     {
-                        _logger.LogError("MapJson is empty");
+                        _logger.Error("MapJson is empty");
                         throw new Exception("MapJson is empty");
                     }
                 }
@@ -153,7 +153,7 @@ namespace ChangeLogConsole.Base
             }
             catch (Exception ex)
             {
-                _logger.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
+                _logger.Error($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
                 return;
             }
         }

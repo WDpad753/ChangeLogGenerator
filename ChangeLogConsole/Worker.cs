@@ -32,13 +32,13 @@ namespace ChangeLogConsole
 
                 if (_consoleBase.IsOneTimeRun)
                 {
-                    _logger.LogBase("All console tasks completed. Stopping host...");
+                    _logger.Base("All console tasks completed. Stopping host...");
                     _lifeTime.StopApplication();
                 }
             }
             else
             {
-                _logger.LogError("Console cannot start. Stopping host...");
+                _logger.Error("Console cannot start. Stopping host...");
                 _lifeTime.StopApplication();
             }
         }

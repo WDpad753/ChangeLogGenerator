@@ -110,7 +110,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
             }
             catch (Exception ex)
             {
-                _logWriter.LogError($"Unable to create client. Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
+                _logWriter.Error($"Unable to create client. Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
                 return null;
             }
         }

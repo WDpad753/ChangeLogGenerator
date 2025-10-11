@@ -87,7 +87,7 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
                     {
                         Console.WriteLine(taskcol.Exception.ToString());
                         System.Diagnostics.Debug.WriteLine($@"Here is the Content of the Error Message: {taskcol.Exception.ToString()}");
-                        _logWriter.LogError($"Error in acquiring response from url {client.BaseAddress}: {taskcol.Exception.ToString()}");
+                        _logWriter.Error($"Error in acquiring response from url {client.BaseAddress}: {taskcol.Exception.ToString()}");
                     }
                     else
                     {
@@ -112,14 +112,14 @@ namespace ChangeLogCoreLibrary.APIRepositories.Client
                 {
                     //Console.WriteLine(ex.ToString());
                     System.Diagnostics.Debug.WriteLine($@"Here is the Content of the Error Message: {ex.ToString()}");
-                    _logWriter.LogError("Error in De-Serializing the JSON Object: " + ex);
+                    _logWriter.Error("Error in De-Serializing the JSON Object: " + ex);
                     return null;
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($@"Here is the Content of the Error Message: {ex.ToString()}");
-                _logWriter.LogError("Error in De-Serializing the JSON Object: " + ex);
+                _logWriter.Error("Error in De-Serializing the JSON Object: " + ex);
                 return null;
             }
         }
