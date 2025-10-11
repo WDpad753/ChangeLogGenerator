@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace ChangeLogConsole.Base
 {
-    public class ChangeLogBase<T> where T : class
+    public class ChangeBase<T> where T : class
     {
         private readonly IBaseProvider? _provider;
         private CLGConfig? _config;
@@ -32,7 +32,7 @@ namespace ChangeLogConsole.Base
         private string? _logFilePath;
         private ClientProvider<T>? _factoryProvider;
 
-        public ChangeLogBase(IBaseProvider provider)
+        public ChangeBase(IBaseProvider provider)
         {
             _provider = provider;
 

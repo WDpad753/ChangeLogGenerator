@@ -23,7 +23,7 @@ namespace ChangeLogConsole
         private readonly IBaseSettings _settings;
         private readonly ILogger logger;
         private ConfigHandler _configHandler;
-        private ChangeLogBase<DBNull> _clb;
+        private ChangeBase<DBNull> _clb;
         private JSONFileHandler jsonHandler;
         private IAPIRepo<DBNull> _repo;
         public CLGConfig _config;

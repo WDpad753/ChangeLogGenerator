@@ -380,7 +380,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
             {
                 if (!File.Exists(configPath))
                 {
-                    logwriter.LogError($"XML File does not exist in the given path. Path => {configPath}");
+                    logwriter.Error($"XML File does not exist in the given path. Path => {configPath}");
                     return;
                 }
 
@@ -389,7 +389,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                 XElement targetNode = xdoc.Descendants(mainKey).FirstOrDefault();
                 if (targetNode == null)
                 {
-                    logwriter.LogError($"No element named '{mainKey}' found.");
+                    logwriter.Error($"No element named '{mainKey}' found.");
                     return;
                 }
 
@@ -409,7 +409,7 @@ namespace ChangeLogConsoleUnitTests.BaseTests
 
                 if (!adds.Any())
                 {
-                    logwriter.LogBase(keyToDelete == null
+                    logwriter.Base(keyToDelete == null
                         ? $"No <add> elements found under <{container.Name}>."
                         : $"No <add key=\"{keyToDelete}\"/> found under <{container.Name}>.");
                     return;
@@ -419,11 +419,11 @@ namespace ChangeLogConsoleUnitTests.BaseTests
                     add.Remove();
 
                 xdoc.Save(configPath);
-                logwriter.LogBase($"Removed {adds.Count()} <add> element(s) under <{container.Name}>.");
+                logwriter.Base($"Removed {adds.Count()} <add> element(s) under <{container.Name}>.");
             }
             catch (Exception ex)
             {
-                logwriter.LogError($"Exception in DeleteAdd: {ex.Message}");
+                logwriter.Error($"Exception in DeleteAdd: {ex.Message}");
             }
         }
     }

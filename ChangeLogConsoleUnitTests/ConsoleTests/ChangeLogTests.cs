@@ -180,7 +180,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             }
             catch (Exception ex)
             {
-                _logger.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
+                _logger.Error($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
                 return;
             }
         }
@@ -315,7 +315,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
 
             var content = await response.Content.ReadAsStringAsync();
 
-            logwriter.LogBase(content.ToString());
+            logwriter.Base(content.ToString());
 
             Assert.That(content, Is.Not.Null.And.Not.Empty, "Health endpoint returned empty content");
 
@@ -341,7 +341,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             }
             else
             {
-                logwriter.LogBase(baseUrl);
+                logwriter.Base(baseUrl);
             }
 
             _config.jsonfilename = azureJsonfile;
@@ -364,7 +364,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             }
             catch (Exception ex)
             {
-                logwriter.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
+                logwriter.Error($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
             }
 
             bool ChangeLogExists = File.Exists(Path.Combine(_config.logfilepath, _config.logfilename));
@@ -406,7 +406,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             }
             else
             {
-                logwriter.LogBase(baseUrl);
+                logwriter.Base(baseUrl);
             }
 
             _config.jsonfilename = githubJsonfile;
@@ -430,7 +430,7 @@ namespace ChangeLogConsoleUnitTests.ConsoleTests
             }
             catch (Exception ex)
             {
-                logwriter.LogError($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
+                logwriter.Error($@"Error Message: {ex.Message}; Trace: {ex.StackTrace}; Exception: {ex.InnerException}; Error Source: {ex.Source}");
             }
 
             bool ChangeLogExists = File.Exists(Path.Combine(_config.logfilepath, _config.logfilename));
